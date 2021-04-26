@@ -1,4 +1,11 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿(async function () {
+  const connection = new signalR.HubConnectionBuilder()
+    .withUrl('/hub/livemap')
+    .build();
 
-// Write your JavaScript code.
+  connection.on('SendLog', (request) => {
+    $('#log').append(`<li>${request.message}</li>`);
+  });
+
+  await connection.start();
+})();

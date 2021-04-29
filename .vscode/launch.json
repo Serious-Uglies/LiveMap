@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/DasCleverle.DcsExport.LiveMap/bin/Debug/net5.0/DasCleverle.DcsExport.LiveMap.dll",
+            "program": "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap/bin/Debug/net5.0/DasCleverle.DcsExport.LiveMap.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/DasCleverle.DcsExport.LiveMap",
+            "cwd": "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap",
             "stopAtEntry": false,
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"

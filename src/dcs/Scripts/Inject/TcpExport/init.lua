@@ -10,15 +10,15 @@ local eventHandlers = {
     end,
 
     [world.event.S_EVENT_PLAYER_LEAVE_UNIT] = function (event)
-        exporter.send("RemoveUnit", info.getUnit(event.initiator))
+        exporter.send("RemoveUnit", { id = event.initiator:getID() })
     end,
 
     [world.event.S_EVENT_KILL] = function (event)
-        exporter.send("RemoveUnit", info.getUnit(event.initiator))
+        exporter.send("RemoveUnit", { id = event.initiator:getID() })
     end,
 
     [world.event.S_EVENT_UNIT_LOST] = function (event)
-        exporter.send("RemoveUnit", info.getUnit(event.initiator))
+        exporter.send("RemoveUnit", { id = event.initiator:getID() })
     end,
 
     [world.event.S_EVENT_MISSION_END] = function (event)
@@ -28,7 +28,7 @@ local eventHandlers = {
 
     -- S_EVENT_REMOVE_UNIT (added by MOOSE)
     [world.event.S_EVENT_MAX + 1006] = function (event)
-        exporter.send("RemoveUnit", info.getUnit(event.initiator))
+        exporter.send("RemoveUnit", { id = event.initiator:getID() })
     end,
 }
 
@@ -73,5 +73,5 @@ timer.scheduleFunction(updatePositions, nil, timer.getTime() + 10)
 
 -- INITIAL EXPORT ON MISSION INIT --
 exporter.connect()
-exporter.send("Init", {}) -- TODO: Report data like weather and time of day
+exporter.send("Init", { time = timer.getTime() }) -- TODO: Report data like weather and time of day
 exporter.send("AddUnit", info.getAllUnits())

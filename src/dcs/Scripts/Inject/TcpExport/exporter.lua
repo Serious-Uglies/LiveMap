@@ -20,7 +20,7 @@ local function flush(force)
         return
     end
 
-    if string.len(sendBuffer) < bufferSize then
+    if not force and string.len(sendBuffer) < bufferSize then
         return
     end
 
@@ -28,21 +28,24 @@ local function flush(force)
         return
     end
 
-    local _, err, i = sock:send(sendBuffer)
+    local _, err, nextToSend = sock:send(sendBuffer)
+
+    if nextToSend ~= nil then
+        sendBuffer = string.sub(sendBuffer, nextToSend)
+    else
+        sendBuffer = ""
+    end
 
     -- TODO: handle 'closed', and 'timeout'
     if err then
         local message = string.format("Failed to send export data to %s:%s: %s", config.address, config.port, err)
 
         errors = errors + 1
-        sendBuffer = string.sub(sendBuffer, i)
 
         if errors > 5 then
             message = message .. " (suspending flush for 10 seconds)"
             nextFlush = 10
         end
-
-        env.error(message)
     else
         errors = 0
         nextFlush = 1

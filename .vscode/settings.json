@@ -1,0 +1,10 @@
+{
+  "Lua.diagnostics.globals": [
+    "coalition",
+    "coord",
+    "country",
+    "env",
+    "timer",
+    "world"
+  ]
+}

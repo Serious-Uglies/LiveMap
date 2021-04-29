@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using DasCleverle.DcsExport.Listener;
+using DasCleverle.DcsExport.Listener.Json;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
 using Microsoft.AspNetCore.Builder;
@@ -38,7 +39,8 @@ namespace DasCleverle.DcsExport.LiveMap
                 });
 
             services.AddDcsExportListener(Configuration.GetSection("ExportListener"));
-            services.AddTransient<IExportListenerHandler, LiveMapExportHandler>();
+            services.AddTransient<IExportEventHandler, LiveMapEventHandler>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

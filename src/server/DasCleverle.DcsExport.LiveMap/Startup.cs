@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
@@ -22,9 +23,19 @@ namespace DasCleverle.DcsExport.LiveMap
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages()
-                .AddRazorRuntimeCompilation();
+                .AddRazorRuntimeCompilation()
+                .AddJsonOptions(json =>
+                {
+                    json.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    json.JsonSerializerOptions.Converters.Add(new JsonExportEventConverter());
+                });
 
-            services.AddSignalR();
+            services.AddSignalR()
+                .AddJsonProtocol(options => 
+                {
+                    options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    options.PayloadSerializerOptions.Converters.Add(new JsonExportEventConverter());
+                });
 
             services.AddDcsExportListener(Configuration.GetSection("ExportListener"));
             services.AddTransient<IExportListenerHandler, LiveMapExportHandler>();

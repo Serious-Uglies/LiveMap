@@ -49,8 +49,8 @@ local function hasMoved(unit)
     local currentPos = unit.position
 
     if lastPos ~= nil then
-        return lastPos.lat ~= currentPos.lat
-            or lastPos.long ~= currentPos.long
+        return lastPos.x ~= currentPos.x
+            or lastPos.y ~= currentPos.y
     end
 
     return true

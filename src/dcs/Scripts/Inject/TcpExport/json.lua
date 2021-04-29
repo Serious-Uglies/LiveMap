@@ -65,6 +65,13 @@ local function encode_table(val, stack)
 
   stack[val] = true
 
+  local mt = getmetatable(val)
+
+  -- Use __json_encode on metatable if available
+  if mt ~= nil and mt.__json_encode ~= nil then
+    return encode(mt.__json_encode(val), stack)
+  end
+
   if rawget(val, 1) ~= nil or next(val) == nil then
     -- Treat as array -- check keys are valid and it is not sparse
     local n = 0

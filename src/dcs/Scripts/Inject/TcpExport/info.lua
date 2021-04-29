@@ -1,6 +1,14 @@
 local function getPosition(unit)
-    local lat, long = coord.LOtoLL(unit:getPoint())
-    return { lat = lat, long = long }
+    local point = unit:getPoint()
+
+    setmetatable(point, {
+        __json_encode = function (p)
+            local lat, long = coord.LOtoLL(p)
+            return { lat = lat, long = long }
+        end
+    })
+
+    return point
 end
 
 local function getUnit(unit, reduced)

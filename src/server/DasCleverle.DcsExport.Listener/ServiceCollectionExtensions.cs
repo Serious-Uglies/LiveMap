@@ -1,3 +1,4 @@
+using DasCleverle.DcsExport.Listener.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,12 +9,13 @@ namespace DasCleverle.DcsExport.Listener
         public static IServiceCollection AddDcsExportListener(this IServiceCollection services)
         {
             services.AddHostedService<DcsExportListenerService>();
+            services.AddTransient<IExportMessageHandler, JsonExportMessageHandler>();
             return services;
         }
 
         public static IServiceCollection AddDcsExportListener(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddHostedService<DcsExportListenerService>();
+            services.AddDcsExportListener();
             services.Configure<ExportListenerOptions>(configuration);
 
             return services;
@@ -21,7 +23,7 @@ namespace DasCleverle.DcsExport.Listener
 
         public static IServiceCollection AddDcsExportListener(this IServiceCollection services, string address, int port)
         {
-            services.AddHostedService<DcsExportListenerService>();
+            services.AddDcsExportListener();
             services.Configure<ExportListenerOptions>(options =>
             {
                 options.Address = address;

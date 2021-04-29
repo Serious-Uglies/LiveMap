@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO.Pipelines;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -16,15 +17,17 @@ namespace DasCleverle.DcsExport.Listener
     {
         private readonly TcpListener _listener;
         private readonly ILogger<DcsExportListenerService> _logger;
-        private readonly IEnumerable<IExportListenerHandler> _handlers;
+        private readonly IExportMessageHandler _messageHandler;
+        private readonly IEnumerable<IExportEventHandler> _eventHandlers;
 
-        public DcsExportListenerService(ILogger<DcsExportListenerService> logger, IEnumerable<IExportListenerHandler> handlers, IOptions<ExportListenerOptions> options)
+        public DcsExportListenerService(ILogger<DcsExportListenerService> logger, IExportMessageHandler messageHandler, IEnumerable<IExportEventHandler> eventHandlers, IOptions<ExportListenerOptions> options)
         {
             var ipAddress = IPAddress.Parse(options.Value.Address);
 
             _listener = new TcpListener(ipAddress, options.Value.Port);
             _logger = logger;
-            _handlers = handlers;
+            _messageHandler = messageHandler;
+            _eventHandlers = eventHandlers;
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)
@@ -75,11 +78,7 @@ namespace DasCleverle.DcsExport.Listener
                         if (position != null)
                         {
                             var message = buffer.Slice(0, position.Value);
-
-                            foreach (var handler in _handlers)
-                            {
-                                await handler.HandleMessageAsync(message, token);
-                            }
+                            await HandleMessageAsync(message, token);
 
                             buffer = buffer.Slice(buffer.GetPosition(1, position.Value));
                         }
@@ -109,6 +108,24 @@ namespace DasCleverle.DcsExport.Listener
             }
 
             _logger.LogInformation("Client connection from {ClientEndpoint} has been closed", endpoint);
+        }
+
+        private async Task HandleMessageAsync(ReadOnlySequence<byte> message, CancellationToken token)
+        {
+            try
+            {
+                var exportEvent = await _messageHandler.HandleMessageAsync(message, token);
+
+                foreach (var eventHandler in _eventHandlers)
+                {
+                    await eventHandler.HandleEventAsync(exportEvent, token);
+                }
+            }
+            catch (Exception ex)
+            {
+                var messageStr = Encoding.ASCII.GetString(message);
+                _logger.LogError(ex, "Could not handle message: {Message}", messageStr);
+            }
         }
     }
 }

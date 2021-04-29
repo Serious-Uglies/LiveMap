@@ -16,9 +16,9 @@ namespace DasCleverle.DcsExport.Listener
     {
         private readonly TcpListener _listener;
         private readonly ILogger<DcsExportListenerService> _logger;
-        private readonly IEnumerable<IDcsExportListenerHandler> _handlers;
+        private readonly IEnumerable<IExportListenerHandler> _handlers;
 
-        public DcsExportListenerService(ILogger<DcsExportListenerService> logger, IEnumerable<IDcsExportListenerHandler> handlers, IOptions<DcsExportListenerOptions> options)
+        public DcsExportListenerService(ILogger<DcsExportListenerService> logger, IEnumerable<IExportListenerHandler> handlers, IOptions<ExportListenerOptions> options)
         {
             var ipAddress = IPAddress.Parse(options.Value.Address);
 

@@ -14,7 +14,7 @@ namespace DasCleverle.DcsExport.Listener
         public static IServiceCollection AddDcsExportListener(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddHostedService<DcsExportListenerService>();
-            services.Configure<DcsExportListenerOptions>(configuration);
+            services.Configure<ExportListenerOptions>(configuration);
 
             return services;
         }
@@ -22,7 +22,7 @@ namespace DasCleverle.DcsExport.Listener
         public static IServiceCollection AddDcsExportListener(this IServiceCollection services, string address, int port)
         {
             services.AddHostedService<DcsExportListenerService>();
-            services.Configure<DcsExportListenerOptions>(options =>
+            services.Configure<ExportListenerOptions>(options =>
             {
                 options.Address = address;
                 options.Port = port;

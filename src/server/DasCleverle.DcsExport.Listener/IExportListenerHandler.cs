@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DasCleverle.DcsExport.Listener
 {
-    public interface IDcsExportListenerHandler
+    public interface IExportListenerHandler
     {
         Task HandleMessageAsync(ReadOnlySequence<byte> message, CancellationToken token);
     }

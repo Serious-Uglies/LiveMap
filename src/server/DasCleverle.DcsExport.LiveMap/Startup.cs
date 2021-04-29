@@ -25,7 +25,7 @@ namespace DasCleverle.DcsExport.LiveMap
             services.AddSignalR();
 
             services.AddDcsExportListener(Configuration.GetSection("ExportListener"));
-            services.AddTransient<IDcsExportListenerHandler, LiveMapExportHandler>();
+            services.AddTransient<IExportListenerHandler, LiveMapExportHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

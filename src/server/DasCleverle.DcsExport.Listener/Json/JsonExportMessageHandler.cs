@@ -23,7 +23,8 @@ namespace DasCleverle.DcsExport.Listener.Json
         {
             var options = new JsonSerializerOptions
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                NumberHandling = JsonNumberHandling.AllowReadingFromString
             };
 
             options.Converters.Add(new JsonStringEnumConverter());

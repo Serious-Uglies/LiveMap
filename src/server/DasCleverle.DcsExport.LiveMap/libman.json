@@ -9,6 +9,14 @@
         "dist/browser/signalr.js",
         "dist/browser/signalr.min.js"
       ]
+    },
+    {
+      "library": "mapbox-gl@latest",
+      "destination": "wwwroot/lib/mapbox",
+      "files": [
+        "dist/mapbox-gl.js",
+        "dist/mapbox-gl.css"
+      ]
     }
   ]
 }

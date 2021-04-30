@@ -4,8 +4,8 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="container">
-    <h3>Logs appear here:</h3>
-    <ul id="log"></ul>
-</div>
+@section Scripts {
+    <script src="~/js/index.js"></script>
+}
 
+<div id="map" data-token="@Model.MapboxToken"></div>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="32.023842"
+   height="34.032475"
+   viewBox="0 0 32.023842 34.032475"
+   version="1.1"
+   id="svg612"
+   sodipodi:docname="blue-sub-ai.svg"
+   inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)">
+  <metadata
+     id="metadata618">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs616" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1696"
+     inkscape:window-height="1162"
+     id="namedview614"
+     showgrid="false"
+     units="px"
+     fit-margin-top="1"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="9.5379062"
+     inkscape:cx="12.934437"
+     inkscape:cy="33.192376"
+     inkscape:window-x="469"
+     inkscape:window-y="44"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg612" />
+  <g
+     id="surface1"
+     transform="translate(0.00112184,0.99929219)">
+    <path
+       style="fill:#91cce3;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
+       d="m 335.31102,34.659791 c 0.0605,29.180836 -11.91555,38.653421 -17.76171,38.573344 -5.84615,-0.08008 -18.06401,-9.449032 -17.86402,-38.573344"
+       transform="matrix(0.839895,0,0,0.829285,-250.65339,-28.735019)"
+       id="path609" />
+  </g>
+</svg>

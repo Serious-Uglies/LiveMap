@@ -18,7 +18,7 @@ namespace DasCleverle.DcsExport.LiveMap.Handlers
 
         public async Task HandleEventAsync(IExportEvent exportEvent, CancellationToken token)
         {
-            await _hubContext.Clients.All.SendLog(new SendEventRequest { Event = exportEvent }, token);
+            await _hubContext.Clients.All.Event(new SendEventRequest { Event = exportEvent }, token);
         }
     }
 }

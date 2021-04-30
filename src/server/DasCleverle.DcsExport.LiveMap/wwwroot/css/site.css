@@ -76,9 +76,44 @@ header {
 }
 
 .content {
+  position: relative;
   flex: 1 1 auto;
 }
 
-#map {
-    min-height: 100%;
+.loading {
+  z-index: 1040;
+}
+
+.loading-content {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    max-width: 25rem;
+}
+
+.loading-content .spinner-border {
+    width: 5rem;
+    height: 5rem;
+}
+
+.backdrop {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #000;
+  opacity: 0.5;
+}
+
+.map {
+  min-height: 100%;
 }

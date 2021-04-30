@@ -7,7 +7,7 @@ namespace DasCleverle.DcsExport.LiveMap.Hubs
 {
     public interface ILiveMapHub
     {
-        Task SendLog(SendEventRequest request, CancellationToken token = default);
+        Task Event(SendEventRequest request, CancellationToken token = default);
     }
 
     public class SendEventRequest

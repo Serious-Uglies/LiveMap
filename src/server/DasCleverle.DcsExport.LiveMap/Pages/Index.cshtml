@@ -8,4 +8,11 @@
     <script src="~/js/index.js"></script>
 }
 
-<div id="map" data-token="@Model.MapboxToken"></div>
+<div id="map" class="map" data-token="@Model.MapboxToken"></div>
+<div id="loading" class="loading" style="display: none">
+    <div class="backdrop"></div>
+    <div class="loading-content">
+        <div id="spinner" class="spinner-border" style="width: 5rem; height: 5rem"></div>
+        <div id="error" class="alert alert-danger text-center mt-3" style="display: none;"></div>
+    </div>
+</div>

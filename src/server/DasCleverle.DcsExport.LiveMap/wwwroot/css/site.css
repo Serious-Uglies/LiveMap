@@ -110,8 +110,8 @@ header {
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: #000;
-  opacity: 0.5;
+  background-color: #fff;
+  opacity: 0.7;
 }
 
 .map {

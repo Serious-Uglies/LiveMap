@@ -7,9 +7,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="32.037289"
-   height="22.051769"
-   viewBox="0 0 32.037289 22.051769"
+   width="31.999998"
+   height="22.49214"
+   viewBox="0 0 31.999998 22.49214"
    version="1.1"
    id="svg290"
    sodipodi:docname="blue-ground-ai.svg"
@@ -42,32 +42,35 @@
      id="namedview292"
      showgrid="false"
      units="px"
-     fit-margin-top="0"
+     fit-margin-top="1"
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:zoom="24.421875"
-     inkscape:cx="19.510334"
-     inkscape:cy="14.665203"
+     inkscape:cx="12.284808"
+     inkscape:cy="19.810881"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg290" />
+     inkscape:current-layer="svg290"
+     inkscape:document-rotation="0"
+     lock-margins="false" />
   <g
      id="surface1"
-     transform="translate(-8.6212767e-4,-0.00146399)">
+     transform="matrix(1.0528979,0,0,1.0528979,-0.86690506,0.13539769)"
+     style="stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none">
     <path
-       style="fill:#91cce3;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4.365;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
+       style="fill:#91cce3;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.65204;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 57.548319,38.561197 H 106.0204 V 70.68853 H 57.548319 Z m 0,0"
        transform="matrix(0.606341,0,0,0.604285,-33.569704,-21.981637)"
        id="path283" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:1.765;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
+       style="fill:none;stroke:#000000;stroke-width:1.65204;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 57.548319,38.561197 106.0204,70.68853"
        transform="matrix(0.606341,0,0,0.604285,-33.569704,-21.981637)"
        id="path285" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:1.765;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
+       style="fill:none;stroke:#000000;stroke-width:1.65204;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 106.0204,38.561197 57.548319,70.68853"
        transform="matrix(0.606341,0,0,0.604285,-33.569704,-21.981637)"
        id="path287" />

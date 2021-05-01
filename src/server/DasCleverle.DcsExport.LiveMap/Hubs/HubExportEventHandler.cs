@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace DasCleverle.DcsExport.LiveMap.Handlers
 {
-    public class LiveMapEventHandler : IExportEventHandler
+    public class HubExportEventHandler : IExportEventHandler
     {
         private readonly IHubContext<LiveMapHub, ILiveMapHub> _hubContext;
 
-        public LiveMapEventHandler(IHubContext<LiveMapHub, ILiveMapHub> hubContext)
+        public HubExportEventHandler(IHubContext<LiveMapHub, ILiveMapHub> hubContext)
         {
             _hubContext = hubContext;
         }
@@ -22,4 +22,3 @@ namespace DasCleverle.DcsExport.LiveMap.Handlers
         }
     }
 }
-

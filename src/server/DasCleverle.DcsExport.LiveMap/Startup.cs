@@ -1,8 +1,11 @@
 using System.Text.Json.Serialization;
 using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.Listener.Json;
+using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
+using DasCleverle.DcsExport.LiveMap.State;
+using DasCleverle.DcsExport.LiveMap.State.Handlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -39,7 +42,17 @@ namespace DasCleverle.DcsExport.LiveMap
                 });
 
             services.AddDcsExportListener(Configuration.GetSection("ExportListener"));
-            services.AddTransient<IExportEventHandler, LiveMapEventHandler>();
+
+            services.AddTransient<IExportEventHandler, HubExportEventHandler>();
+
+            services.AddSingleton<ILiveState, LiveState>();
+            services.AddTransient<IWriteableLiveState>(sp => (IWriteableLiveState) sp.GetService<ILiveState>());
+
+            services.AddTransient<IExportEventHandler<InitPayload>, InitHandler>();
+            services.AddTransient<IExportEventHandler<UnitPayload>, AddUnitHandler>();
+            services.AddTransient<IExportEventHandler<UpdatePositionPayload>, UpdatePositionHandler>();
+            services.AddTransient<IExportEventHandler<RemoveUnitPayload>, RemoveUnitHandler>();
+            services.AddTransient<IExportEventHandler<MissionEndPayload>, MissionEndHandler>();
 
         }
 
@@ -55,9 +68,9 @@ namespace DasCleverle.DcsExport.LiveMap
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                app.UseHttpsRedirection();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -67,6 +80,8 @@ namespace DasCleverle.DcsExport.LiveMap
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapControllers();
+
                 endpoints.MapHub<LiveMapHub>("/hub/livemap");
             });
         }

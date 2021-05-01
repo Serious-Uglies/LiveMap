@@ -9,6 +9,20 @@ class IndexPage {
 
     mapboxgl.accessToken = $('#map').data('token');
 
+    this.connection = new signalR.HubConnectionBuilder()
+      .withUrl('/hub/livemap')
+      .withAutomaticReconnect([1000, 2000, 5000, 5000])
+      .build();
+
+    this.connection.on('Event', this.handleEvent.bind(this));
+    this.connection.onclose(this.handleConnectionClose.bind(this));
+    this.connection.onreconnected(this.handleReconnected.bind(this));
+    this.connection.onreconnecting(this.handleReconnecting.bind(this));
+  }
+
+  async initialize() {
+    this.setLoading(true);
+
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/dascleverle/cko5q98k62fvv18lj5jln6inl',
@@ -21,24 +35,10 @@ class IndexPage {
       touchPitch: false,
     });
 
-    this.connection = new signalR.HubConnectionBuilder()
-      .withUrl('/hub/livemap')
-      .withAutomaticReconnect([1000, 2000, 5000, 5000])
-      .build();
-
     this.map.on('load', this.handleMapLoad.bind(this));
-
-    this.connection.on('Event', this.handleEvent.bind(this));
-    this.connection.onclose(this.handleConnectionClose.bind(this));
-    this.connection.onreconnected(this.handleReconnected.bind(this));
-    this.connection.onreconnecting(this.handleReconnecting.bind(this));
   }
 
-  async initialize() {
-    await this.startConnection();
-  }
-
-  handleMapLoad() {
+  async handleMapLoad() {
     this.addLayer('units-earthbound', {
       layout: {
         'icon-size': 0.85,
@@ -50,6 +50,22 @@ class IndexPage {
         'icon-size': 0.7,
       },
     });
+
+    const state = await this.getLiveState();
+
+    if (!state) {
+      return;
+    }
+
+    this.loadState(state);
+
+    if (await this.startConnection()) {
+      this.setLoading(false);
+    }
+  }
+
+  loadState(state) {
+    state.units.forEach((unit) => this.addUnit(unit));
   }
 
   addLayer(name, options) {
@@ -240,19 +256,32 @@ class IndexPage {
     }
   }
 
-  async startConnection() {
+  async getLiveState() {
     try {
-      this.setLoading(true);
-
-      await this.connection.start();
-
-      this.$error.hide();
+      return await fetch('/api/state').then((res) => res.json());
     } catch (err) {
       console.error(err);
-      this.$error.show();
-    }
 
-    this.setLoading(false);
+      this.$error.show();
+      this.handleConnectionClose();
+
+      return null;
+    }
+  }
+
+  async startConnection() {
+    try {
+      await this.connection.start();
+
+      return true;
+    } catch (err) {
+      console.error(err);
+
+      this.$error.show();
+      this.handleConnectionClose();
+
+      return false;
+    }
   }
 
   handleConnectionClose() {

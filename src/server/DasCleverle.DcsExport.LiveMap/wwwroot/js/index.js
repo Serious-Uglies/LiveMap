@@ -5,12 +5,10 @@ class IndexPage {
     this.$error = $('#error');
 
     this.featuresById = {};
-    this.featureCollection = {
-      type: 'FeatureCollection',
-      features: [],
-    };
+    this.layers = {};
 
     mapboxgl.accessToken = $('#map').data('token');
+
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/dascleverle/cko47dgy70ymg17qbegroiuue',
@@ -37,23 +35,47 @@ class IndexPage {
   }
 
   handleMapLoad() {
-    this.map.addSource('units', {
-      type: 'geojson',
-      data: this.featureCollection,
-    });
-
-    this.map.addLayer({
-      id: 'units',
-      type: 'symbol',
-      source: 'units',
+    this.addLayer('units-earthbound', {
       layout: {
-        'icon-image': '{icon}',
-        'icon-allow-overlap': true,
         'icon-size': 0.85,
       },
     });
 
-    this.source = this.map.getSource('units');
+    this.addLayer('units-air', {
+      layout: {
+        'icon-size': 0.7,
+      },
+    });
+  }
+
+  addLayer(name, options) {
+    const layer = {
+      name: name,
+      features: {
+        type: 'FeatureCollection',
+        features: [],
+      },
+    };
+
+    this.map.addSource(name, {
+      type: 'geojson',
+      data: layer.features,
+    });
+
+    this.map.addLayer(
+      Object.assign({}, options, {
+        id: name,
+        type: 'symbol',
+        source: name,
+        layout: Object.assign({}, options.layout || {}, {
+          'icon-image': '{icon}',
+          'icon-allow-overlap': true,
+        }),
+      })
+    );
+
+    layer.source = this.map.getSource(name);
+    this.layers[name] = layer;
   }
 
   handleEvent({ event: { event, payload } }) {
@@ -87,6 +109,7 @@ class IndexPage {
     const coalition = unit.coalition.toLowerCase();
     const iconType = this.getUnitIconType(unit);
     const pilot = unit.player ? 'player' : 'ai';
+    const layer = this.determineLayer(unit);
 
     const feature = {
       type: 'Feature',
@@ -94,6 +117,7 @@ class IndexPage {
         id: unit.id,
         icon: `${coalition}-${iconType}-${pilot}`,
         description: unit.name,
+        layer: layer.name,
       },
       geometry: {
         type: 'Point',
@@ -101,9 +125,9 @@ class IndexPage {
       },
     };
 
-    this.featuresById[unit.id] = feature;
-    this.featureCollection.features.push(feature);
+    layer.features.features.push(feature);
 
+    this.featuresById[unit.id] = feature;
     this.updateMap();
   }
 
@@ -125,23 +149,41 @@ class IndexPage {
       return;
     }
 
-    delete this.featuresById[unit.id];
-    const features = this.featureCollection.features;
+    const layer = this.layers[feature.properties.layer];
+    const features = layer.features.features;
     const index = features.findIndex((f) => f.properties.id == unit.id);
 
     features.splice(index, 1);
+    delete this.featuresById[unit.id];
 
     this.updateMap();
   }
 
   clear() {
     this.featuresById = {};
-    this.featureCollection.features = [];
+
+    for (const layer of Object.values(this.layers)) {
+      layer.features.features = [];
+    }
+
     this.updateMap();
   }
 
   updateMap() {
-    this.source.setData(this.featureCollection);
+    for (const layer of Object.values(this.layers)) {
+      layer.source.setData(layer.features);
+    }
+  }
+
+  determineLayer(unit) {
+    if (
+      unit.attributes.includes('Fixed') ||
+      unit.attributes.includes('Rotary')
+    ) {
+      return this.layers['units-air'];
+    }
+
+    return this.layers['units-earthbound'];
   }
 
   getUnitIconType(unit) {

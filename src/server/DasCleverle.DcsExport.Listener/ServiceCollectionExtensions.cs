@@ -10,6 +10,8 @@ namespace DasCleverle.DcsExport.Listener
         {
             services.AddHostedService<DcsExportListenerService>();
             services.AddTransient<IExportMessageHandler, JsonExportMessageHandler>();
+            services.AddTransient<IExportEventHandler, GenericExportEventHandlerPropgator>();
+
             return services;
         }
 

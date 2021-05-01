@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace DasCleverle.DcsExport.Listener.Model
 {
     public record UnitPayload
@@ -10,8 +12,6 @@ namespace DasCleverle.DcsExport.Listener.Model
 
         public string DisplayName { get; init; }
 
-        public UnitCategory Category { get; init; }
-
         public Coalition Coalition { get; init; } 
 
         public string Country { get; init; }
@@ -19,6 +19,8 @@ namespace DasCleverle.DcsExport.Listener.Model
         public string TypeName { get; init; }
 
         public string Player { get; init; }
+
+        public HashSet<UnitAttribute> Attributes { get; init; }
 
         public Position Position { get; init; }
     }

@@ -30,11 +30,11 @@ local function getUnit(unit, reduced)
         groupId = unit:getGroup():getID(),
         name = unit:getName(),
         displayName = desc.displayName,
-        category = unit:getCategory(),
         coalition = unit:getCoalition(),
         country = country.name[unit:getCountry()],
         typeName = unit:getTypeName(),
         player = unit:getPlayerName(),
+        attributes = desc.attributes,
         position = position
     }
 end

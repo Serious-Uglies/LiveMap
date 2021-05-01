@@ -84,13 +84,15 @@ class IndexPage {
       return;
     }
 
-    const controller = unit.player ? 'player' : 'ai';
+    const coalition = unit.coalition.toLowerCase();
+    const iconType = this.getUnitIconType(unit);
+    const pilot = unit.player ? 'player' : 'ai';
 
     const feature = {
       type: 'Feature',
       properties: {
         id: unit.id,
-        icon: `${unit.coalition.toLowerCase()}-fixed-${controller}`,
+        icon: `${coalition}-${iconType}-${pilot}`,
         description: unit.name,
       },
       geometry: {
@@ -140,6 +142,22 @@ class IndexPage {
 
   updateMap() {
     this.source.setData(this.featureCollection);
+  }
+
+  getUnitIconType(unit) {
+    if (unit.attributes.includes('Water')) {
+      return 'water';
+    } else if (unit.attributes.includes('Ground')) {
+      return 'ground';
+    } else if (unit.attributes.includes('Rotary')) {
+      return 'rotary';
+    } else if (unit.attributes.includes('Tanker')) {
+      return 'tanker';
+    } else if (unit.attributes.includes('Awacs')) {
+      return 'awacs';
+    }
+
+    return 'fixed';
   }
 
   setLoading(loading) {

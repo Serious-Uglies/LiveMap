@@ -1,16 +1,19 @@
+using System;
+using System.ComponentModel;
+
 namespace DasCleverle.DcsExport.Listener.Model
 {
     public enum EventType
     {
         [EventPayload(typeof(InitPayload))]
         Init,
-        
+
         [EventPayload(typeof(MissionEndPayload))]
         MissionEnd,
-        
+
         [EventPayload(typeof(UnitPayload))]
         AddUnit,
-        
+
         [EventPayload(typeof(RemoveUnitPayload))]
         RemoveUnit,
 
@@ -25,12 +28,24 @@ namespace DasCleverle.DcsExport.Listener.Model
         Blue = 2
     }
 
-    public enum UnitCategory
+    public enum UnitAttribute
     {
-        Airplane = 0,
-        Helicopter = 1,
-        GroundUnit = 2,
-        Ship = 3,
-        Structure = 4
+        [Description("Planes")]
+        Fixed,
+
+        [Description("AWACS")]
+        Awacs,
+
+        [Description("Tankers")]
+        Tanker,
+
+        [Description("Helicopters")]
+        Rotary,
+
+        [Description("Ground Units")]
+        Ground,
+
+        [Description("Ships")]
+        Water
     }
 }

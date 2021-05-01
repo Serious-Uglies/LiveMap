@@ -47,8 +47,9 @@ class IndexPage {
       type: 'symbol',
       source: 'units',
       layout: {
-        'icon-image': 'blue-fixed-ai',
+        'icon-image': '{icon}',
         'icon-allow-overlap': true,
+        'icon-size': 0.85,
       },
     });
 
@@ -58,34 +59,82 @@ class IndexPage {
   handleEvent({ event: { event, payload } }) {
     switch (event) {
       case 'AddUnit':
-      case 'UpdatePosition':
-        this.addOrUpdateUnit(payload);
+        this.addUnit(payload);
         break;
+
+      case 'UpdatePosition':
+        this.updateUnit(payload);
+        break;
+
+      case 'RemoveUnit':
+        this.removeUnit(payload);
+        break;
+
+      case 'MissionEnd':
+        this.clear();
+        break;
+
       default:
         console.log(`Unhandled event: ${event}, payload: `, payload);
     }
   }
 
-  addOrUpdateUnit(unit) {
-    let feature = this.featuresById[unit.id];
+  addUnit(unit) {
+    if (this.featuresById[unit.id]) {
+      return;
+    }
+
+    const controller = unit.player ? 'player' : 'ai';
+
+    const feature = {
+      type: 'Feature',
+      properties: {
+        id: unit.id,
+        icon: `${unit.coalition.toLowerCase()}-fixed-${controller}`,
+        description: unit.name,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [unit.position.long, unit.position.lat],
+      },
+    };
+
+    this.featuresById[unit.id] = feature;
+    this.featureCollection.features.push(feature);
+
+    this.updateMap();
+  }
+
+  updateUnit(unit) {
+    const feature = this.featuresById[unit.id];
 
     if (!feature) {
-      feature = {
-        type: 'Feature',
-        properties: {
-          description: unit.name,
-        },
-        geometry: {
-          type: 'Point',
-        },
-      };
-
-      this.featuresById[unit.id] = feature;
-      this.featureCollection.features.push(feature);
+      return;
     }
 
     feature.geometry.coordinates = [unit.position.long, unit.position.lat];
+    this.updateMap();
+  }
 
+  removeUnit(unit) {
+    const feature = this.featuresById[unit.id];
+
+    if (!feature) {
+      return;
+    }
+
+    delete this.featuresById[unit.id];
+    const features = this.featureCollection.features;
+    const index = features.findIndex((f) => f.properties.id == unit.id);
+
+    features.splice(index, 1);
+
+    this.updateMap();
+  }
+
+  clear() {
+    this.featuresById = {};
+    this.featureCollection.features = [];
     this.updateMap();
   }
 

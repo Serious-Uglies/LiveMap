@@ -78,8 +78,33 @@ class IndexPage {
       })
     );
 
+    this.map.on('click', name, this.handleMapClick.bind(this));
+    this.map.on('mouseenter', name, this.handleMapMouseEnter.bind(this));
+    this.map.on('mouseleave', name, this.handleMapMouseLeave.bind(this));
+
     layer.source = this.map.getSource(name);
     this.layers[name] = layer;
+  }
+
+  handleMapClick(event) {
+    const properties = event.features.map((f) => f.properties);
+
+    const popup = $('<div />').template('feature-popup', this, {
+      features: properties,
+    });
+
+    new mapboxgl.Popup()
+      .setLngLat(event.lngLat)
+      .setHTML(popup.html())
+      .addTo(this.map);
+  }
+
+  handleMapMouseEnter(event) {
+    event.target.getCanvas().style.cursor = 'pointer';
+  }
+
+  handleMapMouseLeave(event) {
+    event.target.getCanvas().style.cursor = '';
   }
 
   handleEvent({ event: { event, payload } }) {
@@ -120,8 +145,9 @@ class IndexPage {
       properties: {
         id: unit.id,
         icon: `${coalition}-${iconType}-${pilot}`,
-        description: unit.name,
         layer: layer.name,
+        name: unit.name,
+        typeName: unit.typeName,
       },
       geometry: {
         type: 'Point',
@@ -231,15 +257,13 @@ class IndexPage {
 
   handleConnectionClose() {
     this.$spinner.hide();
-    this.$error.html('Die Verbindung konnte nicht hergestellt werden.');
+    this.$error.template('connection-error');
   }
 
   handleReconnecting() {
     this.setLoading(true);
     this.$error.show();
-    this.$error.html(
-      'Die Verbindung zum Server ist abgebrochen. Versuche erneute Verbindung ...'
-    );
+    this.$error.template('connection-reconnecting');
   }
 
   handleReconnected() {

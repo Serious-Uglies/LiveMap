@@ -11,10 +11,14 @@ class IndexPage {
 
     this.map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/dascleverle/cko47dgy70ymg17qbegroiuue',
+      style: 'mapbox://styles/dascleverle/cko5q98k62fvv18lj5jln6inl',
       // TODO: move to server state
       center: [36.18279, 34.83058],
       zoom: 6.6,
+
+      dragRotate: false,
+      touchZoomRotate: false,
+      touchPitch: false,
     });
 
     this.connection = new signalR.HubConnectionBuilder()

@@ -5,24 +5,24 @@ using DasCleverle.DcsExport.Listener.Model;
 
 namespace DasCleverle.DcsExport.LiveMap.State.Handlers
 {
-    public class UpdatePositionHandler : IExportEventHandler<UpdatePositionPayload>
+    public class UpdateUnitHandler : IExportEventHandler<UpdateUnitPayload>
     {
         private readonly IWriteableLiveState _state;
 
-        public UpdatePositionHandler(IWriteableLiveState state)
+        public UpdateUnitHandler(IWriteableLiveState state)
         {
             _state = state;
         }
 
-        public Task HandleEventAsync(IExportEvent<UpdatePositionPayload> exportEvent, CancellationToken token)
+        public Task HandleEventAsync(IExportEvent<UpdateUnitPayload> exportEvent, CancellationToken token)
         {
             Handle(exportEvent, token);
             return Task.CompletedTask;
         }
 
-        private void Handle(IExportEvent<UpdatePositionPayload> exportEvent, CancellationToken token)
+        private void Handle(IExportEvent<UpdateUnitPayload> exportEvent, CancellationToken token)
         {
-            if (exportEvent.Event != EventType.UpdatePosition)
+            if (exportEvent.Event != EventType.UpdateUnit)
             {
                 return;
             }

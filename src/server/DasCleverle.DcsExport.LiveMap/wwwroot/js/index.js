@@ -129,7 +129,7 @@ class IndexPage {
         this.addUnit(payload);
         break;
 
-      case 'UpdatePosition':
+      case 'UpdateUnit':
         this.updateUnit(payload);
         break;
 

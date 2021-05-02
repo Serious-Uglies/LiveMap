@@ -17,8 +17,8 @@ namespace DasCleverle.DcsExport.Listener.Model
         [EventPayload(typeof(RemoveUnitPayload))]
         RemoveUnit,
 
-        [EventPayload(typeof(UpdatePositionPayload))]
-        UpdatePosition
+        [EventPayload(typeof(UpdateUnitPayload))]
+        UpdateUnit
     }
 
     public enum Coalition

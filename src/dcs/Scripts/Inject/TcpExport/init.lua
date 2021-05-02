@@ -64,12 +64,12 @@ local function hasMoved(unit)
     return true
 end
 
-local function updatePositions(_, t)
+local function updateUnits(_, t)
     local units = info.getAllUnits(true)
 
     for _, unit in pairs(units) do
         if hasMoved(unit) then
-            exporter.send("UpdatePosition", unit)
+            exporter.send("UpdateUnit", unit)
             lastPositions[unit.id] = unit.position
         end
     end
@@ -77,7 +77,7 @@ local function updatePositions(_, t)
     return t + config.interval
 end
 
-timer.scheduleFunction(updatePositions, nil, timer.getTime() + 10)
+timer.scheduleFunction(updateUnits, nil, timer.getTime() + 10)
 
 -- INITIAL EXPORT ON MISSION INIT --
 logger.info("Starting up tcp export. Connecting and sending initial information")

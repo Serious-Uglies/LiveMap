@@ -50,7 +50,7 @@ namespace DasCleverle.DcsExport.LiveMap
 
             services.AddTransient<IExportEventHandler<InitPayload>, InitHandler>();
             services.AddTransient<IExportEventHandler<UnitPayload>, AddUnitHandler>();
-            services.AddTransient<IExportEventHandler<UpdatePositionPayload>, UpdatePositionHandler>();
+            services.AddTransient<IExportEventHandler<UpdateUnitPayload>, UpdateUnitHandler>();
             services.AddTransient<IExportEventHandler<RemoveUnitPayload>, RemoveUnitHandler>();
             services.AddTransient<IExportEventHandler<MissionEndPayload>, MissionEndHandler>();
 

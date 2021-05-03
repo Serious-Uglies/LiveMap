@@ -108,10 +108,26 @@ local function getDate()
     )
 end
 
+local function getMapCenter()
+    local point = {
+        x = env.mission.map.centerX,
+        y = env.mission.map.centerY,
+        z = 0
+    }
+    local lat, long = coord.LOtoLL(point)
+    return {
+        lat = lat,
+        long = long
+    }
+end
+
 logger.info("Starting up tcp export. Connecting and sending initial information")
 
 exporter.connect()
 exporter.send("Init", {
-    date = getDate()
+    date = getDate(),
+    missionName = env.mission.name,
+    theatre = env.mission.theatre,
+    mapCenter = getMapCenter(),
 })
 exporter.send("AddUnit", info.getAllUnits())

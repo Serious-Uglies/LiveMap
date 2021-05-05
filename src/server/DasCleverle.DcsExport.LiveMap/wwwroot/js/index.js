@@ -3,6 +3,7 @@ class IndexPage {
     this.$loading = $('#loading');
     this.$spinner = $('#spinner');
     this.$error = $('#error');
+    this.$sidebar = $('#sidebar');
 
     this.featuresById = {};
     this.layers = {};
@@ -26,8 +27,6 @@ class IndexPage {
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/dascleverle/cko5q98k62fvv18lj5jln6inl',
-      // TODO: move to server state
-      center: [36.18279, 34.83058],
       zoom: 6.6,
 
       dragRotate: false,
@@ -65,6 +64,7 @@ class IndexPage {
   }
 
   loadState(state) {
+    this.initMap(state);
     state.units.forEach((unit) => this.addUnit(unit));
   }
 
@@ -125,6 +125,10 @@ class IndexPage {
 
   handleEvent({ event: { event, payload } }) {
     switch (event) {
+      case 'Init':
+        this.initMap(payload);
+        break;
+
       case 'AddUnit':
         this.addUnit(payload);
         break;
@@ -144,6 +148,27 @@ class IndexPage {
       default:
         console.log(`Unhandled event: ${event}, payload: `, payload);
     }
+  }
+
+  initMap(init) {
+    this.map.setCenter(
+      {
+        ['Caucasus']: { lng: 41.6748132691836, lat: 43.729303011322685 },
+        ['Nevada']: { lng: -115.3220498166852, lat: 37.959029700616 },
+        ['PersianGulf']: { lng: 55.9127513841311, lat: 26.872559655101398 },
+        ['Syria']: { lng: 37.71425723879233, lat: 34.890062119982204 },
+      }[init.theatre] || [init.mapCenter.long, init.mapCenter.lat]
+    );
+    this.map.setZoom(
+      {
+        ['Caucasus']: 6.15,
+        ['Nevada']: 6.66,
+        ['PersianGulf']: 6.04,
+        ['Syria']: 6.37,
+      }[init.theatre] || 6
+    );
+
+    this.$sidebar.template('sidebar', this, init);
   }
 
   addUnit(unit) {

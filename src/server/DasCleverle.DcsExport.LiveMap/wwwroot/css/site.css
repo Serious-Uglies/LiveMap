@@ -80,6 +80,18 @@ header {
   flex: 1 1 auto;
 }
 
+.map-container {
+  display: flex;
+  flex-direction: row;
+  min-height: 100%;
+}
+
+.sidebar {
+  width: 370px;
+  padding: 0.5rem 1rem;
+  word-break: break-all;
+}
+
 .loading {
   z-index: 1040;
 }
@@ -116,4 +128,5 @@ header {
 
 .map {
   min-height: 100%;
+  flex-grow: 1
 }

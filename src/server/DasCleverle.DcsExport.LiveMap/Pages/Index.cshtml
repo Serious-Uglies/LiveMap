@@ -8,12 +8,15 @@
     <script src="~/js/index.js"></script>
 }
 
-<div id="map" class="map" data-token="@Model.MapboxToken"></div>
-<div id="loading" class="loading" style="display: none">
-    <div class="backdrop"></div>
-    <div class="loading-content">
-        <div id="spinner" class="spinner-border" style="width: 5rem; height: 5rem"></div>
-        <div id="error" class="alert alert-danger text-center mt-3" style="display: none;"></div>
+<div class="map-container">
+    <div id="sidebar" class="sidebar"></div>
+    <div id="map" class="map" data-token="@Model.MapboxToken"></div>
+    <div id="loading" class="loading" style="display: none">
+        <div class="backdrop"></div>
+        <div class="loading-content">
+            <div id="spinner" class="spinner-border" style="width: 5rem; height: 5rem"></div>
+            <div id="error" class="alert alert-danger text-center mt-3" style="display: none;"></div>
+        </div>
     </div>
 </div>
 
@@ -31,5 +34,17 @@
             <strong>${feature.typeName}</strong><br/>
             ${feature.name}
         </div>
+    </div>
+</script>
+
+<script type="text/template" data-template="sidebar">
+    <div class="row">
+        <div class="col-3"><strong>Mission</strong></div>
+        <div class="col">${missionName}</div>
+    </div>
+
+    <div class="row">
+        <div class="col-3"><strong>Theatre</strong></div>
+        <div class="col">${theatre}</div>
     </div>
 </script>

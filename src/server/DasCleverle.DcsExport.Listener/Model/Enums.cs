@@ -47,4 +47,11 @@ namespace DasCleverle.DcsExport.Listener.Model
         [Description("Ships")]
         Water
     }
+
+    public enum ObjectType
+    {
+        Unknown = 0,
+        Unit = 1,
+        Static = 2
+    }
 }

@@ -6,7 +6,9 @@ namespace DasCleverle.DcsExport.Listener.Model
     {
         public int Id { get; init; }
 
-        public int GroupId { get; init; }
+        public ObjectType Type { get; init; }
+
+        public int? GroupId { get; init; }
 
         public string Name { get; init; }
 

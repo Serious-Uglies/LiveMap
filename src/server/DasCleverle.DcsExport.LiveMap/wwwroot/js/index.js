@@ -248,7 +248,7 @@ class IndexPage {
 
   determineLayer(obj) {
     if (
-      obj.attributes &&
+      obj.type === 'Unit' &&
       (obj.attributes.includes('Fixed') || obj.attributes.includes('Rotary'))
     ) {
       return this.layers['objects-air'];
@@ -258,7 +258,7 @@ class IndexPage {
   }
 
   getIconType(obj) {
-    if (!obj.attributes) {
+    if (obj.type === 'Static') {
       return 'ground';
     }
 

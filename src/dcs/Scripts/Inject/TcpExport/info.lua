@@ -1,5 +1,7 @@
-local function getPosition(unit)
-    local point = unit:getPoint()
+local info = {}
+
+local function getPosition(object)
+    local point = object:getPoint()
 
     setmetatable(point, {
         __json_encode = function (p)
@@ -11,65 +13,116 @@ local function getPosition(unit)
     return point
 end
 
-local function getUnit(unit, reduced)
-    if unit == nil or not unit:isActive() or not unit:isExist() then
+local function getType(object)
+    local metatable = getmetatable(object)
+
+    if metatable == Unit then
+        return "unit"
+    end
+
+    if metatable == StaticObject then
+        return "static"
+    end
+
+    return "unknown"
+end
+
+function info.getObject(object, reduced)
+    if object == nil  or not object:isExist() then
         return nil
     end
 
-    local id = tonumber(unit:getID())
-    local position = getPosition(unit)
+    local type = getType(object)
+
+    if type == "unit" and not object:isActive() then
+        return nil
+    end
+
+    local id = tonumber(object:getID())
+    local position = getPosition(object)
 
     if reduced then
         return { id = id, position = position }
     end
 
-    local desc = unit:getDesc()
+    local desc = object:getDesc()
 
-    return {
+    local objectInfo = {
+        type = type,
         id = id,
-        groupId = unit:getGroup():getID(),
-        name = unit:getName(),
+        name = object:getName(),
         displayName = desc.displayName,
-        coalition = unit:getCoalition(),
-        country = country.name[unit:getCountry()],
-        typeName = unit:getTypeName(),
-        player = unit:getPlayerName(),
+        coalition = object:getCoalition(),
+        country = country.name[object:getCountry()],
+        typeName = object:getTypeName(),
         attributes = desc.attributes,
         position = position
     }
+
+    if type == "unit" then
+        objectInfo.groupId = object:getGroup():getID()
+        objectInfo.player = object:getPlayerName()
+    end
+
+    return objectInfo
 end
 
-local function getCoalitionUnits(side, reduced)
+local function getUnits(side, reduced)
+    local objects = {}
     local groups = coalition.getGroups(side)
-    local units = {}
 
-    for _, group in pairs(groups) do
-        for _, unit in pairs(group:getUnits()) do
-            local info = getUnit(unit, reduced)
+    for g = 1, #groups do
+        local units = groups[g]:getUnits()
+        for u = 1, #units do
+            local unit = info.getObject(units[u], reduced)
 
-            if info ~= nil then
-                table.insert(units, info)
+            if objects ~= nil then
+                table.insert(objects, unit)
             end
         end
     end
 
-    return units
+    return objects
 end
 
-local function getAllUnits(reduced)
-    local units = {}
+local function getStatics(side, reduced)
+    local objects = {}
+    local statics = coalition.getStaticObjects(side)
 
-    for _, id in pairs(coalition.side) do
-        for _, unit in pairs(getCoalitionUnits(id, reduced)) do
-            table.insert(units, unit)
+    for i = 1, #statics do
+        local static = info.getObject(statics[i], reduced)
+
+        if static ~= nil then
+            table.insert(objects, info.getObject(statics[i], reduced))
         end
     end
 
-    return units
+    return objects
 end
 
-return {
-    getUnit = getUnit,
-    getCoalitionUnits = getCoalitionUnits,
-    getAllUnits = getAllUnits
-}
+function info.getCoalitionObjects(type, side, reduced)
+    if type == "unit" then
+        return getUnits(side, reduced)
+    end
+
+    if type == "static" then
+        return getStatics(side, reduced)
+    end
+
+    return {}
+end
+
+function info.getAllObjects(type, reduced)
+    local objects = {}
+
+    for _, side in pairs(coalition.side) do
+        local coalitionObjects = info.getCoalitionObjects(type, side, reduced)
+        for i = 1, #coalitionObjects do
+            table.insert(objects, coalitionObjects[i])
+        end
+    end
+
+    return objects
+end
+
+return info

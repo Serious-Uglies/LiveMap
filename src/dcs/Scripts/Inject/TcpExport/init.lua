@@ -10,7 +10,7 @@ local function addUnitHandler(event)
         return
     end
 
-    exporter.send("AddUnit", info.getUnit(event.initiator))
+    exporter.send("AddUnit", info.getObject(event.initiator))
 end
 
 local function removeUnitHandler(event)
@@ -65,7 +65,7 @@ local function hasMoved(unit)
 end
 
 local function updateUnits(_, t)
-    local units = info.getAllUnits(true)
+    local units = info.getAllObjects("unit", true)
 
     for _, unit in pairs(units) do
         if hasMoved(unit) then
@@ -121,7 +121,7 @@ local function getMapCenter()
     }
 end
 
-logger.info("Starting up tcp export. Connecting and sending initial information")
+logger.info("Starting up TCP export. Connecting and sending initial information")
 
 exporter.connect()
 exporter.send("Init", {
@@ -130,4 +130,6 @@ exporter.send("Init", {
     theatre = env.mission.theatre,
     mapCenter = getMapCenter(),
 })
-exporter.send("AddUnit", info.getAllUnits())
+
+exporter.send("AddUnit", info.getAllObjects("unit"))
+exporter.send("AddUnit", info.getAllObjects("static"))

@@ -5,6 +5,7 @@
     "country",
     "env",
     "timer",
-    "world"
+    "world",
+    "StaticObject"
   ]
 }

@@ -38,13 +38,13 @@ class IndexPage {
   }
 
   async handleMapLoad() {
-    this.addLayer('units-earthbound', {
+    this.addLayer('objects-earthbound', {
       layout: {
         'icon-size': 0.85,
       },
     });
 
-    this.addLayer('units-air', {
+    this.addLayer('objects-air', {
       layout: {
         'icon-size': 0.7,
       },
@@ -65,7 +65,7 @@ class IndexPage {
 
   loadState(state) {
     this.initMap(state);
-    state.units.forEach((unit) => this.addUnit(unit));
+    state.objects.forEach((obj) => this.addObject(obj));
   }
 
   addLayer(name, options) {
@@ -129,16 +129,16 @@ class IndexPage {
         this.initMap(payload);
         break;
 
-      case 'AddUnit':
-        this.addUnit(payload);
+      case 'AddObject':
+        this.addObject(payload);
         break;
 
-      case 'UpdateUnit':
-        this.updateUnit(payload);
+      case 'UpdateObject':
+        this.updateObject(payload);
         break;
 
-      case 'RemoveUnit':
-        this.removeUnit(payload);
+      case 'RemoveObject':
+        this.removeObject(payload);
         break;
 
       case 'MissionEnd':
@@ -171,50 +171,50 @@ class IndexPage {
     this.$sidebar.template('sidebar', this, init);
   }
 
-  addUnit(unit) {
-    if (this.featuresById[unit.id]) {
+  addObject(obj) {
+    if (this.featuresById[obj.id]) {
       return;
     }
 
-    const coalition = unit.coalition.toLowerCase();
-    const iconType = this.getUnitIconType(unit);
-    const pilot = unit.player ? 'player' : 'ai';
-    const layer = this.determineLayer(unit);
+    const coalition = obj.coalition.toLowerCase();
+    const iconType = this.getIconType(obj);
+    const pilot = obj.player ? 'player' : 'ai';
+    const layer = this.determineLayer(obj);
 
     const feature = {
       type: 'Feature',
       properties: {
-        id: unit.id,
+        id: obj.id,
         icon: `${coalition}-${iconType}-${pilot}`,
         layer: layer.name,
-        name: unit.name,
-        typeName: unit.typeName,
+        name: obj.name,
+        typeName: obj.typeName,
       },
       geometry: {
         type: 'Point',
-        coordinates: [unit.position.long, unit.position.lat],
+        coordinates: [obj.position.long, obj.position.lat],
       },
     };
 
     layer.features.features.push(feature);
 
-    this.featuresById[unit.id] = feature;
+    this.featuresById[obj.id] = feature;
     this.updateMap();
   }
 
-  updateUnit(unit) {
-    const feature = this.featuresById[unit.id];
+  updateObject(obj) {
+    const feature = this.featuresById[obj.id];
 
     if (!feature) {
       return;
     }
 
-    feature.geometry.coordinates = [unit.position.long, unit.position.lat];
+    feature.geometry.coordinates = [obj.position.long, obj.position.lat];
     this.updateMap();
   }
 
-  removeUnit(unit) {
-    const feature = this.featuresById[unit.id];
+  removeObject(obj) {
+    const feature = this.featuresById[obj.id];
 
     if (!feature) {
       return;
@@ -222,10 +222,10 @@ class IndexPage {
 
     const layer = this.layers[feature.properties.layer];
     const features = layer.features.features;
-    const index = features.findIndex((f) => f.properties.id == unit.id);
+    const index = features.findIndex((f) => f.properties.id == obj.id);
 
     features.splice(index, 1);
-    delete this.featuresById[unit.id];
+    delete this.featuresById[obj.id];
 
     this.updateMap();
   }
@@ -246,27 +246,31 @@ class IndexPage {
     }
   }
 
-  determineLayer(unit) {
+  determineLayer(obj) {
     if (
-      unit.attributes.includes('Fixed') ||
-      unit.attributes.includes('Rotary')
+      obj.attributes &&
+      (obj.attributes.includes('Fixed') || obj.attributes.includes('Rotary'))
     ) {
-      return this.layers['units-air'];
+      return this.layers['objects-air'];
     }
 
-    return this.layers['units-earthbound'];
+    return this.layers['objects-earthbound'];
   }
 
-  getUnitIconType(unit) {
-    if (unit.attributes.includes('Water')) {
-      return 'water';
-    } else if (unit.attributes.includes('Ground')) {
+  getIconType(obj) {
+    if (!obj.attributes) {
       return 'ground';
-    } else if (unit.attributes.includes('Rotary')) {
+    }
+
+    if (obj.attributes.includes('Water')) {
+      return 'water';
+    } else if (obj.attributes.includes('Ground')) {
+      return 'ground';
+    } else if (obj.attributes.includes('Rotary')) {
       return 'rotary';
-    } else if (unit.attributes.includes('Tanker')) {
+    } else if (obj.attributes.includes('Tanker')) {
       return 'tanker';
-    } else if (unit.attributes.includes('Awacs')) {
+    } else if (obj.attributes.includes('Awacs')) {
       return 'awacs';
     }
 

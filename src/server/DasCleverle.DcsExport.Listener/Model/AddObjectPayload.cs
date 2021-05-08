@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace DasCleverle.DcsExport.Listener.Model
 {
-    public record UnitPayload
+    public record AddObjectPayload
     {
         public int Id { get; init; }
 
@@ -20,7 +20,7 @@ namespace DasCleverle.DcsExport.Listener.Model
 
         public string Player { get; init; }
 
-        public HashSet<UnitAttribute> Attributes { get; init; }
+        public HashSet<ObjectAttribute> Attributes { get; init; }
 
         public Position Position { get; init; }
     }

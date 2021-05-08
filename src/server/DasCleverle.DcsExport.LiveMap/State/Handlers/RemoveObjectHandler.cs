@@ -5,29 +5,29 @@ using DasCleverle.DcsExport.Listener.Model;
 
 namespace DasCleverle.DcsExport.LiveMap.State.Handlers
 {
-    public class RemoveUnitHandler : IExportEventHandler<RemoveUnitPayload>
+    public class RemoveObjectHandler : IExportEventHandler<RemoveObjectPayload>
     {
         private readonly IWriteableLiveState _state;
 
-        public RemoveUnitHandler(IWriteableLiveState state)
+        public RemoveObjectHandler(IWriteableLiveState state)
         {
             _state = state;
         }
 
-        public Task HandleEventAsync(IExportEvent<RemoveUnitPayload> exportEvent, CancellationToken token)
+        public Task HandleEventAsync(IExportEvent<RemoveObjectPayload> exportEvent, CancellationToken token)
         {
             Handle(exportEvent, token);
             return Task.CompletedTask;
         }
 
-        private void Handle(IExportEvent<RemoveUnitPayload> exportEvent, CancellationToken token)
+        private void Handle(IExportEvent<RemoveObjectPayload> exportEvent, CancellationToken token)
         {
-            if (exportEvent.Event != EventType.RemoveUnit)
+            if (exportEvent.Event != EventType.RemoveObject)
             {
                 return;
             }
 
-            _state.Units.TryRemove(exportEvent.Payload.Id, out _);
+            _state.Objects.TryRemove(exportEvent.Payload.Id, out _);
         }
     }
 }

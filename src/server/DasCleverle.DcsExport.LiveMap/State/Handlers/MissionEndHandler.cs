@@ -16,7 +16,7 @@ namespace DasCleverle.DcsExport.LiveMap.State.Handlers
 
         public Task HandleEventAsync(IExportEvent<MissionEndPayload> exportEvent, CancellationToken token)
         {
-            _state.Units.Clear();
+            _state.Objects.Clear();
             return Task.CompletedTask;
         }
     }

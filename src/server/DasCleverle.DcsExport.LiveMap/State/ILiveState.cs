@@ -6,7 +6,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
 {
     public interface ILiveState
     {
-        ICollection<UnitPayload> Units { get; }
+        ICollection<AddObjectPayload> Objects { get; }
 
         string MissionName { get; }
 
@@ -17,7 +17,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
 
     public interface IWriteableLiveState 
     {
-        ConcurrentDictionary<int, UnitPayload> Units { get; }
+        ConcurrentDictionary<int, AddObjectPayload> Objects { get; }
 
         string MissionName { get; set; }
 

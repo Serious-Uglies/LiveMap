@@ -6,12 +6,12 @@ namespace DasCleverle.DcsExport.LiveMap.State
 {
     public class LiveState : ILiveState, IWriteableLiveState
     {
-        private ConcurrentDictionary<int, UnitPayload> _units = new ConcurrentDictionary<int, UnitPayload>();
+        private ConcurrentDictionary<int, AddObjectPayload> _objects = new ConcurrentDictionary<int, AddObjectPayload>();
         private string _missionName;
         private string _theatre;
         private Position _mapCenter;
 
-        ConcurrentDictionary<int, UnitPayload> IWriteableLiveState.Units => _units;
+        ConcurrentDictionary<int, AddObjectPayload> IWriteableLiveState.Objects => _objects;
 
         string IWriteableLiveState.MissionName
         {
@@ -31,7 +31,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
             set => _mapCenter = value;
         }
 
-        public ICollection<UnitPayload> Units => _units.Values;
+        public ICollection<AddObjectPayload> Objects => _objects.Values;
 
         public string MissionName => _missionName;
 

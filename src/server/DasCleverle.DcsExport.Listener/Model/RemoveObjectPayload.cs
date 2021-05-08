@@ -1,9 +1,7 @@
 namespace DasCleverle.DcsExport.Listener.Model
 {
-    public record UpdateUnitPayload
+    public record RemoveObjectPayload
     {
         public int Id { get; init; }
-
-        public Position Position { get; init; }
     }
 }

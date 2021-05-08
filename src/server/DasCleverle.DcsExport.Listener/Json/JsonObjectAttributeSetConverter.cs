@@ -8,18 +8,18 @@ using DasCleverle.DcsExport.Listener.Model;
 
 namespace DasCleverle.DcsExport.Listener.Json
 {
-    public class JsonUnitAttributeSetConverter : JsonConverter<HashSet<UnitAttribute>>
+    public class JsonObjectAttributeSetConverter : JsonConverter<HashSet<ObjectAttribute>>
     {
-        private static readonly Dictionary<string, UnitAttribute> AttributeMapping = GetAttributeMapping();
+        private static readonly Dictionary<string, ObjectAttribute> AttributeMapping = GetAttributeMapping();
 
-        public override HashSet<UnitAttribute> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override HashSet<ObjectAttribute> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.StartObject)
             {
                 throw new JsonException("Expected a start object token.");
             }
 
-            var set = new HashSet<UnitAttribute>();
+            var set = new HashSet<ObjectAttribute>();
 
             while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
             {
@@ -30,9 +30,9 @@ namespace DasCleverle.DcsExport.Listener.Json
 
                 var name = reader.GetString();
 
-                if (AttributeMapping.TryGetValue(name, out var unitAttribute))
+                if (AttributeMapping.TryGetValue(name, out var attribute))
                 {
-                    set.Add(unitAttribute);
+                    set.Add(attribute);
                 }
 
                 if (!reader.Read() || reader.TokenType != JsonTokenType.True)
@@ -49,19 +49,19 @@ namespace DasCleverle.DcsExport.Listener.Json
             return set;
         }
 
-        public override void Write(Utf8JsonWriter writer, HashSet<UnitAttribute> value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, HashSet<ObjectAttribute> value, JsonSerializerOptions options)
         {
-            throw new NotSupportedException("Writing UnitAttribute sets is not supported.");
+            throw new NotSupportedException("Writing ObjectAttribute sets is not supported.");
         }
 
-        private static Dictionary<string, UnitAttribute> GetAttributeMapping()
+        private static Dictionary<string, ObjectAttribute> GetAttributeMapping()
         {
-            var mapping = new Dictionary<string, UnitAttribute>();
+            var mapping = new Dictionary<string, ObjectAttribute>();
 
-            foreach (var attribute in Enum.GetValues<UnitAttribute>())
+            foreach (var attribute in Enum.GetValues<ObjectAttribute>())
             {
                 var name = Enum.GetName(attribute);
-                var field = typeof(UnitAttribute).GetField(name);
+                var field = typeof(ObjectAttribute).GetField(name);
                 var descriptionAttribute = field.GetCustomAttribute<DescriptionAttribute>();
 
                 if (descriptionAttribute != null)

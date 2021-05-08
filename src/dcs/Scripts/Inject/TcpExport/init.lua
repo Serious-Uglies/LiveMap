@@ -5,20 +5,20 @@ local logger = require("logger")
 
 -- DCS WORLD EVENTS --
 
-local function addUnitHandler(event)
+local function addObjectHandler(event)
     if event == nil or event.initiator == nil then
         return
     end
 
-    exporter.send("AddUnit", info.getObject(event.initiator))
+    exporter.send("AddObject", info.getObject(event.initiator))
 end
 
-local function removeUnitHandler(event)
+local function removeObjectHanlder(event)
     if event == nil or event.initiator == nil then
         return
     end
 
-    exporter.send("RemoveUnit", { id = event.initiator:getID() })
+    exporter.send("RemoveObject", { id = event.initiator:getID() })
 
 end
 
@@ -30,14 +30,14 @@ local function missionEndHandler(event)
 end
 
 local eventHandlers = {
-    [world.event.S_EVENT_BIRTH] = addUnitHandler,
-    [world.event.S_EVENT_PLAYER_LEAVE_UNIT] = removeUnitHandler,
-    [world.event.S_EVENT_KILL] = removeUnitHandler,
-    [world.event.S_EVENT_UNIT_LOST] = removeUnitHandler,
+    [world.event.S_EVENT_BIRTH] = addObjectHandler,
+    [world.event.S_EVENT_PLAYER_LEAVE_UNIT] = removeObjectHanlder,
+    [world.event.S_EVENT_KILL] = removeObjectHanlder,
+    [world.event.S_EVENT_UNIT_LOST] = removeObjectHanlder,
     [world.event.S_EVENT_MISSION_END] = missionEndHandler,
 
     -- S_EVENT_REMOVE_UNIT (added by MOOSE)
-    [world.event.S_EVENT_MAX + 1006] = removeUnitHandler,
+    [world.event.S_EVENT_MAX + 1006] = removeObjectHanlder,
 }
 
 function eventHandlers:onEvent(event)
@@ -64,12 +64,12 @@ local function hasMoved(unit)
     return true
 end
 
-local function updateUnits(_, t)
+local function updateObjects(_, t)
     local units = info.getAllObjects("unit", true)
 
     for _, unit in pairs(units) do
         if hasMoved(unit) then
-            exporter.send("UpdateUnit", unit)
+            exporter.send("UpdateObject", unit)
             lastPositions[unit.id] = unit.position
         end
     end
@@ -77,7 +77,7 @@ local function updateUnits(_, t)
     return t + config.interval
 end
 
-timer.scheduleFunction(updateUnits, nil, timer.getTime() + 10)
+timer.scheduleFunction(updateObjects, nil, timer.getTime() + 10)
 
 -- INITIAL EXPORT ON MISSION INIT --
 
@@ -131,5 +131,5 @@ exporter.send("Init", {
     mapCenter = getMapCenter(),
 })
 
-exporter.send("AddUnit", info.getAllObjects("unit"))
-exporter.send("AddUnit", info.getAllObjects("static"))
+exporter.send("AddObject", info.getAllObjects("unit"))
+exporter.send("AddObject", info.getAllObjects("static"))

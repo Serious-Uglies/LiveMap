@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 
 namespace DasCleverle.DcsExport.Listener.Model
@@ -11,14 +10,14 @@ namespace DasCleverle.DcsExport.Listener.Model
         [EventPayload(typeof(MissionEndPayload))]
         MissionEnd,
 
-        [EventPayload(typeof(UnitPayload))]
-        AddUnit,
+        [EventPayload(typeof(AddObjectPayload))]
+        AddObject,
 
-        [EventPayload(typeof(RemoveUnitPayload))]
-        RemoveUnit,
+        [EventPayload(typeof(RemoveObjectPayload))]
+        RemoveObject,
 
-        [EventPayload(typeof(UpdateUnitPayload))]
-        UpdateUnit
+        [EventPayload(typeof(UpdateObjectPayload))]
+        UpdateObject
     }
 
     public enum Coalition
@@ -28,7 +27,7 @@ namespace DasCleverle.DcsExport.Listener.Model
         Blue = 2
     }
 
-    public enum UnitAttribute
+    public enum ObjectAttribute
     {
         [Description("Planes")]
         Fixed,

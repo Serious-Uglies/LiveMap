@@ -5,24 +5,24 @@ using DasCleverle.DcsExport.Listener.Model;
 
 namespace DasCleverle.DcsExport.LiveMap.State.Handlers
 {
-    public class UpdateUnitHandler : IExportEventHandler<UpdateUnitPayload>
+    public class UpdateObjectHandler : IExportEventHandler<UpdateObjectPayload>
     {
         private readonly IWriteableLiveState _state;
 
-        public UpdateUnitHandler(IWriteableLiveState state)
+        public UpdateObjectHandler(IWriteableLiveState state)
         {
             _state = state;
         }
 
-        public Task HandleEventAsync(IExportEvent<UpdateUnitPayload> exportEvent, CancellationToken token)
+        public Task HandleEventAsync(IExportEvent<UpdateObjectPayload> exportEvent, CancellationToken token)
         {
             Handle(exportEvent, token);
             return Task.CompletedTask;
         }
 
-        private void Handle(IExportEvent<UpdateUnitPayload> exportEvent, CancellationToken token)
+        private void Handle(IExportEvent<UpdateObjectPayload> exportEvent, CancellationToken token)
         {
-            if (exportEvent.Event != EventType.UpdateUnit)
+            if (exportEvent.Event != EventType.UpdateObject)
             {
                 return;
             }
@@ -30,22 +30,22 @@ namespace DasCleverle.DcsExport.LiveMap.State.Handlers
             var id = exportEvent.Payload.Id;
             var position = exportEvent.Payload.Position;
 
-            var updated = false;
+            var isUpdated = false;
 
             do
             {
-                if (!_state.Units.TryGetValue(id, out var unit))
+                if (!_state.Objects.TryGetValue(id, out var obj))
                 {
                     return;
                 }
 
-                var updatedUnit = unit with
+                var updated = obj with
                 {
                     Position = position
                 };
 
-                updated = _state.Units.TryUpdate(id, updatedUnit, unit);
-            } while (!updated);
+                isUpdated = _state.Objects.TryUpdate(id, updated, obj);
+            } while (!isUpdated);
         }
     }
 }

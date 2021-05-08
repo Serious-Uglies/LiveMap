@@ -43,7 +43,7 @@ namespace DasCleverle.DcsExport.Listener.Json
 
             options.Converters.Add(new JsonStringEnumConverter());
             options.Converters.Add(new JsonExportEventConverter());
-            options.Converters.Add(new JsonUnitAttributeSetConverter());
+            options.Converters.Add(new JsonObjectAttributeSetConverter());
 
             return options;
         }

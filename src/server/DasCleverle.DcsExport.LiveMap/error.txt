@@ -1,0 +1,298 @@
+Microsoft Windows [Version 10.0.19042.964]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.LiveMap>dotnet run
+
+Welcome to .NET 5.0!
+---------------------
+SDK Version: 5.0.202
+
+Telemetry
+---------
+The .NET tools collect usage data in order to help us improve your experience. It is collected by Microsoft and shared with the community. You can opt-out of telemetry by setting the DOTNET_CLI_TELEMETRY_OPTOUT environment variable to '1' or 'true' using your favorite shell.
+
+Read more about .NET CLI Tools telemetry: https://aka.ms/dotnet-cli-telemetry
+
+----------------
+Installed an ASP.NET Core HTTPS development certificate.
+To trust the certificate run 'dotnet dev-certs https --trust' (Windows and macOS only).
+Learn about HTTPS: https://aka.ms/dotnet-https
+----------------
+Write your first app: https://aka.ms/dotnet-hello-world
+Find out what's new: https://aka.ms/dotnet-whats-new
+Explore documentation: https://aka.ms/dotnet-docs
+Report issues and find source on GitHub: https://github.com/dotnet/core
+Use 'dotnet --help' to see available commands or visit: https://aka.ms/dotnet-cli
+--------------------------------------------------------------------------------------
+Building...
+info: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Listening for connections on 127.0.0.1:31090
+warn: Microsoft.AspNetCore.Server.Kestrel[0]
+      Overriding address(es) 'https://localhost:5001, http://localhost:5000'. Binding to endpoints defined in UseKestrel() instead.
+info: Microsoft.Hosting.Lifetime[0]
+      Now listening on: http://[::]:5000
+info: Microsoft.Hosting.Lifetime[0]
+      Now listening on: https://[::]:5001
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.LiveMap
+info: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Established client connection from 127.0.0.1:65150
+info: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Established client connection from 127.0.0.1:65151
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: GET / HTTP/1.1
+      System.Text.Json.JsonException: 'G' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'G' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: Host: 127.0.0.1:31090
+      System.Text.Json.JsonException: 'H' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'H' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: Connection: keep-alive
+      System.Text.Json.JsonException: 'C' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'C' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: sec-ch-ua: " Not A;Brand";v="99", "Chromium";v="90", "Google Chrome";v="90"
+      System.Text.Json.JsonException: 's' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 's' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: sec-ch-ua-mobile: ?0
+      System.Text.Json.JsonException: 's' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 's' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: DNT: 1
+      System.Text.Json.JsonException: 'D' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'D' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: Upgrade-Insecure-Requests: 1
+      System.Text.Json.JsonException: 'U' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'U' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36
+      System.Text.Json.JsonException: 'U' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'U' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+      System.Text.Json.JsonException: 'A' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'A' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: Sec-Fetch-Site: none
+      System.Text.Json.JsonException: 'S' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'S' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: Sec-Fetch-Mode: navigate
+      System.Text.Json.JsonException: 'S' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'S' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: Sec-Fetch-User: ?1
+      System.Text.Json.JsonException: 'S' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'S' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: Sec-Fetch-Dest: document
+      System.Text.Json.JsonException: 'S' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'S' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: Accept-Encoding: gzip, deflate, br
+      System.Text.Json.JsonException: 'A' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'A' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message: Accept-Language: en-US,en;q=0.9,de;q=0.8
+      System.Text.Json.JsonException: 'A' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+       ---> System.Text.Json.JsonReaderException: 'A' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+         at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+         at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117
+fail: DasCleverle.DcsExport.Listener.DcsExportListenerService[0]
+      Could not handle message:
+      System.Text.Json.JsonException: The input does not contain any JSON tokens. Expected the input to start with a valid JSON token, when isFinalBlock is true. Path: $ | LineNumber: 0 | BytePositionInLine: 1.
+       ---> System.Text.Json.JsonReaderException: The input does not contain any JSON tokens. Expected the input to start with a valid JSON token, when isFinalBlock is true. LineNumber: 0 | BytePositionInLine: 1.
+         at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+         at System.Text.Json.Utf8JsonReader.Read()
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         --- End of inner exception stack trace ---
+         at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+         at System.Text.Json.JsonSerializer.ReadValueCore[TValue](JsonSerializerOptions options, Utf8JsonReader& reader, ReadStack& state)
+         at System.Text.Json.JsonSerializer.Deserialize[TValue](Utf8JsonReader& reader, JsonSerializerOptions options)
+         at DasCleverle.DcsExport.Listener.Json.JsonExportMessageHandler.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\Json\JsonExportMessageHandler.cs:line 31
+         at DasCleverle.DcsExport.Listener.DcsExportListenerService.HandleMessageAsync(ReadOnlySequence`1 message, CancellationToken token) in C:\Users\matth\Google Drive\Coding\Serious-Uglies\LiveMap\src\server\DasCleverle.DcsExport.Listener\ExportListenerService.cs:line 117

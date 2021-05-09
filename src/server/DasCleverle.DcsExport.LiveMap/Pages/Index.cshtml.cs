@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -16,6 +11,8 @@ namespace DasCleverle.DcsExport.LiveMap.Pages
 
         public string MapboxToken { get; private set; }
 
+        public string MapboxStyle { get; private set; }
+
         public IndexModel(ILogger<IndexModel> logger, IConfiguration configuration)
         {
             _logger = logger;
@@ -25,6 +22,7 @@ namespace DasCleverle.DcsExport.LiveMap.Pages
         public void OnGet()
         {
             MapboxToken = _configuration["MapboxToken"];
+            MapboxStyle = _configuration["MapboxStyle"];
         }
     }
 }

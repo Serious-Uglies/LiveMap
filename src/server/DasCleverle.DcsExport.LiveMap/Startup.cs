@@ -53,7 +53,6 @@ namespace DasCleverle.DcsExport.LiveMap
             services.AddTransient<IExportEventHandler<UpdateObjectPayload>, UpdateObjectHandler>();
             services.AddTransient<IExportEventHandler<RemoveObjectPayload>, RemoveObjectHandler>();
             services.AddTransient<IExportEventHandler<MissionEndPayload>, MissionEndHandler>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

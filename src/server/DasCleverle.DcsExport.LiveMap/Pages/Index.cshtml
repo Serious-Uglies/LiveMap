@@ -5,12 +5,13 @@
 }
 
 @section Scripts {
+    <script src="~/js/map.js"></script>
     <script src="~/js/index.js"></script>
 }
 
 <div class="map-container">
     <div id="sidebar" class="sidebar"></div>
-    <div id="map" class="map" data-token="@Model.MapboxToken"></div>
+    <div id="map" class="map" data-token="@Model.MapboxToken" data-style="@Model.MapboxStyle"></div>
     <div id="loading" class="loading" style="display: none">
         <div class="backdrop"></div>
         <div class="loading-content">

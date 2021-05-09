@@ -66,11 +66,21 @@ end
 
 local function updateObjects(_, t)
     local units = info.getAllObjects("unit", true)
+    local statics = info.getAllObjects("static", true)
 
-    for _, unit in pairs(units) do
+    for i = 1, #units do
+        local unit = units[i]
         if hasMoved(unit) then
             exporter.send("UpdateObject", unit)
             lastPositions[unit.id] = unit.position
+        end
+    end
+
+    for i = 1, #statics do
+        local static = statics[i]
+        if hasMoved(static) then
+            exporter.send("UpdateObject", static)
+            lastPositions[static.id] = static.position
         end
     end
 

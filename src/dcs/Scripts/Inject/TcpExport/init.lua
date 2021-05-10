@@ -2,6 +2,7 @@ local config = require("config")
 local exporter = require("exporter")
 local info = require("info")
 local objects = require("infoObject")
+local airbases = require("infoAirbase")
 local logger = require("logger")
 
 -- DCS WORLD EVENTS --
@@ -99,3 +100,4 @@ exporter.send("Init", info.getInit())
 
 exporter.send("AddObject", objects.getAllObjects("unit"))
 exporter.send("AddObject", objects.getAllObjects("static"))
+exporter.send("AddAirbase", airbases.getAllAirbases())

@@ -1,6 +1,7 @@
 local config = require("config")
-local objects = require("infoObject")
 local exporter = require("exporter")
+local info = require("info")
+local objects = require("infoObject")
 local logger = require("logger")
 
 -- DCS WORLD EVENTS --
@@ -91,55 +92,10 @@ timer.scheduleFunction(updateObjects, nil, timer.getTime() + 10)
 
 -- INITIAL EXPORT ON MISSION INIT --
 
-local function getDate()
-    local timezones = {
-        Caucasus = '+04:00',
-        Nevada = '-07:00',
-        PersianGulf = '+04:00',
-        Syria = '+03:00',
-        TheChannel = '+00:00',
-        Normandy = '+01:00'
-    }
-
-    local date = env.mission.date
-    local theatre = env.mission.theatre
-    local time = timer.getAbsTime()
-
-    local seconds = time % 60
-    local minutes = (time / 60) % 60
-    local hours = (time / 60 / 60) % 60
-
-    local timezone = timezones[theatre]
-
-    return string.format(
-        "%.4d-%.2d-%.2dT%.2d:%.2d:%.2d%s",
-        date.Year, date.Month, date.Day,
-        hours, minutes, seconds, timezone
-    )
-end
-
-local function getMapCenter()
-    local point = {
-        x = env.mission.map.centerX,
-        y = env.mission.map.centerY,
-        z = 0
-    }
-    local lat, long = coord.LOtoLL(point)
-    return {
-        lat = lat,
-        long = long
-    }
-end
-
 logger.info("Starting up TCP export. Connecting and sending initial information")
 
 exporter.connect()
-exporter.send("Init", {
-    date = getDate(),
-    missionName = env.mission.name,
-    theatre = env.mission.theatre,
-    mapCenter = getMapCenter(),
-})
+exporter.send("Init", info.getInit())
 
 exporter.send("AddObject", objects.getAllObjects("unit"))
 exporter.send("AddObject", objects.getAllObjects("static"))

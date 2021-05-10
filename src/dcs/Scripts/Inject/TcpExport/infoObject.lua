@@ -63,7 +63,7 @@ local function getUnits(side, reduced)
     for g = 1, #groups do
         local units = groups[g]:getUnits()
         for u = 1, #units do
-            local unit = objects.getObject(units[u], reduced)
+            local unit = infoObject.getObject(units[u], reduced)
 
             if objects ~= nil then
                 table.insert(objects, unit)
@@ -79,10 +79,10 @@ local function getStatics(side, reduced)
     local statics = coalition.getStaticObjects(side)
 
     for i = 1, #statics do
-        local static = objects.getObject(statics[i], reduced)
+        local static = infoObject.getObject(statics[i], reduced)
 
         if static ~= nil then
-            table.insert(objects, objects.getObject(statics[i], reduced))
+            table.insert(objects, infoObject.getObject(statics[i], reduced))
         end
     end
 
@@ -105,7 +105,7 @@ function infoObject.getAllObjects(type, reduced)
     local objects = {}
 
     for _, side in pairs(coalition.side) do
-        local coalitionObjects = objects.getCoalitionObjects(type, side, reduced)
+        local coalitionObjects = infoObject.getCoalitionObjects(type, side, reduced)
         for i = 1, #coalitionObjects do
             table.insert(objects, coalitionObjects[i])
         end

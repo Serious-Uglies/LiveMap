@@ -137,6 +137,12 @@ encode = function(val, stack)
   error("unexpected type '" .. t .. "'")
 end
 
+function json.setEncoder(val, encoder)
+    local meta = getmetatable(val) or {}
+    meta.__json_encode = encoder
+
+    setmetatable(val, meta)
+end
 
 function json.encode(val)
   return ( encode(val) )

@@ -1,5 +1,5 @@
 local config = require("config")
-local info = require("info")
+local objects = require("infoObject")
 local exporter = require("exporter")
 local logger = require("logger")
 
@@ -10,7 +10,7 @@ local function addObjectHandler(event)
         return
     end
 
-    exporter.send("AddObject", info.getObject(event.initiator))
+    exporter.send("AddObject", objects.getObject(event.initiator))
 end
 
 local function removeObjectHanlder(event)
@@ -65,8 +65,8 @@ local function hasMoved(unit)
 end
 
 local function updateObjects(_, t)
-    local units = info.getAllObjects("unit", true)
-    local statics = info.getAllObjects("static", true)
+    local units = objects.getAllObjects("unit", true)
+    local statics = objects.getAllObjects("static", true)
 
     for i = 1, #units do
         local unit = units[i]
@@ -141,5 +141,5 @@ exporter.send("Init", {
     mapCenter = getMapCenter(),
 })
 
-exporter.send("AddObject", info.getAllObjects("unit"))
-exporter.send("AddObject", info.getAllObjects("static"))
+exporter.send("AddObject", objects.getAllObjects("unit"))
+exporter.send("AddObject", objects.getAllObjects("static"))

@@ -15,7 +15,7 @@ local function addObjectHandler(event)
     exporter.send("AddObject", objects.getObject(event.initiator))
 end
 
-local function removeObjectHanlder(event)
+local function removeObjectHandler(event)
     if event == nil or event.initiator == nil then
         return
     end
@@ -33,13 +33,13 @@ end
 
 local eventHandlers = {
     [world.event.S_EVENT_BIRTH] = addObjectHandler,
-    [world.event.S_EVENT_PLAYER_LEAVE_UNIT] = removeObjectHanlder,
-    [world.event.S_EVENT_KILL] = removeObjectHanlder,
-    [world.event.S_EVENT_UNIT_LOST] = removeObjectHanlder,
+    [world.event.S_EVENT_PLAYER_LEAVE_UNIT] = removeObjectHandler,
+    [world.event.S_EVENT_KILL] = removeObjectHandler,
+    [world.event.S_EVENT_UNIT_LOST] = removeObjectHandler,
     [world.event.S_EVENT_MISSION_END] = missionEndHandler,
 
     -- S_EVENT_REMOVE_UNIT (added by MOOSE)
-    [world.event.S_EVENT_MAX + 1006] = removeObjectHanlder,
+    [world.event.S_EVENT_MAX + 1006] = removeObjectHandler,
 }
 
 function eventHandlers:onEvent(event)

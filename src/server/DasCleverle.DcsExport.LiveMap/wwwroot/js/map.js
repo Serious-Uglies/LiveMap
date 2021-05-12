@@ -21,7 +21,7 @@ class LiveMap {
   }
 
   addFeature(id, layerName, position, properties) {
-    if (this.featuresById[id]) {
+    if (this.featuresById[layerName][id]) {
       return;
     }
 
@@ -44,11 +44,11 @@ class LiveMap {
     };
 
     layer.features.features.push(feature);
-    this.featuresById[id] = feature;
+    this.featuresById[layerName][id] = feature;
   }
 
-  updateFeature(id, position, properties) {
-    const current = this.featuresById[id];
+  updateFeature(id, position, layers) {
+    const current = this.findFeature(id, layers);
 
     if (!current) {
       return;
@@ -57,14 +57,10 @@ class LiveMap {
     if (position) {
       current.geometry.coordinates = [position.long, position.lat];
     }
-
-    if (properties) {
-      Object.assign(current.properties, properties);
-    }
   }
 
-  removeFeature(id) {
-    const feature = this.featuresById[id];
+  removeFeature(id, layers) {
+    const feature = this.findFeature(id, layers);
 
     if (!feature) {
       return;
@@ -75,13 +71,12 @@ class LiveMap {
     const index = features.findIndex((f) => f.properties.id == id);
 
     features.splice(index, 1);
-    delete this.featuresById[id];
+    delete this.featuresById[layer.name][id];
   }
 
   clear() {
-    this.featuresById = {};
-
     for (const layer of Object.values(this.layers)) {
+      this.featuresById[layer.name] = {};
       layer.features.features = [];
     }
 
@@ -145,6 +140,7 @@ class LiveMap {
 
     layer.source = this.map.getSource(name);
     this.layers[name] = layer;
+    this.featuresById[name] = {};
   }
 
   handleMapMouseEnter(event) {
@@ -153,5 +149,17 @@ class LiveMap {
 
   handleMapMouseLeave(event) {
     event.target.getCanvas().style.cursor = '';
+  }
+
+  findFeature(id, layers) {
+    for (let layer of Array.from(layers)) {
+      const feature = this.featuresById[layer][id];
+
+      if (feature) {
+        return feature;
+      }
+    }
+
+    return null;
   }
 }

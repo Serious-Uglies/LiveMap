@@ -9,6 +9,7 @@ class IndexPage {
     this.connection = new signalR.HubConnectionBuilder()
       .withUrl('/hub/livemap')
       .withAutomaticReconnect([1000, 2000, 5000, 5000])
+      .configureLogging(signalR.LogLevel.Information)
       .build();
 
     this.connection.on('Event', this.handleEvent.bind(this));
@@ -16,6 +17,7 @@ class IndexPage {
     this.connection.onreconnected(this.handleReconnected.bind(this));
     this.connection.onreconnecting(this.handleReconnecting.bind(this));
 
+    this.objectLayers = ['objects-air', 'objects-earthbound'];
     this.theatreProperties = {
       ['Caucasus']: {
         center: [41.6748132691836, 43.729303011322685],
@@ -51,6 +53,15 @@ class IndexPage {
             'icon-size': 0.7,
           },
         },
+        airbases: {
+          layout: {
+            'icon-size': 0.8,
+            'text-field': '{name}',
+            'text-anchor': 'left',
+            'text-allow-overlap': true,
+            'text-offset': [0.8, 0],
+          },
+        },
       },
     });
 
@@ -75,6 +86,7 @@ class IndexPage {
   loadState(state) {
     this.initMap(state);
     state.objects.forEach((obj) => this.addObject(obj));
+    state.airbases.forEach((airbase) => this.addAirbase(airbase));
     this.map.update();
   }
 
@@ -124,6 +136,10 @@ class IndexPage {
         this.initMap(payload);
         break;
 
+      case 'MissionEnd':
+        this.map.clear();
+        break;
+
       case 'AddObject':
         this.addObject(payload);
         break;
@@ -136,8 +152,8 @@ class IndexPage {
         this.removeObject(payload);
         break;
 
-      case 'MissionEnd':
-        this.map.clear();
+      case 'AddAirbase':
+        this.addAirbase(payload);
         break;
 
       default:
@@ -162,11 +178,20 @@ class IndexPage {
   }
 
   updateObject(obj) {
-    this.map.updateFeature(obj.id, obj.position);
+    this.map.updateFeature(obj.id, obj.position, this.objectLayers);
   }
 
   removeObject(obj) {
-    this.map.removeFeature(obj.id);
+    this.map.removeFeature(obj.id, this.objectLayers);
+  }
+
+  addAirbase(airbase) {
+    const coalition = airbase.coalition.toLowerCase();
+
+    this.map.addFeature(airbase.id, 'airbases', airbase.position, {
+      icon: `${coalition}-airbase`,
+      name: airbase.name,
+    });
   }
 
   determineLayer(obj) {

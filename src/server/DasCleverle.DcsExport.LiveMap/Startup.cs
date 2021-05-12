@@ -52,6 +52,7 @@ namespace DasCleverle.DcsExport.LiveMap
             services.AddTransient<IExportEventHandler<AddObjectPayload>, AddObjectHandler>();
             services.AddTransient<IExportEventHandler<UpdateObjectPayload>, UpdateObjectHandler>();
             services.AddTransient<IExportEventHandler<RemoveObjectPayload>, RemoveObjectHandler>();
+            services.AddTransient<IExportEventHandler<AddAirbasePayload>, AddAirbaseHandler>();
             services.AddTransient<IExportEventHandler<MissionEndPayload>, MissionEndHandler>();
         }
 

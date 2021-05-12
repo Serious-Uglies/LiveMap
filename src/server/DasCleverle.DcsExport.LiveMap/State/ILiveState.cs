@@ -8,6 +8,8 @@ namespace DasCleverle.DcsExport.LiveMap.State
     {
         ICollection<AddObjectPayload> Objects { get; }
 
+        ICollection<AddAirbasePayload> Airbases { get; }
+
         string MissionName { get; }
 
         string Theatre { get; }
@@ -18,6 +20,8 @@ namespace DasCleverle.DcsExport.LiveMap.State
     public interface IWriteableLiveState 
     {
         ConcurrentDictionary<int, AddObjectPayload> Objects { get; }
+
+        ConcurrentDictionary<int, AddAirbasePayload> Airbases { get; }
 
         string MissionName { get; set; }
 

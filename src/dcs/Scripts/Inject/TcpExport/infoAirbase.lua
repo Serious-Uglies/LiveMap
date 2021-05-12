@@ -123,6 +123,7 @@ function infoAirbase.getAirbase(airbase)
     return {
         id = id,
         name = airbase:getName(),
+        coalition = airbase:getCoalition(),
         frequencies = getFrequencies(airdrome),
         beacons = getBeacons(airdrome),
         position = info.getPosition(airbase)

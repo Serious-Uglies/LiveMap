@@ -44,7 +44,7 @@ end
 function info.getInit()
     return {
         date = getDate(),
-        missionName = env.mission.name,
+        missionName = TcpExportHook.missionName,
         theatre = env.mission.theatre,
         mapCenter = getMapCenter(),
     }

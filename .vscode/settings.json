@@ -6,6 +6,8 @@
     "env",
     "timer",
     "world",
-    "StaticObject"
+    "StaticObject",
+    "DCS",
+    "TcpExportHook"
   ]
 }

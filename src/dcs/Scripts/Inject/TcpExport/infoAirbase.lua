@@ -9,9 +9,8 @@ local function getBeaconTypes()
     return env
 end
 
-local modulations = {[0] = "AM", [1] = "FM"}
 local airdromeData = terrain.GetTerrainConfig("Airdromes")
-local radioData = terrain.getRadio()
+local radioData = TcpExportHook.airdromeRadios
 local beaconData = terrain.getBeacons()
 local beaconTypes = getBeaconTypes()
 
@@ -21,15 +20,10 @@ local function getFrequencies(airdrome)
     local frequencies = {}
 
     for _, radioId in pairs(airdrome.radio) do
-        for _, radio in pairs(radioData) do
-            if radio.radioId == radioId then
-                for _, frequency in pairs(radio.frequency) do
-                    table.insert(frequencies, {
-                        frequency = frequency[2],
-                        modulation = modulations[frequency[1]]
-                    })
-                end
-            end
+        local airdromeFrequencies = radioData[radioId]
+
+        for _, frequency in pairs(airdromeFrequencies) do
+            table.insert(frequencies, frequency)
         end
     end
 

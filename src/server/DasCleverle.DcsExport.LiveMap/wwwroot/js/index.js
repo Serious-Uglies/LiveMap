@@ -55,11 +55,26 @@ class IndexPage {
         },
         airbases: {
           layout: {
-            'icon-size': 0.8,
+            'icon-size': 0.7,
+            'icon-rotate': ['get', 'rotation'],
             'text-field': '{name}',
             'text-anchor': 'left',
-            'text-allow-overlap': true,
-            'text-offset': [0.8, 0],
+            'text-offset': [0.73, 0],
+            'text-font': ['DIN Pro Regular'],
+            'text-size': [
+              'interpolate',
+              ['cubic-bezier', 0.2, 0, 0.9, 1],
+              ['zoom'],
+              3,
+              12,
+              13,
+              19,
+            ],
+          },
+          paint: {
+            'text-halo-color': 'white',
+            'text-halo-width': 1,
+            'text-halo-blur': 1,
           },
         },
       },
@@ -187,9 +202,11 @@ class IndexPage {
 
   addAirbase(airbase) {
     const coalition = airbase.coalition.toLowerCase();
+    const rotation = airbase.runways[0].course;
 
     this.map.addFeature(airbase.id, 'airbases', airbase.position, {
       icon: `${coalition}-airbase`,
+      rotation: rotation,
       name: airbase.name,
     });
   }

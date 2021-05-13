@@ -132,6 +132,7 @@ class LiveMap {
           'icon-image': '{icon}',
           'icon-allow-overlap': true,
         }),
+        paint: options.paint || {},
       })
     );
 

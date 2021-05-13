@@ -11,11 +11,24 @@ namespace DasCleverle.DcsExport.Listener.Model
 
         public Coalition Coalition { get; init; }
 
+        public IEnumerable<AirbaseRunway> Runways { get; init; } = Array.Empty<AirbaseRunway>();
+
         public IEnumerable<int> Frequencies { get; init; } = Array.Empty<int>();
 
         public AirbaseBeacons Beacons { get; init; } = new AirbaseBeacons();
 
         public Position Position { get; init; }
+    }
+
+    public record AirbaseRunway
+    {
+        public string Name { get; init; }
+
+        public string Edge1 { get; init; }
+
+        public string Edge2 { get; init; }
+
+        public double Course { get; init; }
     }
 
     public record AirbaseBeacons

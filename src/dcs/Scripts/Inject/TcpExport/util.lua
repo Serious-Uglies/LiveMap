@@ -1,5 +1,9 @@
 local util = {}
 
+function util.radToDeg(radians)
+    return radians * 180 / math.pi
+end
+
 local function serializeValue(s)
     if s == nil then
         return "\"\""

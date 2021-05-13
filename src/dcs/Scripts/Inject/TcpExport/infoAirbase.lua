@@ -1,5 +1,7 @@
 local info = require("info")
 local terrain = require("terrain")
+local logger = require("logger")
+local util = require("util")
 
 local function getBeaconTypes()
     local env = setmetatable({}, { __index = _G })
@@ -15,6 +17,22 @@ local beaconData = terrain.getBeacons()
 local beaconTypes = getBeaconTypes()
 
 local infoAirbase = {}
+
+local function getRunways(airdrome)
+    local runways = {}
+    local runwayList = terrain.getRunwayList(airdrome.roadnet)
+
+    for _, runway in pairs(runwayList) do
+        table.insert(runways, {
+            course = util.radToDeg(runway.course),
+            edge1 = runway.edge1name,
+            edge2 = runway.edge2name,
+            name = runway.edge1name .. "-" .. runway.edge2name
+        })
+    end
+
+    return runways
+end
 
 local function getFrequencies(airdrome)
     local frequencies = {}
@@ -124,6 +142,7 @@ function infoAirbase.getAirbase(airbase)
         id = id,
         name = airbase:getName(),
         coalition = airbase:getCoalition(),
+        runways = getRunways(airdrome),
         frequencies = getFrequencies(airdrome),
         beacons = getBeacons(airdrome),
         position = info.getPosition(airbase)

@@ -1,6 +1,4 @@
-local info = require("info")
 local terrain = require("terrain")
-local logger = require("logger")
 local util = require("util")
 
 local function getBeaconTypes()
@@ -35,6 +33,14 @@ local function getRunways(airdrome)
 end
 
 local function getFrequencies(airdrome)
+    if airdrome.frequency ~= nil then
+        return airdrome.frequency
+    end
+
+    if airdrome.radio == nil then
+        return {}
+    end
+
     local frequencies = {}
 
     for _, radioId in pairs(airdrome.radio) do
@@ -138,6 +144,11 @@ function infoAirbase.getAirbase(airbase)
         return nil
     end
 
+    local lat, long = terrain.convertMetersToLatLon(
+        airdrome.reference_point.x,
+        airdrome.reference_point.y
+    )
+
     return {
         id = id,
         name = airbase:getName(),
@@ -145,7 +156,10 @@ function infoAirbase.getAirbase(airbase)
         runways = getRunways(airdrome),
         frequencies = getFrequencies(airdrome),
         beacons = getBeacons(airdrome),
-        position = info.getPosition(airbase)
+        position = {
+            lat = lat,
+            long = long
+        }
     }
 end
 

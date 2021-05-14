@@ -87,9 +87,17 @@ header {
 }
 
 .sidebar {
-  width: 370px;
-  padding: 0.5rem 1rem;
+  position: absolute;
+  width: 450px;
+  padding: 1rem;
   word-break: break-all;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar > div {
+  padding-bottom: 1rem;
 }
 
 .loading {

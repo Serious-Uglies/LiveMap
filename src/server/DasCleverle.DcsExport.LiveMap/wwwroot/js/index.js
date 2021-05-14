@@ -4,7 +4,8 @@ class IndexPage {
     this.$loading = $('#loading');
     this.$spinner = $('#spinner');
     this.$error = $('#error');
-    this.$sidebar = $('#sidebar');
+    this.$missionProperties = $('#sidebar-mission-properties');
+    this.$airbaseProperties = $('#sidebar-airbase-properties');
 
     this.connection = new signalR.HubConnectionBuilder()
       .withUrl('/hub/livemap')
@@ -16,6 +17,8 @@ class IndexPage {
     this.connection.onclose(this.handleConnectionClose.bind(this));
     this.connection.onreconnected(this.handleReconnected.bind(this));
     this.connection.onreconnecting(this.handleReconnecting.bind(this));
+
+    this.airbases = {};
 
     this.objectLayers = ['objects-air', 'objects-earthbound'];
     this.theatreProperties = {
@@ -115,13 +118,27 @@ class IndexPage {
       );
     }
 
-    this.$sidebar.template('sidebar', this, init);
+    this.$missionProperties.template('mission-properties', init);
   }
 
   handleMapClick(event) {
     const features = event.target
       .queryRenderedFeatures(event.point)
       .filter((feature) => !!this.map.layers[feature.layer.id]);
+
+    if (features.length == 0) {
+      return;
+    }
+
+    const i = features.findIndex((f) => f.layer.id == 'airbases');
+    const airbaseFeature = features[i];
+
+    if (airbaseFeature) {
+      const airbase = this.airbases[airbaseFeature.properties.id];
+      this.$airbaseProperties.template('airbase-properties', airbase);
+
+      features.splice(i, 1);
+    }
 
     if (features.length == 0) {
       return;
@@ -135,7 +152,7 @@ class IndexPage {
       features.reduce((s, f) => s + f.geometry.coordinates[1], 0) /
       features.length;
 
-    const popup = $('<div />').template('feature-popup', this, {
+    const popup = $('<div />').template('feature-popup', {
       features: features.map((f) => f.properties),
     });
 
@@ -201,9 +218,15 @@ class IndexPage {
   }
 
   addAirbase(airbase) {
+    for (let runway of airbase.runways) {
+      runway.course = runway.course < 0 ? 360 + runway.course : runway.course;
+      runway.course = Math.round(runway.course);
+    }
+
     const coalition = airbase.coalition.toLowerCase();
     const rotation = airbase.runways[0].course;
 
+    this.airbases[airbase.id] = airbase;
     this.map.addFeature(airbase.id, 'airbases', airbase.position, {
       icon: `${coalition}-airbase`,
       rotation: rotation,

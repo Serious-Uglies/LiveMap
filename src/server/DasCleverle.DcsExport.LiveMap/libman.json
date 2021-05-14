@@ -19,6 +19,13 @@
         "dist/mapbox-gl-dev.js",
         "dist/mapbox-gl.css"
       ]
+    },
+    {
+      "library": "he@1.2.0",
+      "destination": "wwwroot/lib/he",
+      "files": [
+        "he.js"
+      ]
     }
   ]
 }

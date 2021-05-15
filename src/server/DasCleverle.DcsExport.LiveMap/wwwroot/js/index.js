@@ -122,6 +122,8 @@ class IndexPage {
   }
 
   handleMapClick(event) {
+    this.$airbaseProperties.hide();
+
     const features = event.target
       .queryRenderedFeatures(event.point)
       .filter((feature) => !!this.map.layers[feature.layer.id]);
@@ -135,7 +137,12 @@ class IndexPage {
 
     if (airbaseFeature) {
       const airbase = this.airbases[airbaseFeature.properties.id];
-      this.$airbaseProperties.template('airbase-properties', airbase);
+      const handlers = {
+        close: () => this.$airbaseProperties.hide(),
+      };
+
+      this.$airbaseProperties.template('airbase-properties', airbase, handlers);
+      this.$airbaseProperties.show();
 
       features.splice(i, 1);
     }

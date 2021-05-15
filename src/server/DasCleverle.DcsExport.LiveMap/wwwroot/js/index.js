@@ -218,13 +218,15 @@ class IndexPage {
   }
 
   addAirbase(airbase) {
-    for (let runway of airbase.runways) {
-      runway.course = runway.course < 0 ? 360 + runway.course : runway.course;
-      runway.course = Math.round(runway.course);
+    const ilss = airbase.beacons.ils;
+    airbase.ilsByRwy = {};
+
+    for (let ils of ilss) {
+      airbase.ilsByRwy[ils.runway] = ils.frequency;
     }
 
     const coalition = airbase.coalition.toLowerCase();
-    const rotation = airbase.runways[0].course;
+    const rotation = airbase.runways[0] ? airbase.runways[0].course : 90;
 
     this.airbases[airbase.id] = airbase;
     this.map.addFeature(airbase.id, 'airbases', airbase.position, {

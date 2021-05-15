@@ -42,55 +42,66 @@
 </script>
 
 <script type="text/template" data-template="mission-properties">
-    <div class="card">
+    <div class="card property-card">
         <div class="card-header">
             Aktuelle Mission
         </div>
 
         <div class="card-body">
-            <div class="row">
-                <div class="col-12"><strong>Mission</strong></div>
-                <div class="col-12">${missionName}</div>
-            </div>
+            <div class="property-title">Mission</div>
+            ${missionName}
 
-            <div class="row">
-                <div class="col-12"><strong>Theatre</strong></div>
-                <div class="col-12">${theatre}</div>
-            </div>
+            <div class="property-title">Theatre</div>
+            ${theatre}
         </div>
     </div>
 </script>
 
 <script type="text/template" data-template="airbase-properties">
-    <div class="card">
+    <div class="card property-card">
         <div class="card-header">
             Ausgewähltes Airfield
         </div>
 
         <div class="card-body">
-            <div class="row">
-                <div class="col-12"><strong>Name</strong></div>
-                <div class="col-12">${name}</div>
+            <div class="property-title">Name</div>
+            ${name}
+        
+            <div class="property-title">Tower</div>
+            ${frequencies.map(formatFrequency).join(', ')}
+        
+            <div $if="runways.length">
+                <div class="property-title">Runways</div>
+
+                <div class="row">
+                    <div class="col" $for="runway of runways">
+                        <div>
+                            <strong>${runway.edge1}</strong> 
+                            ${ilsByRwy[runway.edge1] && '(ILS: ' + formatFrequency(ilsByRwy[runway.edge1]) + ')'}
+                        </div>
+                    </div>
+                    <div class="col" $for="runway of runways">
+                        <div>
+                            <strong>${runway.edge2}</strong> 
+                            ${ilsByRwy[runway.edge2] && '(ILS: ' + formatFrequency(ilsByRwy[runway.edge2]) + ')'}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div $if="beacons.tacan.length">
+                <div class="property-title">TACAN</div>
+                ${beacons.tacan.map(t => t.channel + t.mode + ' (' + t.callsign + ')').join(', ')}
             </div>
 
-            <div class="row">
-                <div class="col-12"><strong>Tower</strong></div>
-                <div class="col-12">${frequencies.map(f => (f / 1000000) + ' MHz').join(', ')}</div>
+            <div $if="beacons.vor.length">
+                <div class="property-title">VOR</div>
+                ${beacons.vor.map(x => formatFrequency(x.frequency) + ' (' + x.callsign + ')').join(', ')}
             </div>
 
-            <div class="row">
-                <div class="col-12"><strong>Runways</strong></div>
-                <div class="col-12">${runways.map(r => r.name + ' (Kurs ' + r.course + ')').join(', ')}</div>
-            </div>
-
-            <div class="row" $if="beacons.tacan.length">
-                <div class="col-12"><strong>TACAN</strong></div>
-                <div class="col-12">${beacons.tacan.map(t => t.channel + t.mode).join(', ')}</div>
-            </div>
-
-            <div class="row" $if="beacons.ils.length">
-                <div class="col-12"><strong>ILS</strong></div>
-                <div class="col-12">${beacons.ils.map(t => t.runway + ': ' + (t.frequency / 1000000) + ' MHz').join(', ')}</div>
+            <div $if="beacons.ndb.length">
+                <div class="property-title">NDB</div>
+                ${beacons.ndb.map(x => formatFrequency(x.frequency) + ' (' + x.callsign + ')').join(', ')}
             </div>
         </div>
     </div>

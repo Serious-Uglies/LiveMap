@@ -100,6 +100,20 @@ header {
   padding-bottom: 1rem;
 }
 
+.property-card .card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.property-card .card-body .property-title {
+  font-weight: bold;
+  margin-top: 0.6rem;
+}
+
+.property-card .card-body > .property-title:first-of-type {
+  margin-top: 0;
+}
+
 .loading {
   z-index: 1040;
 }

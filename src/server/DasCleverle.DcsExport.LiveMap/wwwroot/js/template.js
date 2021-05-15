@@ -1,5 +1,15 @@
 (function ($) {
+  const functions = {};
+
+  $.template = {
+    addFunction: function (name, fn) {
+      functions[name] = fn;
+    },
+  };
+
   const evalExpression = (expr, params) => {
+    params = Object.assign({}, params, functions);
+
     const keys = Object.keys(params);
     const values = Object.values(params);
     const fn = new Function(
@@ -9,85 +19,109 @@
     return fn.apply(fn, values);
   };
 
-  const evalParams = ($el, params) => {
+  const evalParams = (html, params) => {
     const paramRe = /\$\{(.+?)\}/g;
-    return he
-      .decode($el.html())
-      .replace(paramRe, (_, expr) => evalExpression(expr, params));
+
+    return he.decode(html).replace(paramRe, (_, expr) => {
+      const result = evalExpression(expr, params);
+
+      if (result === null || result === undefined) {
+        return '';
+      }
+
+      return result;
+    });
   };
 
-  const evalConditional = ($el, params) => {
-    const expr = $el.attr('$if');
-    const result = evalExpression(expr, params);
+  const evalConditional = (node, params) => {
+    const attribute = node.attributes && node.attributes['$if'];
 
-    $el.removeAttr('$if');
+    if (!attribute) {
+      return true;
+    }
 
-    return result;
+    node.removeAttribute('$if');
+    return evalExpression(attribute.value, params);
   };
 
-  const evalLoop = ($el, params) => {
-    const match = /(\w+) of (\w+)/.exec($el.attr('$for'));
+  const evalLoop = (node, params) => {
+    const attribute = node.attributes && node.attributes['$for'];
+
+    if (!attribute) {
+      return null;
+    }
+
+    node.removeAttribute('$for');
+
+    const match = /(\w+) of (\w+)/.exec(attribute.value);
     const variable = match[1];
     const iteratable = params[match[2]];
 
-    $el.removeAttr('$for');
-
-    const template = $el.html();
-    const result = [];
+    const fragment = document.createDocumentFragment();
 
     for (const item of iteratable) {
       const innerParams = Object.assign({}, params, {
         [variable]: item,
       });
 
-      result.push(evalTemplate(template, innerParams));
+      fragment.appendChild(evalTemplate(node, innerParams, false));
     }
 
-    return result.join('');
+    const clone = node.cloneNode();
+    clone.append(fragment);
+
+    return clone;
   };
 
-  const evalTemplate = (template, params) => {
-    const children = $('<div />').html(template).children();
-
-    if (children.length == 0) {
+  const evalTemplate = (template, params, isChild) => {
+    if (template.nodeType === Node.TEXT_NODE) {
+      template.data = evalParams(template.data, params);
       return template;
     }
 
-    const result = [];
+    if (template.nodeType !== Node.ELEMENT_NODE) {
+      return null;
+    }
 
-    children.each((_, el) => {
-      const $el = $(el);
+    const element = isChild
+      ? template
+      : document.createRange().createContextualFragment(template.innerHTML);
 
-      if ($el.attr('$if') && !evalConditional($el, params)) {
-        return;
+    if (!evalConditional(element, params)) {
+      return null;
+    }
+
+    const loop = evalLoop(element, params);
+
+    if (loop) {
+      return loop;
+    }
+
+    const children = Array.from(element.childNodes);
+
+    for (let child of children) {
+      const newChild = evalTemplate(child, params, true);
+
+      if (!newChild) {
+        element.removeChild(child);
+      } else if (newChild !== child) {
+        element.insertBefore(newChild, child);
+        element.removeChild(child);
       }
+    }
 
-      if ($el.attr('$for')) {
-        $el.html(evalLoop($el, params));
-      }
-
-      $el.html(evalParams($el, params));
-
-      const html = $el.html();
-
-      if (html.includes('$for') || html.includes('$if')) {
-        $el.html(evalTemplate(html, params));
-      }
-
-      result.push(el.outerHTML);
-    });
-
-    return result.join('');
+    return element;
   };
 
   $.fn.template = function (template, params, handlers) {
-    const content = $(`script[data-template="${template}"]`).html();
-    const target = $(this);
+    const container = document.querySelector(
+      `script[data-template="${template}"]`
+    );
 
-    target.html(evalTemplate(content, params));
+    this.html(evalTemplate(container, params));
 
     if (handlers) {
-      target.find(`[data-event][data-handler]`).each((_, el) => {
+      this.find(`[data-event][data-handler]`).each((_, el) => {
         const event = el.dataset.event;
         const handlerName = el.dataset.handler;
         const handler = handlers[handlerName];
@@ -100,6 +134,6 @@
       });
     }
 
-    return target;
+    return this;
   };
 })($);

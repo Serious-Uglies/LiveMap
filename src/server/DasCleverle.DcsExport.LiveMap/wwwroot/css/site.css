@@ -1,12 +1,6 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
-}
-
 /* Provide sufficient contrast against white background */
 a {
   color: #0366d6;
@@ -36,48 +30,24 @@ html {
   }
 }
 
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
-}
-
-/* Sticky footer styles
--------------------------------------------------- */
-html,
-body {
+html, body {
   height: 100%;
   margin: 0;
 }
 
-.page {
+.body {
   display: flex;
   flex-flow: column;
-  height: 100%;
 }
 
 header {
   flex: 0 1 auto;
 }
 
-.footer {
-  flex: 0 1 60px;
-  line-height: 60px;
-}
-
 .content {
   position: relative;
-  flex: 1 1 auto;
+  flex: 1 0 auto;
+  height: calc(100% - 56px);
 }
 
 .map-container {
@@ -89,7 +59,7 @@ header {
 .sidebar {
   position: absolute;
   width: 450px;
-  padding: 1rem;
+  padding: var(--bs-gutter-x,.75rem);
   word-break: break-all;
 
   display: flex;

@@ -1,5 +1,6 @@
 local terrain = require("terrain")
 local util = require("util")
+local info = require("info")
 
 local function getBeaconTypes()
     local env = setmetatable({}, { __index = _G })
@@ -131,36 +132,41 @@ function infoAirbase.getAirbase(airbase)
         return nil
     end
 
-    local category = Airbase.getCategory(airbase)
-
-    if category ~= Object.Category.BASE then
-        return nil
-    end
-
     local id = tonumber(airbase:getID())
-    local airdrome = airdromeData[id]
-
-    if airdrome == nil then
-        return nil
-    end
-
-    local lat, long = terrain.convertMetersToLatLon(
-        airdrome.reference_point.x,
-        airdrome.reference_point.y
-    )
-
-    return {
-        id = id,
+    local desc = airbase:getDesc()
+    local airbaseInfo = {
+        id = tostring(desc.category) .. ":" .. tostring(id),
+        category = desc.category,
         name = airbase:getName(),
         coalition = airbase:getCoalition(),
-        runways = getRunways(airdrome),
-        frequencies = getFrequencies(airdrome),
-        beacons = getBeacons(airdrome),
-        position = {
+    }
+
+    if desc.category == Airbase.Category.AIRDROME then
+        local airdrome = airdromeData[id]
+
+        local lat, long = terrain.convertMetersToLatLon(
+            airdrome.reference_point.x,
+            airdrome.reference_point.y
+        )
+
+        airbaseInfo.runways = getRunways(airdrome)
+        airbaseInfo.frequencies = getFrequencies(airdrome)
+        airbaseInfo.beacons = getBeacons(airdrome)
+        airbaseInfo.position = {
             lat = lat,
             long = long
         }
-    }
+
+    -- Currently there seems to be a bug that causes the Invisible FARP
+    -- to be of type SHIP, so we must add an extra case here.
+    elseif desc.category == Airbase.Category.HELIPAD or desc.typeName == "Invi" then
+        airbaseInfo.category = Airbase.Category.HELIPAD
+        airbaseInfo.position = info.getPosition(airbase);
+    else
+        return nil
+    end
+
+    return airbaseInfo
 end
 
 function infoAirbase.getAllAirbases()

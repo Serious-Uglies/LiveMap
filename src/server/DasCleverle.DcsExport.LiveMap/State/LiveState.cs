@@ -6,15 +6,15 @@ namespace DasCleverle.DcsExport.LiveMap.State
 {
     public class LiveState : ILiveState, IWriteableLiveState
     {
-        private ConcurrentDictionary<int, AddObjectPayload> _objects = new ConcurrentDictionary<int, AddObjectPayload>();
-        private ConcurrentDictionary<int, AddAirbasePayload> _airbases = new ConcurrentDictionary<int, AddAirbasePayload>();
+        private ConcurrentDictionary<int, AddObjectPayload> _objects = new();
+        private ConcurrentDictionary<string, AddAirbasePayload> _airbases = new();
         private string _missionName;
         private string _theatre;
         private Position _mapCenter;
 
         ConcurrentDictionary<int, AddObjectPayload> IWriteableLiveState.Objects => _objects;
 
-        ConcurrentDictionary<int, AddAirbasePayload> IWriteableLiveState.Airbases => _airbases;
+        ConcurrentDictionary<string, AddAirbasePayload> IWriteableLiveState.Airbases => _airbases;
 
         string IWriteableLiveState.MissionName
         {

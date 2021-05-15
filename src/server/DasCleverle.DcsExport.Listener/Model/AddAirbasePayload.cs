@@ -5,11 +5,13 @@ namespace DasCleverle.DcsExport.Listener.Model
 {
     public record AddAirbasePayload
     {
-        public int Id { get; init; }
+        public string Id { get; init; }
 
         public string Name { get; init; }
 
         public Coalition Coalition { get; init; }
+
+        public AirbaseCategory Category { get; init; }
 
         public IEnumerable<AirbaseRunway> Runways { get; init; } = Array.Empty<AirbaseRunway>();
 
@@ -65,5 +67,11 @@ namespace DasCleverle.DcsExport.Listener.Model
     public record TacanBeacon : ChannelBeacon
     {
         public string Mode { get; init; }
+    }
+
+    public enum AirbaseCategory
+    {
+        Airdrome,
+        FARP
     }
 }

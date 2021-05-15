@@ -21,7 +21,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
     {
         ConcurrentDictionary<int, AddObjectPayload> Objects { get; }
 
-        ConcurrentDictionary<int, AddAirbasePayload> Airbases { get; }
+        ConcurrentDictionary<string, AddAirbasePayload> Airbases { get; }
 
         string MissionName { get; set; }
 

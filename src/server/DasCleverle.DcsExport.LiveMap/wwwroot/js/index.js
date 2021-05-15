@@ -233,11 +233,12 @@ class IndexPage {
     }
 
     const coalition = airbase.coalition.toLowerCase();
-    const rotation = airbase.runways[0] ? airbase.runways[0].course : 90;
+    const category = airbase.category.toLowerCase();
+    const rotation = airbase.runways[0] ? airbase.runways[0].course : 0;
 
     this.airbases[airbase.id] = airbase;
     this.map.addFeature(airbase.id, 'airbases', airbase.position, {
-      icon: `${coalition}-airbase`,
+      icon: `${coalition}-${category}`,
       rotation: rotation,
       name: airbase.name,
     });

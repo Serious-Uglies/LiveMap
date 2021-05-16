@@ -1,4 +1,5 @@
 local json = require("json")
+
 local info = {}
 
 local function getDate()
@@ -59,6 +60,90 @@ function info.getPosition(object)
     end)
 
     return point
+end
+
+local coalitionNames = {
+    [coalition.side.NEUTRAL] = "neutrals",
+    [coalition.side.RED] = "red",
+    [coalition.side.BLUE] = "blue"
+}
+
+local unitCategoryKeys = {
+    [Unit.Category.AIRPLANE] = "plane",
+    [Unit.Category.HELICOPTER] = "helicopter",
+    [Unit.Category.SHIP] = "ship"
+}
+
+function info.getFrequency(object)
+    local objectCategory = object:getCategory()
+
+    if objectCategory ~= Object.Category.UNIT
+        and objectCategory ~= Object.Category.STATIC
+        and objectCategory ~= Object.Category.BASE
+    then
+        return nil
+    end
+
+    local desc = object:getDesc()
+    local category = desc.category
+
+    local coalition = coalitionNames[object:getCoalition()]
+    local countries = env.mission.coalition[coalition].country
+    local country
+
+    for _, c in pairs(countries) do
+        if c.id == object:getCountry() then
+            country = c
+            break
+        end
+    end
+
+    local categoryKey
+
+    if objectCategory == Object.Category.UNIT then
+        categoryKey = unitCategoryKeys[category]
+    else
+        categoryKey = "static"
+    end
+
+    local objectID = tonumber(object:getID())
+    local groups = country[categoryKey].group
+    local group
+    local unit
+
+    for _, g in pairs(groups) do
+        if categoryKey == "static" then
+            for _, u in pairs(g.units) do
+                if u.unitId == objectID then
+                    unit = u
+                    group = g
+                    break
+                end
+            end
+        else
+            if g.groupId == object:getGroup():getID() then
+                group = g
+                break
+            end
+        end
+
+        if group ~= nil then
+            break
+        end
+    end
+
+    if categoryKey == "ship" then
+        unit = group.units[object:getNumber()]
+        return unit.frequency
+    elseif categoryKey == "static" then
+        if unit.category ~= "Heliports" then
+            return nil
+        end
+
+        return tonumber(unit.heliport_frequency) * 1000000
+    else
+        return tonumber(group.frequency) * 1000000
+    end
 end
 
 return info

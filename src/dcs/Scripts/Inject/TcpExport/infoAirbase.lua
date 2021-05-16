@@ -161,7 +161,13 @@ function infoAirbase.getAirbase(airbase)
     -- to be of type SHIP, so we must add an extra case here.
     elseif desc.category == Airbase.Category.HELIPAD or desc.typeName == "Invi" then
         airbaseInfo.category = Airbase.Category.HELIPAD
-        airbaseInfo.position = info.getPosition(airbase);
+        airbaseInfo.position = info.getPosition(airbase)
+
+        local frequency = info.getFrequency(airbase)
+
+        if frequency ~= nil then
+            airbaseInfo.frequencies = { frequency }
+        end
     else
         return nil
     end

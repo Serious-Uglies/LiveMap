@@ -4,6 +4,16 @@ function util.radToDeg(radians)
     return radians * 180 / math.pi
 end
 
+function util.power(base, exponent)
+    local result = 1
+
+    for i = 1, exponent do
+        result = result * base
+    end
+
+    return result
+end
+
 local function serializeValue(s)
     if s == nil then
         return "\"\""

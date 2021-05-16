@@ -25,7 +25,7 @@ local function removeObjectHandler(event)
 end
 
 local function missionEndHandler(event)
-    logger.info("Received mission end event cleaning up and closing export connection")
+    logger.info("Received mission end event. Cleaning up and closing export connection")
 
     exporter.send("MissionEnd", { time = event.time })
     exporter.close()

@@ -4,6 +4,7 @@ package.cpath = "./LuaSocket/?.dll;" .. package.cpath
 local socket = require("socket")
 local json = require("json")
 local logger = require("logger")
+local util = require("util")
 
 local config = require("config")
 
@@ -15,8 +16,8 @@ local sendBuffer = ""
 local nextFlush = 1
 local errors = 0
 local errorThreshold = 5
+local errorFlushInterval = 10
 local scheduleId = 0
-local isClosed = false
 
 local function flush(force)
     if sock == nil then
@@ -42,7 +43,7 @@ local function flush(force)
     if err then
         if err == "closed" then
             logger.warning("Connection to %s:%s to was closed. Trying to reconnect ...", config.address, config.port)
-            isClosed = true
+            sock = nil
             return
         end
 
@@ -50,9 +51,9 @@ local function flush(force)
 
         errors = errors + 1
 
-        if errors > 5 then
-            message = message .. " (suspending flush for 10 seconds)"
-            nextFlush = 10
+        if errors > errorThreshold then
+            message = string.format("%s (suspending flush for %s seconds)", message, errorFlushInterval)
+            nextFlush = errorFlushInterval
         end
 
         logger.error(message)
@@ -66,7 +67,6 @@ local function doConnect()
     local s, err = socket.connect(config.address, config.port)
 
     if s == nil then
-        isClosed = true
         logger.error("Could not connect to tcp endpoint %s:%s: %s", config.address, config.port, err)
         return false
     end
@@ -74,28 +74,27 @@ local function doConnect()
     sock = s
     sock:setoption("tcp-nodelay", true)
 
+    logger.info("Successfully connected to tcp endpoint %s:%s", config.address, config.port)
+
     return true
 end
 
 local function reconnect()
     if not doConnect() then
         errors = errors + 1
+        nextFlush = math.min(util.power(2, errors), 120)
 
-        if errors == 10 then
-            logger.error("We've been trying to reconnect for 10 times. Extending retry interval to every 10 seconds")
-            nextFlush = 10
-        end
+        logger.error("Next try in %s seconds", nextFlush)
 
         return
     end
 
-    isClosed = false
     errors = 0
     nextFlush = 1
 end
 
 local function flushSchedule(_, t)
-    if isClosed then
+    if sock == nil then
         reconnect()
     else
         flush(true)
@@ -112,7 +111,7 @@ end
 local function close()
     timer.removeFunction(scheduleId)
 
-    if isClosed then
+    if sock == nil then
         return
     end
 

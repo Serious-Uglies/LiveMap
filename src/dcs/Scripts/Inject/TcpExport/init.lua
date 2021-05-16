@@ -70,19 +70,23 @@ local function updateObjects(_, t)
     local units = objects.getAllObjects("unit", true)
     local statics = objects.getAllObjects("static", true)
 
-    for i = 1, #units do
-        local unit = units[i]
-        if hasMoved(unit) then
-            exporter.send("UpdateObject", unit)
-            lastPositions[unit.id] = unit.position
+    if units ~= nil then
+        for i = 1, #units do
+            local unit = units[i]
+            if hasMoved(unit) then
+                exporter.send("UpdateObject", unit)
+                lastPositions[unit.id] = unit.position
+            end
         end
     end
 
-    for i = 1, #statics do
-        local static = statics[i]
-        if hasMoved(static) then
-            exporter.send("UpdateObject", static)
-            lastPositions[static.id] = static.position
+    if statics ~= nil then
+        for i = 1, #statics do
+            local static = statics[i]
+            if hasMoved(static) then
+                exporter.send("UpdateObject", static)
+                lastPositions[static.id] = static.position
+            end
         end
     end
 

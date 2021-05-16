@@ -98,7 +98,7 @@ function infoObject.getCoalitionObjects(type, side, reduced)
         return getStatics(side, reduced)
     end
 
-    return {}
+    return nil
 end
 
 function infoObject.getAllObjects(type, reduced)
@@ -106,13 +106,21 @@ function infoObject.getAllObjects(type, reduced)
 
     for _, side in pairs(coalition.side) do
         local coalitionObjects = infoObject.getCoalitionObjects(type, side, reduced)
+
         for i = 1, #coalitionObjects do
-            table.insert(objects, coalitionObjects[i])
+            local object = coalitionObjects[i]
+
+            if object ~= nil then
+                table.insert(objects, object)
+            end
         end
+    end
+
+    if #objects == 0 then
+        return nil
     end
 
     return objects
 end
-
 
 return infoObject

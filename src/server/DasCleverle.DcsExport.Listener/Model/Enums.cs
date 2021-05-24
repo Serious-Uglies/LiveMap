@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace DasCleverle.DcsExport.Listener.Model
@@ -21,7 +20,10 @@ namespace DasCleverle.DcsExport.Listener.Model
         UpdateObject,
 
         [EventPayload(typeof(AddAirbasePayload))]
-        AddAirbase
+        AddAirbase,
+
+        [EventPayload(typeof(TimePayload))]
+        Time
     }
 
     public enum Coalition

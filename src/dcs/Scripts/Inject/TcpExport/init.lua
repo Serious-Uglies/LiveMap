@@ -90,6 +90,8 @@ local function updateObjects(_, t)
         end
     end
 
+    exporter.send("Time", info.getTime())
+
     return t + config.interval
 end
 

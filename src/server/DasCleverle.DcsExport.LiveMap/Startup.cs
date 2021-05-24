@@ -49,6 +49,7 @@ namespace DasCleverle.DcsExport.LiveMap
             services.AddTransient<IWriteableLiveState>(sp => (IWriteableLiveState) sp.GetService<ILiveState>());
 
             services.AddTransient<IExportEventHandler<InitPayload>, InitHandler>();
+            services.AddTransient<IExportEventHandler<TimePayload>, TimeHandler>();
             services.AddTransient<IExportEventHandler<AddObjectPayload>, AddObjectHandler>();
             services.AddTransient<IExportEventHandler<UpdateObjectPayload>, UpdateObjectHandler>();
             services.AddTransient<IExportEventHandler<RemoveObjectPayload>, RemoveObjectHandler>();

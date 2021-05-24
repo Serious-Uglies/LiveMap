@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using DasCleverle.DcsExport.Listener.Model;
@@ -15,6 +16,8 @@ namespace DasCleverle.DcsExport.LiveMap.State
         string Theatre { get; }
 
         Position MapCenter { get; }
+
+        DateTimeOffset Time { get; }
     }
 
     public interface IWriteableLiveState 
@@ -28,5 +31,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
         string Theatre { get; set; }
 
         Position MapCenter { get; set; }
+
+        DateTimeOffset Time { get; set; }
     }
 }

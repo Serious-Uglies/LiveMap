@@ -22,22 +22,27 @@ class IndexPage {
     this.airbases = {};
 
     this.objectLayers = ['objects-air', 'objects-earthbound'];
+    this.theatre = null;
     this.theatreProperties = {
       ['Caucasus']: {
         center: [41.6748132691836, 43.729303011322685],
         zoom: 6.15,
+        timezone: 'Asia/Tbilisi',
       },
       ['Nevada']: {
         center: [-115.3220498166852, 37.959029700616],
         zoom: 6.66,
+        timezone: 'America/Los_Angeles',
       },
       ['PersianGulf']: {
         center: [55.9127513841311, 26.872559655101398],
         zoom: 6.04,
+        timezone: 'Asia/Dubai',
       },
       ['Syria']: {
         center: [37.71425723879233, 34.890062119982204],
         zoom: 6.37,
+        timezone: 'Asia/Damascus',
       },
     };
   }
@@ -111,11 +116,11 @@ class IndexPage {
 
   initMap(init) {
     if (init.theatre) {
-      const theatre = this.theatreProperties[init.theatre];
+      this.theatre = this.theatreProperties[init.theatre];
 
-      this.map.setZoom(theatre.zoom || 6);
+      this.map.setZoom(this.theatre.zoom || 6);
       this.map.setCenter(
-        theatre.center || [init.mapCenter.long, init.mapCenter.lat]
+        this.theatre.center || [init.mapCenter.long, init.mapCenter.lat]
       );
     }
 
@@ -180,6 +185,10 @@ class IndexPage {
         this.map.clear();
         break;
 
+      case 'Time':
+        this.updateTime(payload);
+        break;
+
       case 'AddObject':
         this.addObject(payload);
         break;
@@ -202,6 +211,22 @@ class IndexPage {
     }
 
     this.map.update();
+  }
+
+  updateTime({ time }) {
+    time = new Date(time);
+
+    const format = new Intl.DateTimeFormat('de-DE', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZone: this.theatre.timezone,
+    });
+
+    $('#mission-time').template('mission-time', { time: format.format(time) });
   }
 
   addObject(obj) {

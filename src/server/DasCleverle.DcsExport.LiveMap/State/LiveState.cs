@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using DasCleverle.DcsExport.Listener.Model;
@@ -11,6 +12,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
         private string _missionName;
         private string _theatre;
         private Position _mapCenter;
+        private DateTimeOffset _time;
 
         ConcurrentDictionary<int, AddObjectPayload> IWriteableLiveState.Objects => _objects;
 
@@ -30,8 +32,14 @@ namespace DasCleverle.DcsExport.LiveMap.State
 
         Position IWriteableLiveState.MapCenter
         {
-            get => _mapCenter; 
+            get => _mapCenter;
             set => _mapCenter = value;
+        }
+
+        DateTimeOffset IWriteableLiveState.Time
+        {
+            get => _time;
+            set => _time = value;
         }
 
         public ICollection<AddObjectPayload> Objects => _objects.Values;
@@ -43,5 +51,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
         public string Theatre => _theatre;
 
         public Position MapCenter => _mapCenter;
+
+        public DateTimeOffset Time => _time;
     }
 }

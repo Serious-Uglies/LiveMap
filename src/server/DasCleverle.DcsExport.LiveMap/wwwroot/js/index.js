@@ -18,6 +18,7 @@ class IndexPage {
     this.connection.onreconnected(this.handleReconnected.bind(this));
     this.connection.onreconnecting(this.handleReconnecting.bind(this));
 
+    this.objects = {};
     this.airbases = {};
 
     this.objectLayers = ['objects-air', 'objects-earthbound'];
@@ -160,7 +161,7 @@ class IndexPage {
       features.length;
 
     const popup = $('<div />').template('feature-popup', {
-      features: features.map((f) => f.properties),
+      objects: features.map((f) => this.objects[f.properties.id]),
     });
 
     new mapboxgl.Popup()
@@ -209,10 +210,10 @@ class IndexPage {
     const pilot = obj.player ? 'player' : 'ai';
     const layer = this.determineLayer(obj);
 
+    this.objects[obj.id] = obj;
+
     this.map.addFeature(obj.id, layer, obj.position, {
       icon: `${coalition}-${iconType}-${pilot}`,
-      name: obj.name,
-      typeName: obj.typeName,
     });
   }
 

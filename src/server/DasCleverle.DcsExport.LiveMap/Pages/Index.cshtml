@@ -33,10 +33,10 @@
 </script>
 
 <script type="text/template" data-template="feature-popup">
-    <div $for="feature of features" class="mt-2">
+    <div $for="object of objects" class="mt-2">
         <div class="mt-1">
-            <strong>${feature.typeName}</strong><br/>
-            ${feature.name}
+            <div><strong>${object.typeName}</strong></div>
+            <div>${object.name}</div>
         </div>
     </div>
 </script>

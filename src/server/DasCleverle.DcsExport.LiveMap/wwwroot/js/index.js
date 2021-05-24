@@ -102,19 +102,36 @@ class IndexPage {
 
     this.loadState(state);
 
-    if (await this.startConnection()) {
+    const started = await this.startConnection();
+
+    if (!started) {
+      return;
+    }
+
+    if (this.isRunning) {
       this.setLoading(false);
     }
   }
 
   loadState(state) {
+    this.setRunning(state.isRunning);
+
+    if (!state.isRunning) {
+      return;
+    }
+
     this.initMap(state);
     state.objects.forEach((obj) => this.addObject(obj));
     state.airbases.forEach((airbase) => this.addAirbase(airbase));
+
     this.map.update();
   }
 
   initMap(init) {
+    if (init.isRunning !== false) {
+      this.setRunning(true);
+    }
+
     if (init.theatre) {
       this.theatre = this.theatreProperties[init.theatre];
 
@@ -182,7 +199,7 @@ class IndexPage {
         break;
 
       case 'MissionEnd':
-        this.map.clear();
+        this.endMission();
         break;
 
       case 'Time':
@@ -299,6 +316,33 @@ class IndexPage {
     }
 
     return 'fixed';
+  }
+
+  endMission() {
+    this.map.clear();
+    this.map.setCenter([0, 0]);
+    this.map.setZoom(20);
+
+    this.$missionProperties.html('');
+    this.$airbaseProperties.html('');
+
+    this.setRunning(false);
+  }
+
+  setRunning(running) {
+    this.isRunning = running;
+
+    if (running) {
+      this.setLoading(false);
+      this.$spinner.show();
+      this.$error.hide();
+    } else {
+      this.setLoading(true);
+      this.$spinner.hide();
+
+      this.$error.show();
+      this.$error.template('no-mission-running');
+    }
   }
 
   setLoading(loading) {

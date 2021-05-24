@@ -7,6 +7,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
 {
     public class LiveState : ILiveState, IWriteableLiveState
     {
+        private bool _isRunning;
         private ConcurrentDictionary<int, AddObjectPayload> _objects = new();
         private ConcurrentDictionary<string, AddAirbasePayload> _airbases = new();
         private string _missionName;
@@ -42,6 +43,12 @@ namespace DasCleverle.DcsExport.LiveMap.State
             set => _time = value;
         }
 
+        bool IWriteableLiveState.IsRunning
+        {
+            get => _isRunning;
+            set => _isRunning = value;
+        }
+
         public ICollection<AddObjectPayload> Objects => _objects.Values;
 
         public ICollection<AddAirbasePayload> Airbases => _airbases.Values;
@@ -53,5 +60,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
         public Position MapCenter => _mapCenter;
 
         public DateTimeOffset Time => _time;
+
+        public bool IsRunning => _isRunning;
     }
 }

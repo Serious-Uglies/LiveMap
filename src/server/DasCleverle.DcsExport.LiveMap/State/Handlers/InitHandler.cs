@@ -16,6 +16,8 @@ namespace DasCleverle.DcsExport.LiveMap.State.Handlers
 
         public Task HandleEventAsync(IExportEvent<InitPayload> exportEvent, CancellationToken token)
         {
+            _state.IsRunning = true;
+
             _state.MissionName = exportEvent.Payload.MissionName;
             _state.Theatre = exportEvent.Payload.Theatre;
             _state.MapCenter = exportEvent.Payload.MapCenter;

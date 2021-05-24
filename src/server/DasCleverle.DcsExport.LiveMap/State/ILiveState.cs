@@ -7,6 +7,8 @@ namespace DasCleverle.DcsExport.LiveMap.State
 {
     public interface ILiveState
     {
+        bool IsRunning { get; }
+
         ICollection<AddObjectPayload> Objects { get; }
 
         ICollection<AddAirbasePayload> Airbases { get; }
@@ -22,6 +24,8 @@ namespace DasCleverle.DcsExport.LiveMap.State
 
     public interface IWriteableLiveState 
     {
+        bool IsRunning { get; set; }
+
         ConcurrentDictionary<int, AddObjectPayload> Objects { get; }
 
         ConcurrentDictionary<string, AddAirbasePayload> Airbases { get; }

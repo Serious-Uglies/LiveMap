@@ -72,7 +72,7 @@
             ${name}
         
             <div class="property-title">Tower</div>
-            ${frequencies.map(formatFrequency).join(', ')}
+            ${frequencies.length > 0 ? frequencies.map(formatFrequency).join(', ') : 'keine Frequenz gesetzt'}
         
             <div $if="runways.length">
                 <div class="property-title">Runways</div>

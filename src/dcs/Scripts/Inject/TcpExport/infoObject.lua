@@ -1,4 +1,5 @@
 local info = require("info")
+local config = require("config")
 
 local infoObject = {}
 
@@ -17,13 +18,17 @@ local function getType(object)
 end
 
 function infoObject.getObject(object, reduced)
-    if object == nil  or not object:isExist() then
+    if object == nil or not object:isExist() then
         return nil
     end
 
     local type = getType(object)
 
     if type == "unit" and not object:isActive() then
+        return nil
+    end
+
+    if not config.shouldExport(object, type) then
         return nil
     end
 

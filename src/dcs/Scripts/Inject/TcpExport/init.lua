@@ -5,6 +5,11 @@ local objects = require("infoObject")
 local airbases = require("infoAirbase")
 local logger = require("logger")
 
+if not config.enabled then
+    logger.info("TCP export is disabled. No data will be exported.")
+    return
+end
+
 -- DCS WORLD EVENTS --
 
 local function addObjectHandler(event)

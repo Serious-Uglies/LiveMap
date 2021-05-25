@@ -14,6 +14,32 @@ function util.power(base, exponent)
     return result
 end
 
+function util.assign(target, ...)
+    if target == nil or type(target) ~= "table" then
+        error("Please provide a table as target.")
+    end
+
+    for _, a in pairs(arg) do
+        if a ~= nil and type(a) == "table" then
+            for k, v in pairs(a) do
+                local tv = target[k]
+
+                if type(v) == "table" then
+                    if type(tv or false) == "table" then
+                        util.assign(tv, v)
+                    else
+                        target[k] = v
+                    end
+                else
+                    target[k] = v
+                end
+            end
+        end
+    end
+
+    return target
+end
+
 local function serializeValue(s)
     if s == nil then
         return "\"\""

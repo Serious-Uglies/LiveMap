@@ -133,7 +133,7 @@ function infoAirbase.getAirbase(airbase)
         return nil
     end
 
-    if not config.shouldExport(airbase, "airbase") then
+    if not config.shouldExport("airbase", airbase) then
         return nil
     end
 
@@ -177,7 +177,7 @@ function infoAirbase.getAirbase(airbase)
         return nil
     end
 
-    return airbaseInfo
+    return config.extend(airbaseInfo, "airbase", airbase)
 end
 
 function infoAirbase.getAllAirbases()

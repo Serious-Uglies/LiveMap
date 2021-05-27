@@ -28,7 +28,7 @@ function infoObject.getObject(object, reduced)
         return nil
     end
 
-    if not config.shouldExport(object, type) then
+    if not config.shouldExport(type, object) then
         return nil
     end
 
@@ -58,7 +58,7 @@ function infoObject.getObject(object, reduced)
         objectInfo.player = object:getPlayerName()
     end
 
-    return objectInfo
+    return config.extend(objectInfo, type, object)
 end
 
 local function getUnits(side, reduced)

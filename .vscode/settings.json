@@ -8,6 +8,7 @@
     "world",
     "StaticObject",
     "DCS",
-    "TcpExportHook"
+    "TcpExportHook",
+    "TcpExportConfig"
   ]
 }

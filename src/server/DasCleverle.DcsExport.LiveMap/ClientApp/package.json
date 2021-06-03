@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@microsoft/signalr": "^5.0.6",
     "@popperjs/core": "^2.9.2",
     "@reduxjs/toolkit": "^1.5.1",
     "bootstrap": "^5.0.1",

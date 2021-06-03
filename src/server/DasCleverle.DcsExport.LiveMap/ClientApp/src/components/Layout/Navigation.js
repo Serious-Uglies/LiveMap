@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Collapse,
   Container,
@@ -24,19 +24,21 @@ export function Navigation() {
         className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom"
         light
       >
-        <NavbarBrand tag={Link} to="/">
-          Serious Uglies - Live Map
-        </NavbarBrand>
-        <NavbarToggler onClick={toggleNavbar} className="mr-2" />
-        <Collapse className="d-sm-inline-flex" isOpen={!collapsed} navbar>
-          <ul className="navbar-nav flex-grow">
-            <NavItem>
-              <NavLink tag={Link} className="text-dark" to="/">
-                Home
-              </NavLink>
-            </NavItem>
-          </ul>
-        </Collapse>
+        <Container fluid>
+          <NavbarBrand tag={Link} to="/">
+            Serious Uglies - Live Map
+          </NavbarBrand>
+          <NavbarToggler onClick={toggleNavbar} className="mr-2" />
+          <Collapse className="d-sm-inline-flex" isOpen={!collapsed} navbar>
+            <ul className="navbar-nav flex-grow">
+              <NavItem>
+                <NavLink tag={Link} className="text-dark" to="/">
+                  Home
+                </NavLink>
+              </NavItem>
+            </ul>
+          </Collapse>
+        </Container>
       </Navbar>
     </header>
   );

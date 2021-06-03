@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import { Container } from 'reactstrap';
+import React from 'react';
 import { Navigation } from './Navigation';
 
 import './Layout.css';

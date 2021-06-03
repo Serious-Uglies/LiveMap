@@ -30,6 +30,18 @@ const getIconType = (object) => {
   return 'fixed';
 };
 
+const getSortKey = (object) => {
+  if (
+    object.type === 'Unit' &&
+    (object.attributes.includes('Fixed') ||
+      object.attributes.includes('Rotary'))
+  ) {
+    return 1;
+  }
+
+  return 0;
+};
+
 export const objectToFeature = (object) => {
   const coalition = object.coalition.toLowerCase();
   const iconType = getIconType(object);
@@ -37,7 +49,12 @@ export const objectToFeature = (object) => {
 
   return createFeature(object.id, object.position, {
     icon: `${coalition}-${iconType}-${pilot}`,
+    sortKey: getSortKey(object),
   });
+};
+
+export const updateObjectFeature = (feature, { position }) => {
+  feature.geometry.coordinates = [position.long, position.lat];
 };
 
 export const airbaseToFeature = (airbase) => {
@@ -50,16 +67,4 @@ export const airbaseToFeature = (airbase) => {
     icon: `${coalition}-${category}`,
     rotation,
   });
-};
-
-export const getObjectLayer = (object) => {
-  if (
-    object.type === 'Unit' &&
-    (object.attributes.includes('Fixed') ||
-      object.attributes.includes('Rotary'))
-  ) {
-    return 'objects-air';
-  }
-
-  return 'objects-earthbound';
 };

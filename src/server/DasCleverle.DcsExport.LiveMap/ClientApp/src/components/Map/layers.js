@@ -1,13 +1,8 @@
 export const layers = {
-  'objects-earthbound': {
-    layout: {
-      'icon-size': 0.85,
-    },
-  },
-
-  'objects-air': {
+  objects: {
     layout: {
       'icon-size': 0.7,
+      'symbol-sort-key': ['get', 'sortKey'],
     },
   },
 
@@ -65,7 +60,7 @@ export const addLayer = (layers, map, name, options) => {
   });
 
   layer.source = map.getSource(name);
-  layers.current[name] = layer;
+  layers[name] = layer;
 
   map.on('mouseenter', name, (event) => {
     event.target.getCanvas().style.cursor = 'pointer';
@@ -76,24 +71,38 @@ export const addLayer = (layers, map, name, options) => {
   });
 };
 
-export const updateMap = (layers, data, getLayerName, getFeature) => {
-  for (let item of Object.values(data)) {
-    const layer = layers.current[getLayerName(item)];
+export const updateMap = (layer, data, createFeature, updateFeature) => {
+  if (!layer) {
+    return;
+  }
 
-    if (!layer) {
-      return;
+  const items = Object.values(data);
+
+  if (layer.features.features.length !== items.length) {
+    const features = Array.from(layer.features.features);
+
+    for (let i = 0; i < features.length; i++) {
+      const { id } = features[i];
+      const item = data[id];
+
+      if (!item) {
+        delete layer.featuresById[id];
+        layer.features.features.splice(i, 1);
+      }
     }
+  }
 
+  for (let item of items) {
     let feature = layer.featuresById[item.id];
 
     if (!feature) {
-      feature = getFeature(item);
+      feature = createFeature(item);
       layer.featuresById[item.id] = feature;
       layer.features.features.push(feature);
+    } else if (updateFeature) {
+      updateFeature(feature, item);
     }
   }
 
-  for (let layer of Object.values(layers.current)) {
-    layer.source.setData(layer.features);
-  }
+  layer.source.setData(layer.features);
 };

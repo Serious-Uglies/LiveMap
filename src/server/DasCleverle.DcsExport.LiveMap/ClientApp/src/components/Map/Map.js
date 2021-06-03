@@ -1,12 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useAsyncEffect from 'use-async-effect';
 import mapboxgl from 'mapbox-gl';
 import { getMapboxConfig } from '../../api/config';
-import { getLiveState } from '../../api/liveState';
+import { connect } from '../../api/liveState';
 
-import { load } from '../../store/liveState';
-import { airbaseToFeature, getObjectLayer, objectToFeature } from './features';
+import {
+  airbaseToFeature,
+  objectToFeature,
+  updateObjectFeature,
+} from './features';
 import { addLayer, updateMap, layers } from './layers';
 import { theatres } from './theatres';
 
@@ -48,23 +51,24 @@ export function Map() {
 
     map.current.on('load', async () => {
       for (let [name, options] of Object.entries(layers)) {
-        addLayer(layersRef, map.current, name, options);
+        addLayer(layersRef.current, map.current, name, options);
       }
 
-      const liveState = await getLiveState();
-
-      if (liveState) {
-        dispatch(load(liveState));
-      }
+      dispatch(connect());
     });
   }, []);
 
   useEffect(() => {
-    updateMap(layersRef, airbases, () => 'airbases', airbaseToFeature);
+    updateMap(layersRef.current['airbases'], airbases, airbaseToFeature);
   }, [airbases]);
 
   useEffect(() => {
-    updateMap(layersRef, objects, getObjectLayer, objectToFeature);
+    updateMap(
+      layersRef.current['objects'],
+      objects,
+      objectToFeature,
+      updateObjectFeature
+    );
   }, [objects]);
 
   useEffect(() => {
@@ -72,8 +76,10 @@ export function Map() {
       return;
     }
 
-    map.current.setCenter(theatre.center);
-    map.current.setZoom(theatre.zoom);
+    if (theatre) {
+      map.current.setCenter(theatre.center);
+      map.current.setZoom(theatre.zoom);
+    }
   }, [theatre]);
 
   return <div ref={mapContainer} className="map"></div>;

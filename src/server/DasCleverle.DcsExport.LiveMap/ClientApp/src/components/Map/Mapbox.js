@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useAsyncEffect from 'use-async-effect';
-import mapboxgl from 'mapbox-gl';
+import mapboxgl from 'mapbox-gl/dist/mapbox-gl-dev';
 import { getMapboxConfig } from '../../api/config';
 import { connect } from '../../api/liveState';
 
@@ -15,7 +15,7 @@ import { theatres } from './theatres';
 
 import './Mapbox.css';
 
-export function Mapbox() {
+export function Mapbox({ onClick }) {
   const dispatch = useDispatch();
   const airbases = useSelector((state) => state.liveState.airbases);
   const objects = useSelector((state) => state.liveState.objects);
@@ -51,7 +51,7 @@ export function Mapbox() {
 
     map.current.on('load', async () => {
       for (let [name, options] of Object.entries(layers)) {
-        addLayer(layersRef.current, map.current, name, options);
+        addLayer(layersRef.current, map.current, name, options, onClick);
       }
 
       dispatch(connect());

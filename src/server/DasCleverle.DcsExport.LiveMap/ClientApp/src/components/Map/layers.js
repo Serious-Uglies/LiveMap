@@ -1,3 +1,6 @@
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Popup } from 'mapbox-gl';
+
 export const layers = {
   objects: {
     layout: {
@@ -32,7 +35,7 @@ export const layers = {
   },
 };
 
-export const addLayer = (layers, map, name, options) => {
+export const addLayer = (layers, map, name, options, onClick) => {
   const layer = {
     name: name,
     features: {
@@ -69,6 +72,32 @@ export const addLayer = (layers, map, name, options) => {
   map.on('mouseleave', name, (event) => {
     event.target.getCanvas().style.cursor = '';
   });
+
+  if (onClick) {
+    map.on('click', (event) => {
+      const features = event.target.queryRenderedFeatures(event.point, {
+        layers: [name],
+      });
+
+      const popup = onClick(map, name, features, event);
+
+      if (!popup) {
+        return;
+      }
+
+      const lng =
+        features.reduce((s, f) => s + f.geometry.coordinates[0], 0) /
+        features.length;
+
+      const lat =
+        features.reduce((s, f) => s + f.geometry.coordinates[1], 0) /
+        features.length;
+
+      const popupHTML = renderToStaticMarkup(popup);
+
+      new Popup().setLngLat([lng, lat]).setHTML(popupHTML).addTo(event.target);
+    });
+  }
 };
 
 export const updateMap = (layer, data, createFeature, updateFeature) => {
@@ -79,8 +108,10 @@ export const updateMap = (layer, data, createFeature, updateFeature) => {
   const featuresToKeep = [];
 
   for (let feature of layer.features.features) {
-    if (!data[feature.id]) {
-      delete layer.featuresById[feature.id];
+    const id = feature.properties.id;
+
+    if (!data[id]) {
+      delete layer.featuresById[id];
       continue;
     }
 

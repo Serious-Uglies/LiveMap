@@ -2,7 +2,10 @@ const createFeature = (id, position, properties) => {
   return {
     type: 'Feature',
     id,
-    properties,
+    properties: {
+      ...properties,
+      id,
+    },
     geometry: {
       type: 'Point',
       coordinates: [position.long, position.lat],

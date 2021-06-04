@@ -53,12 +53,17 @@ export function Map() {
     [store]
   );
 
+  const handleAirbaseCardDismiss = () => setAirbase(null);
+
   return (
     <>
       <Mapbox onClick={handleMapClick} />
       <Sidebar>
         <MissionSidebarCard />
-        <AirbaseSidebarCard airbase={selectedAirbase} />
+        <AirbaseSidebarCard
+          airbase={selectedAirbase}
+          onDismiss={handleAirbaseCardDismiss}
+        />
       </Sidebar>
     </>
   );

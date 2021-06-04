@@ -31,7 +31,7 @@ function Runways({ airbase }) {
   );
 }
 
-export function AirbaseSidebarCard({ airbase }) {
+export function AirbaseSidebarCard({ airbase, onDismiss }) {
   const airbaseProperties = airbase && [
     { title: 'Name', value: airbase.name },
     {
@@ -75,11 +75,12 @@ export function AirbaseSidebarCard({ airbase }) {
   ];
 
   return (
-    airbase && (
-      <SidebarCard
-        title="Ausgewähltes Airfield"
-        properties={airbaseProperties}
-      />
-    )
+    <SidebarCard
+      title="Ausgewähltes Airfield"
+      properties={airbaseProperties}
+      dismissable
+      visible={!!airbase}
+      onDismiss={onDismiss}
+    />
   );
 }

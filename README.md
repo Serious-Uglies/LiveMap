@@ -8,7 +8,7 @@ Also included is a Live Map implemented in C# using ASP<span>.NET</span> Core th
 ### TCP Export
 
 1. Install the latest version of [injector](https://github.com/Serious-Uglies/Injector).
-1. Unsanitize the DCS Mission Scripting environment.
+2. Unsanitize the DCS Mission Scripting environment.
     * Comment out the following lines to the end of the file `<DCS-ROOT>\Scripts\MissionScripting.lua`.
     ```lua
     ...
@@ -24,9 +24,9 @@ Also included is a Live Map implemented in C# using ASP<span>.NET</span> Core th
         loadlib = nil
     end
     ```
-1. Download the latest release from the releases section.
-1. Drop the contents of the release ZIP archive into your DCS Saved Games folder. This folder should be found here: `C:\Users\<YOUR-NAME>\Saved Games\DCS` for the stable version or `C:\Users\<YOUR-NAME>\Saved Games\DCS.openbeta` for the Open Beta.
-1. Launch DCS and start a mission. If everything worked, the DCS log file should contain something like the following lines:
+3. Download the latest release from the releases section.
+4. Drop the contents of the release ZIP archive into your DCS Saved Games folder. This folder should be found here: `C:\Users\<YOUR-NAME>\Saved Games\DCS` for the stable version or `C:\Users\<YOUR-NAME>\Saved Games\DCS.openbeta` for the Open Beta.
+5. Launch DCS and start a mission. If everything worked, the DCS log file should contain something like the following lines:
     ```
     2021-06-02 22:31:29.914 INFO    INJECTOR: Loading module TcpExport
     2021-06-02 22:31:29.914 INFO    INJECTOR: Loading C:/Users/<NAME>/Saved Games/DCS.server/Scripts/Inject/TcpExport/hook.lua into hook environment
@@ -37,13 +37,13 @@ Also included is a Live Map implemented in C# using ASP<span>.NET</span> Core th
 
 ### Live Map
 
-As mentioned above, the Live Map is an ASP<span>.NET</span> Core app. Microsoft recommends to use a reverse proxy to host such apps. On Windows IIS Server is recommended. The following steps outline how to setup hosting the Live Map with IIS.
+As mentioned above, the Live Map is an ASP<span>.NET</span> Core app. Microsoft recommends to use a reverse proxy to host such apps. On Windows the IIS Server is recommended. The following steps outline how to setup hosting the Live Map with IIS.
 
 1. Install the latest .NET 5 ASP<span>.NET</span> Core Hosting Bundle (includes the runtime along with IIS support).
-1. Make sure that the required Windows Features for IIS are activated.
-1. Download and extract the latest release from the releases section.
-1. Create an application in IIS-Manager and point it to the extracted archive.
-1. Open the application. If everything worked a website should open displaying the Live Map.
+2. Make sure that the required Windows Features for IIS are activated.
+3. Download and extract the latest release from the releases section.
+4. Create an application in IIS-Manager and point it to the extracted archive.
+5. Open the application. If everything worked a website should open displaying the Live Map.
 
 ## Configuration
 
@@ -184,7 +184,7 @@ The Live Map uses the default `appsettings.json` configuration known from .NET. 
   // Default value: pk.eyJ1IjoiZGFzY2xldmVybGUiLCJhIjoiY2tvMzRsZzNnMDZ2ajJwbzBva3l3am54dCJ9.zCFL46P4HkpX4AT7idTU2w
   "MapboxToken": "pk.eyJ1IjoiZGFzY2xldmVybGUiLCJhIjoiY2tvMzRsZzNnMDZ2ajJwbzBva3l3am54dCJ9.zCFL46P4HkpX4AT7idTU2w",
 
-  // The the mapbox style to use for the map
+  // The mapbox style to use for the map
   // Default value: mapbox://styles/dascleverle/cko5q98k62fvv18lj5jln6inl
   "MapboxStyle": "mapbox://styles/dascleverle/cko5q98k62fvv18lj5jln6inl",
 
@@ -218,8 +218,8 @@ The Live Map uses the default `appsettings.json` configuration known from .NET. 
 For development it is very convenient to setup a symbolic link for the TCP Export:
 
 1. Clone the repository
-1. In a administrative PowerShell prompt navigate to the repository directory
-1. Invoke the following commands to create an symbolic link into your DCS Saved Games directory
+2. In a administrative PowerShell prompt navigate to the repository directory
+3. Invoke the following commands to create an symbolic link into your DCS Saved Games directory
     ```powershell
     # Stable 
     New-Item -Type Directory -Path "$env:USERPROFILE\Saved Games\DCS\Scripts\Inject"
@@ -229,7 +229,7 @@ For development it is very convenient to setup a symbolic link for the TCP Expor
     New-Item -Type Directory -Path "$env:USERPROFILE\Saved Games\DCS.openbeta\Scripts\Inject"
     New-Item -Type SymbolicLink -Path "$env:USERPROFILE\Saved Games\DCS.openbeta\Scripts\Inject\TcpExport" -Target ".\dcs\Scripts\Inject\TcpExport"
     ``` 
-1. Now you can edit the files in the git repository and the changes will be mirrored to your DCS Saved Games directory
+4. Now you can edit the files in the git repository and the changes will be mirrored to your DCS Saved Games directory
 
 TIP: It is not required to restart DCS after changes to the lua files because the files are loaded at mission init. Only restart of the mission is required.
 

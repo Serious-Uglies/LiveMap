@@ -6,20 +6,20 @@ import { getMapboxConfig } from '../../api/config';
 import { connect } from '../../api/liveState';
 
 import {
-  airbaseToFeature,
-  objectToFeature,
+  createAirbaseFeature,
+  createObjectFeature,
   updateObjectFeature,
 } from './features';
 import { addLayer, updateMap, layers } from './layers';
 import { theatres } from './theatres';
 
-import './Map.css';
+import './Mapbox.css';
 
-export function Map() {
+export function Mapbox() {
   const dispatch = useDispatch();
   const airbases = useSelector((state) => state.liveState.airbases);
   const objects = useSelector((state) => state.liveState.objects);
-  const theatre = useSelector((state) => theatres[state.liveState.theatre]);
+  const theatreName = useSelector((state) => state.liveState.theatre);
 
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -59,28 +59,28 @@ export function Map() {
   }, []);
 
   useEffect(() => {
-    updateMap(layersRef.current['airbases'], airbases, airbaseToFeature);
+    updateMap(layersRef.current['airbases'], airbases, createAirbaseFeature);
   }, [airbases]);
 
   useEffect(() => {
     updateMap(
       layersRef.current['objects'],
       objects,
-      objectToFeature,
+      createObjectFeature,
       updateObjectFeature
     );
   }, [objects]);
 
   useEffect(() => {
-    if (!map.current) {
+    if (!map.current || !theatreName) {
       return;
     }
 
-    if (theatre) {
-      map.current.setCenter(theatre.center);
-      map.current.setZoom(theatre.zoom);
-    }
-  }, [theatre]);
+    const theatre = theatres[theatreName];
+
+    map.current.setCenter(theatre.center);
+    map.current.setZoom(theatre.zoom);
+  }, [theatreName]);
 
   return <div ref={mapContainer} className="map"></div>;
 }

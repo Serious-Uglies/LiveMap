@@ -76,23 +76,20 @@ export const updateMap = (layer, data, createFeature, updateFeature) => {
     return;
   }
 
-  const items = Object.values(data);
+  const featuresToKeep = [];
 
-  if (layer.features.features.length !== items.length) {
-    const features = Array.from(layer.features.features);
-
-    for (let i = 0; i < features.length; i++) {
-      const { id } = features[i];
-      const item = data[id];
-
-      if (!item) {
-        delete layer.featuresById[id];
-        layer.features.features.splice(i, 1);
-      }
+  for (let feature of layer.features.features) {
+    if (!data[feature.id]) {
+      delete layer.featuresById[feature.id];
+      continue;
     }
+
+    featuresToKeep.push(feature);
   }
 
-  for (let item of items) {
+  layer.features.features = featuresToKeep;
+
+  for (let item of Object.values(data)) {
     let feature = layer.featuresById[item.id];
 
     if (!feature) {

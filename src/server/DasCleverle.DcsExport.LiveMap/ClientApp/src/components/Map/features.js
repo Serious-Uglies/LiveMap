@@ -42,7 +42,7 @@ const getSortKey = (object) => {
   return 0;
 };
 
-export const objectToFeature = (object) => {
+export const createObjectFeature = (object) => {
   const coalition = object.coalition.toLowerCase();
   const iconType = getIconType(object);
   const pilot = object.player ? 'player' : 'ai';
@@ -57,7 +57,7 @@ export const updateObjectFeature = (feature, { position }) => {
   feature.geometry.coordinates = [position.long, position.lat];
 };
 
-export const airbaseToFeature = (airbase) => {
+export const createAirbaseFeature = (airbase) => {
   const coalition = airbase.coalition.toLowerCase();
   const category = airbase.category.toLowerCase();
   const rotation = airbase.runways[0] ? airbase.runways[0].course : 0;

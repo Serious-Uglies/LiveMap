@@ -1,14 +1,14 @@
 import React from 'react';
 import { Route } from 'react-router';
 import { Layout } from './components/Layout/Layout';
-import { Mapbox } from './components/Map/Mapbox';
+import { Map } from './components/Map/Map';
 
 import './App.css';
 
 export default function App() {
   return (
     <Layout>
-      <Route exact path="/" component={Mapbox} />
+      <Route exact path="/" component={Map} />
     </Layout>
   );
 }

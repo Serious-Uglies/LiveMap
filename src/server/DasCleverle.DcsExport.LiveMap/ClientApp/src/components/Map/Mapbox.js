@@ -4,6 +4,7 @@ import useAsyncEffect from 'use-async-effect';
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl-dev';
 import { getMapboxConfig } from '../../api/config';
 import { connect } from '../../api/liveState';
+import { setPhase } from '../../store/liveState';
 
 import {
   createAirbaseFeature,
@@ -26,6 +27,8 @@ export default function Mapbox({ onClick }) {
   const layersRef = useRef({});
 
   useAsyncEffect(async () => {
+    dispatch(setPhase('loading'));
+
     const { mapboxToken, mapboxStyle } = await getMapboxConfig();
 
     if (!mapboxToken) {

@@ -16,8 +16,8 @@ export default function SidebarCard({
       <Card.Header>
         {title}
         {dismissable && (
-          <div class="float-end">
-            <button class="btn-close" onClick={onDismiss}></button>
+          <div className="float-end">
+            <button className="btn-close" onClick={onDismiss}></button>
           </div>
         )}
       </Card.Header>

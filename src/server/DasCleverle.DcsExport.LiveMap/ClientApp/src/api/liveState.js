@@ -2,12 +2,10 @@ import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import {
   addAirbase,
   addObject,
-  setConnected,
   end,
   init,
   removeObject,
-  setError,
-  setLoading,
+  setPhase,
   updateObject,
   updateTime,
 } from '../store/liveState';
@@ -16,7 +14,7 @@ const stateEndpoint = '/api/state';
 const hubEndpoint = '/hub/livemap';
 
 const eventActionMap = {
-  Init: init,
+  Init: (payload) => init({ ...payload, isRunning: true }),
   MissionEnd: end,
   Time: updateTime,
   AddObject: addObject,
@@ -43,12 +41,12 @@ export const connect = () => async (dispatch, getState) => {
   connection.onreconnecting(handleReconnecting(dispatch));
   connection.onreconnected(handleReconnected(dispatch));
 
-  dispatch(setLoading(true));
+  dispatch(setPhase('loading'));
 
   const liveState = await getLiveState(dispatch);
 
   if (!liveState) {
-    dispatch(setError(true));
+    dispatch(setPhase('error'));
     return;
   }
 
@@ -56,12 +54,10 @@ export const connect = () => async (dispatch, getState) => {
 
   try {
     await connection.start();
-    dispatch(setConnected(true));
+    dispatch(setPhase('loaded'));
   } catch (err) {
     console.log(err);
-    dispatch(setError(true));
-  } finally {
-    dispatch(setLoading(false));
+    dispatch(setPhase('error'));
   }
 };
 
@@ -88,16 +84,13 @@ const handleEvent =
   };
 
 const handleConnectionClosed = (dispatch) => () => {
-  dispatch(setConnected(false));
-  dispatch(setError(true));
+  dispatch(setPhase('error'));
 };
 
 const handleReconnecting = (dispatch) => () => {
-  dispatch(setLoading(true));
-  dispatch(setConnected(false));
+  dispatch(setPhase('reconnecting'));
 };
 
 const handleReconnected = (dispatch) => () => {
-  dispatchEvent(setLoading(false));
-  dispatchEvent(setConnected(true));
+  dispatch(setPhase('loaded'));
 };

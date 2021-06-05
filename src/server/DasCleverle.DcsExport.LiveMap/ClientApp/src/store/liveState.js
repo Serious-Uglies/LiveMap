@@ -1,10 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  isLoading: false,
-  isConnected: false,
-  hasError: false,
-
+  phase: null,
   isRunning: false,
   objects: {},
   airbases: {},
@@ -29,29 +26,21 @@ export const liveStateSlice = createSlice({
   name: 'liveState',
   initialState: { ...initialState },
   reducers: {
-    setLoading: (state, { payload }) => {
-      state.isLoading = payload;
-    },
-
-    setConnected: (state, { payload }) => {
-      state.isConnected = payload;
-    },
-
-    setError: (state, { payload }) => {
-      state.hasError = payload;
+    setPhase: (state, { payload }) => {
+      state.phase = payload;
     },
 
     init: (state, { payload }) => {
-      state.isRunning = payload.isRunning;
-      state.missionName = payload.missionName;
-      state.theatre = payload.theatre;
-      state.mapCenter = payload.mapCenter;
-      state.objects = arrayToObject(payload.objects, (o) => o.id) || {};
-      state.airbases = arrayToObject(payload.airbases, (o) => o.id) || {};
+      Object.assign(state, {
+        ...payload,
+        phase: state.phase,
+        objects: arrayToObject(payload.objects, (o) => o.id) || {},
+        airbases: arrayToObject(payload.airbases, (o) => o.id) || {},
+      });
     },
 
     end: (state) => {
-      Object.assign(state, { ...initialState });
+      Object.assign(state, { ...initialState, phase: state.phase });
     },
 
     updateTime: (state, { payload: { time } }) => {
@@ -95,9 +84,7 @@ export const liveStateSlice = createSlice({
 });
 
 export const {
-  setLoading,
-  setError,
-  setConnected,
+  setPhase,
   init,
   end,
   updateTime,

@@ -1,10 +1,16 @@
 import React, { useCallback, useState } from 'react';
-import { useStore } from 'react-redux';
+import { useSelector, useStore } from 'react-redux';
+
+import Alert from 'react-bootstrap/Alert';
+import Spinner from 'react-bootstrap/Spinner';
 
 import Mapbox from './Mapbox';
 import Sidebar from './Sidebar/Sidebar';
 import MissionSidebarCard from './Sidebar/MissionSidebarCard';
 import AirbaseSidebarCard from './Sidebar/AirbaseSidebarCard';
+import Backdrop from './Backdrop';
+
+import './Map.css';
 
 const ObjectPopup = ({ selectedObjects }) => {
   return (
@@ -22,6 +28,8 @@ const ObjectPopup = ({ selectedObjects }) => {
 export default function Map() {
   const store = useStore();
   const [selectedAirbase, setAirbase] = useState(null);
+  const phase = useSelector((state) => state.liveState.phase);
+  const isRunning = useSelector((state) => state.liveState.isRunning);
 
   const handleMapClick = useCallback(
     (map, layer, features) => {
@@ -55,16 +63,42 @@ export default function Map() {
 
   const handleAirbaseCardDismiss = () => setAirbase(null);
 
+  const showBackdrop = phase !== 'loaded' || !isRunning;
+
   return (
     <>
       <Mapbox onClick={handleMapClick} />
-      <Sidebar>
-        <MissionSidebarCard />
-        <AirbaseSidebarCard
-          airbase={selectedAirbase}
-          onDismiss={handleAirbaseCardDismiss}
-        />
-      </Sidebar>
+      {!showBackdrop && (
+        <Sidebar>
+          <MissionSidebarCard />
+          <AirbaseSidebarCard
+            airbase={selectedAirbase}
+            onDismiss={handleAirbaseCardDismiss}
+          />
+        </Sidebar>
+      )}
+      <Backdrop show={showBackdrop}>
+        {(phase === 'loading' || phase === 'reconnecting') && (
+          <Spinner animation="border" className="backdrop-spinner" />
+        )}
+        {phase === 'reconnecting' && (
+          <Alert variant="danger" className="mt-2">
+            Die Verbindung zum Server ist abgebrochen. Versuche erneute
+            Verbindung ...
+          </Alert>
+        )}
+        {phase === 'error' && (
+          <Alert variant="danger">
+            Die Verbindung konnte nicht hergestellt werden.
+          </Alert>
+        )}
+        {phase === 'loaded' && !isRunning && (
+          <Alert variant="info">
+            Aktuell läuft keine Mission. Schau später noch einmal vorbei, oder
+            bitte jemanden eine Mission zu starten.
+          </Alert>
+        )}
+      </Backdrop>
     </>
   );
 }

@@ -6,7 +6,7 @@ import Nav from 'react-bootstrap/Nav';
 
 import './Navigation.css';
 
-export function Navigation() {
+export default function Navigation() {
   return (
     <header>
       <Navbar bg="light" expand="lg">

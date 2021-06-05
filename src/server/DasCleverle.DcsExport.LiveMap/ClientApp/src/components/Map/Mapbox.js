@@ -15,7 +15,7 @@ import { theatres } from './theatres';
 
 import './Mapbox.css';
 
-export function Mapbox({ onClick }) {
+export default function Mapbox({ onClick }) {
   const dispatch = useDispatch();
   const airbases = useSelector((state) => state.liveState.airbases);
   const objects = useSelector((state) => state.liveState.objects);

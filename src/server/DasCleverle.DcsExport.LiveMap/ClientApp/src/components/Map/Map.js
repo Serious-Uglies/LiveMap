@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import { useStore } from 'react-redux';
 
-import { Mapbox } from './Mapbox';
-import { Sidebar } from './Sidebar/Sidebar';
-import { MissionSidebarCard } from './Sidebar/MissionSidebarCard';
-import { AirbaseSidebarCard } from './Sidebar/AirbaseSidebarCard';
+import Mapbox from './Mapbox';
+import Sidebar from './Sidebar/Sidebar';
+import MissionSidebarCard from './Sidebar/MissionSidebarCard';
+import AirbaseSidebarCard from './Sidebar/AirbaseSidebarCard';
 
 const ObjectPopup = ({ selectedObjects }) => {
   return (
@@ -19,7 +19,7 @@ const ObjectPopup = ({ selectedObjects }) => {
   );
 };
 
-export function Map() {
+export default function Map() {
   const store = useStore();
   const [selectedAirbase, setAirbase] = useState(null);
 

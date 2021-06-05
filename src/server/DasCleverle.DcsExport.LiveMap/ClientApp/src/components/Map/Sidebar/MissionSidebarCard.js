@@ -1,9 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { theatres } from '../theatres';
-import { SidebarCard } from './SidebarCard';
 
-export function MissionSidebarCard() {
+import SidebarCard from './SidebarCard';
+
+import { theatres } from '../theatres';
+
+export default function MissionSidebarCard() {
   const timeFormat = useSelector((state) => {
     const theatre = state.liveState.theatre;
     if (!theatre) {

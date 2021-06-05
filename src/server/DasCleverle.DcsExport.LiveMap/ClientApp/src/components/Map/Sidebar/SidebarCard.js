@@ -1,6 +1,6 @@
 import Card from 'react-bootstrap/Card';
 
-export function SidebarCard({
+export default function SidebarCard({
   title,
   properties,
   visible = true,

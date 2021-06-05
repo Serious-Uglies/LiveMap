@@ -1,7 +1,7 @@
 import React from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import { SidebarCard } from './SidebarCard';
+import SidebarCard from './SidebarCard';
 
 import { formatFrequency } from './util';
 
@@ -35,7 +35,7 @@ function Runways({ airbase }) {
   );
 }
 
-export function AirbaseSidebarCard({ airbase, onDismiss }) {
+export default function AirbaseSidebarCard({ airbase, onDismiss }) {
   const airbaseProperties = airbase && [
     { title: 'Name', value: airbase.name },
     {

@@ -1,21 +1,28 @@
-import React, { useCallback, useState } from 'react';
-import { useSelector, useStore } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Popup } from 'react-map-gl';
 
 import Alert from 'react-bootstrap/Alert';
 import Spinner from 'react-bootstrap/Spinner';
 
-import Mapbox from './Mapbox';
+import Mapbox from './Mapbox/Mapbox';
 import Sidebar from './Sidebar/Sidebar';
 import MissionSidebarCard from './Sidebar/MissionSidebarCard';
 import AirbaseSidebarCard from './Sidebar/AirbaseSidebarCard';
 import Backdrop from './Backdrop';
 
-import './Map.css';
+import { connect } from '../../api/liveState';
+import { useViewport } from './hooks';
+import layers from './layers';
 
-const ObjectPopup = ({ selectedObjects }) => {
+import './Map.css';
+import { createSelector } from 'reselect';
+import liveState from '../../store/liveState';
+
+const ObjectPopup = ({ objects }) => {
   return (
     <div className="mt-2">
-      {selectedObjects.map((o) => (
+      {objects.map((o) => (
         <div className="mt-1" key={o.id}>
           <strong>{o.typeName}</strong>
           <div>{o.name}</div>
@@ -25,54 +32,91 @@ const ObjectPopup = ({ selectedObjects }) => {
   );
 };
 
+const layersSelector = createSelector(
+  (state) => state.liveState,
+  (liveState) =>
+    layers.map((layer) => ({
+      ...layer,
+      data: layer.getData(liveState),
+    }))
+);
+
 export default function Map() {
-  const store = useStore();
-  const [selectedAirbase, setAirbase] = useState(null);
+  const dispatch = useDispatch();
+
+  useEffect(() => dispatch(connect()), [dispatch]);
+
+  const [viewport, setViewport] = useViewport();
+  const layers = useSelector(layersSelector);
+
   const phase = useSelector((state) => state.liveState.phase);
   const isRunning = useSelector((state) => state.liveState.isRunning);
+  const objects = useSelector((state) => state.liveState.objects);
+  const airbases = useSelector((state) => state.liveState.airbases);
 
-  const handleMapClick = useCallback(
-    (map, layer, features) => {
-      const {
-        liveState: { airbases, objects },
-      } = store.getState();
+  const [objectPopup, setObjectPopup] = useState({ show: false });
+  const [airbase, setAirbase] = useState();
 
-      switch (layer) {
-        case 'airbases':
-          if (features.length === 0) {
-            setAirbase(null);
-          } else {
-            setAirbase(airbases[features[0].properties.id]);
-          }
-          break;
+  const handleMapClick = (event) => {
+    const objectFeatures = event.features.filter(
+      (f) => f.layer.id === 'objects'
+    );
 
-        case 'objects':
-          const selectedObjects = features.map((f) => objects[f.properties.id]);
-          if (selectedObjects.length === 0) {
-            return null;
-          }
+    if (objectFeatures.length) {
+      const selectedObjects = objectFeatures.map(
+        (f) => objects[f.properties.id]
+      );
 
-          return <ObjectPopup selectedObjects={selectedObjects} />;
+      const longitude =
+        objectFeatures.reduce((s, f) => s + f.geometry.coordinates[0], 0) /
+        objectFeatures.length;
 
-        default:
-          break;
-      }
-    },
-    [store]
-  );
+      const latitude =
+        objectFeatures.reduce((s, f) => s + f.geometry.coordinates[1], 0) /
+        objectFeatures.length;
 
+      const props = { longitude, latitude };
+
+      setObjectPopup({ objects: selectedObjects, props, show: true });
+    }
+
+    const selectedAirbase = event.features.find(
+      (f) => f.layer.id === 'airbases'
+    );
+
+    if (selectedAirbase) {
+      setAirbase(airbases[selectedAirbase.properties.id]);
+    }
+  };
+
+  const handleObjectPopupDismiss = () => setObjectPopup({ show: false });
   const handleAirbaseCardDismiss = () => setAirbase(null);
 
   const showBackdrop = phase !== 'loaded' || !isRunning;
 
   return (
     <>
-      <Mapbox onClick={handleMapClick} />
+      <Mapbox
+        onClick={handleMapClick}
+        viewport={viewport}
+        onViewportChange={setViewport}
+        interactiveLayerIds={layers.map((l) => l.id)}
+      >
+        {objectPopup.show && (
+          <Popup {...objectPopup.props} onClose={handleObjectPopupDismiss}>
+            <ObjectPopup objects={objectPopup.objects} />
+          </Popup>
+        )}
+
+        {layers.map((layer) => (
+          <Mapbox.Layer key={layer.id} {...layer} />
+        ))}
+      </Mapbox>
       {!showBackdrop && (
         <Sidebar>
           <MissionSidebarCard />
           <AirbaseSidebarCard
-            airbase={selectedAirbase}
+            airbase={airbase}
             onDismiss={handleAirbaseCardDismiss}
           />
         </Sidebar>

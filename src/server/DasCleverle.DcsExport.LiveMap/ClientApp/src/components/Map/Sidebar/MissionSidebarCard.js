@@ -3,8 +3,6 @@ import { useSelector } from 'react-redux';
 
 import SidebarCard from './SidebarCard';
 
-import { theatres } from '../theatres';
-
 export default function MissionSidebarCard() {
   const timeFormat = useSelector((state) => {
     const theatre = state.liveState.theatre;
@@ -19,7 +17,6 @@ export default function MissionSidebarCard() {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      timeZone: theatres[theatre].timeZone,
     });
   });
 

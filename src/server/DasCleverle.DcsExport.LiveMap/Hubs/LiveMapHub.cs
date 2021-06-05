@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using DasCleverle.DcsExport.Listener.Model;
@@ -12,7 +13,7 @@ namespace DasCleverle.DcsExport.LiveMap.Hubs
 
     public class SendEventRequest
     {
-        public IExportEvent Event { get; init; }
+        public IEnumerable<IExportEvent> Events { get; init; }
     }
 
     public class LiveMapHub : Hub<ILiveMapHub> { }

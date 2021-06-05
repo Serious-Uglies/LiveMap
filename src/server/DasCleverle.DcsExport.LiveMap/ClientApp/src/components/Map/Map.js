@@ -17,7 +17,6 @@ import layers from './layers';
 
 import './Map.css';
 import { createSelector } from 'reselect';
-import liveState from '../../store/liveState';
 
 const ObjectPopup = ({ objects }) => {
   return (

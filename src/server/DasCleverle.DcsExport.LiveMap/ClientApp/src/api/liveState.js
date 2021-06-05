@@ -14,7 +14,7 @@ const stateEndpoint = '/api/state';
 const hubEndpoint = '/hub/livemap';
 
 const eventActionMap = {
-  Init: (payload) => init({ ...payload, isRunning: true }),
+  Init: (payload) => init({ ...payload[0], isRunning: true }),
   MissionEnd: end,
   Time: updateTime,
   AddObject: addObject,
@@ -72,15 +72,30 @@ const getLiveState = async () => {
 
 const handleEvent =
   (dispatch) =>
-  ({ event: { event, payload } }) => {
-    const action = eventActionMap[event];
+  ({ events }) => {
+    const perEvent = events.reduce((prev, { event, payload }) => {
+      let payloads = prev[event];
 
-    if (!action) {
-      console.log(`Unhandled event: ${event}, payload: `, payload);
-      return;
+      if (!payloads) {
+        payloads = [];
+        prev[event] = payloads;
+      }
+
+      payloads.push(payload);
+
+      return prev;
+    }, {});
+
+    for (let [event, payloads] of Object.entries(perEvent)) {
+      const action = eventActionMap[event];
+
+      if (!action) {
+        console.log(`Unhandled event: ${event}, payload: `, payloads);
+        return;
+      }
+
+      dispatch(action(payloads));
     }
-
-    dispatch(action(payload));
   };
 
 const handleConnectionClosed = (dispatch) => () => {

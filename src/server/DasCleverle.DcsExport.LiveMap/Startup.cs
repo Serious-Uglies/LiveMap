@@ -49,7 +49,9 @@ namespace DasCleverle.DcsExport.LiveMap
             services.Configure<MapboxOptions>(Configuration);
             services.AddDcsExportListener(Configuration.GetSection("ExportListener"));
 
-            services.AddTransient<IExportEventHandler, HubExportEventHandler>();
+            services.AddSingleton<HubExportEventHandler>();
+            services.AddTransient<IExportEventHandler>(sp => sp.GetRequiredService<HubExportEventHandler>());
+            services.AddHostedService(sp => sp.GetRequiredService<HubExportEventHandler>());
 
             services.AddSingleton<ILiveState, LiveState>();
             services.AddTransient<IWriteableLiveState>(sp => (IWriteableLiveState)sp.GetService<ILiveState>());

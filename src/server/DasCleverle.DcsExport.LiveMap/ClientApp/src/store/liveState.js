@@ -22,6 +22,8 @@ const arrayToObject = (array, getIndex) => {
   }, {});
 };
 
+const last = (array) => array[array.length - 1];
+
 export const liveStateSlice = createSlice({
   name: 'liveState',
   initialState: { ...initialState },
@@ -32,7 +34,7 @@ export const liveStateSlice = createSlice({
 
     init: (state, { payload }) => {
       Object.assign(state, {
-        ...payload,
+        ...(last(payload) || payload),
         phase: state.phase,
         objects: arrayToObject(payload.objects, (o) => o.id) || {},
         airbases: arrayToObject(payload.airbases, (o) => o.id) || {},
@@ -43,42 +45,50 @@ export const liveStateSlice = createSlice({
       Object.assign(state, { ...initialState, phase: state.phase });
     },
 
-    updateTime: (state, { payload: { time } }) => {
-      state.time = time;
+    updateTime: (state, { payload }) => {
+      state.time = last(payload).time;
     },
 
     addObject: (state, { payload }) => {
-      if (state.objects[payload.id]) {
-        return;
-      }
+      for (let object of payload) {
+        if (state.objects[object.id]) {
+          continue;
+        }
 
-      state.objects[payload.id] = payload;
+        state.objects[object.id] = object;
+      }
     },
 
     updateObject: (state, { payload }) => {
-      const object = state.objects[payload.id];
+      for (let update of payload) {
+        const object = state.objects[update.id];
 
-      if (!object) {
-        return;
+        if (!object) {
+          continue;
+        }
+
+        Object.assign(object, update);
       }
-
-      Object.assign(object, payload);
     },
 
-    removeObject: (state, { payload: { id } }) => {
-      if (!state.objects[id]) {
-        return;
-      }
+    removeObject: (state, { payload }) => {
+      for (let { id } of payload) {
+        if (!state.objects[id]) {
+          continue;
+        }
 
-      delete state.objects[id];
+        delete state.objects[id];
+      }
     },
 
     addAirbase: (state, { payload }) => {
-      if (state.airbases[payload.id]) {
-        return;
-      }
+      for (let airbase of payload) {
+        if (state.airbases[airbase.id]) {
+          continue;
+        }
 
-      state.airbases[payload.id] = payload;
+        state.airbases[airbase.id] = airbase;
+      }
     },
   },
 });

@@ -7,6 +7,12 @@ import MapboxLayer from './MapboxLayer';
 
 import './Mapbox.css';
 
+const mapOptions = {
+  dragRotate: false,
+  touchZoomRotate: false,
+  touchPitch: false,
+};
+
 function Mapbox({
   children,
   onClick,
@@ -24,6 +30,7 @@ function Mapbox({
   return config ? (
     <MapGL
       {...viewport}
+      asyncRender={true}
       width="100%"
       height="100%"
       onViewportChange={onViewportChange}
@@ -32,6 +39,7 @@ function Mapbox({
       interactiveLayerIds={interactiveLayerIds}
       mapboxApiAccessToken={config.mapboxToken}
       mapStyle={config.mapboxStyle}
+      {...mapOptions}
     >
       {children}
     </MapGL>

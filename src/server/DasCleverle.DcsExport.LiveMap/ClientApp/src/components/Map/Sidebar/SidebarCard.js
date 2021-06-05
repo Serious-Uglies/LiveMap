@@ -1,3 +1,5 @@
+import Card from 'react-bootstrap/Card';
+
 export function SidebarCard({
   title,
   properties,
@@ -10,16 +12,16 @@ export function SidebarCard({
   }
 
   return (
-    <div className="card property-card">
-      <div className="card-header">
+    <Card className="property-card">
+      <Card.Header>
         {title}
         {dismissable && (
           <div class="float-end">
             <button class="btn-close" onClick={onDismiss}></button>
           </div>
         )}
-      </div>
-      <div className="card-body">
+      </Card.Header>
+      <Card.Body>
         {properties.map(
           ({ title, value, format }) =>
             value && (
@@ -29,7 +31,7 @@ export function SidebarCard({
               </div>
             )
         )}
-      </div>
-    </div>
+      </Card.Body>
+    </Card>
   );
 }

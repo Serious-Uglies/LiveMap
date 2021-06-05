@@ -1,5 +1,9 @@
-import { formatFrequency } from './util';
+import React from 'react';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import { SidebarCard } from './SidebarCard';
+
+import { formatFrequency } from './util';
 
 const getILS = (runway, ilss) => ilss.find((i) => i.runway === runway);
 
@@ -24,10 +28,10 @@ function Runways({ airbase }) {
   }
 
   return (
-    <div className="row">
-      <div className="col">{runways.map((r) => renderEdge(r.edge1, ils))}</div>
-      <div className="col">{runways.map((r) => renderEdge(r.edge2, ils))}</div>
-    </div>
+    <Row>
+      <Col>{runways.map((r) => renderEdge(r.edge1, ils))}</Col>
+      <Col>{runways.map((r) => renderEdge(r.edge2, ils))}</Col>
+    </Row>
   );
 }
 

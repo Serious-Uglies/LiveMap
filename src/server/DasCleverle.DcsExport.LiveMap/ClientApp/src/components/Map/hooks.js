@@ -12,24 +12,24 @@ const theatres = {
   },
   Nevada: {
     viewport: {
-      latitude: -115.3220498166852,
-      longitude: 37.959029700616,
+      latitude: 37.959029700616,
+      longitude: -115.3220498166852,
       zoom: 6.66,
     },
     timezone: 'America/Los_Angeles',
   },
   PersianGulf: {
     viewport: {
-      latitude: 55.9127513841311,
-      longitude: 26.872559655101398,
+      latitude: 26.872559655101398,
+      longitude: 55.9127513841311,
       zoom: 6.04,
     },
     timezone: 'Asia/Dubai',
   },
   Syria: {
     viewport: {
-      latitude: 37.71425723879233,
-      longitude: 34.890062119982204,
+      latitude: 34.890062119982204,
+      longitude: 37.71425723879233,
       zoom: 6.37,
     },
     timezone: 'Asia/Damascus',

@@ -47,7 +47,7 @@ export default function AirbaseSidebarCard({ airbase, onDismiss }) {
     },
     {
       title: 'Runways',
-      value: <Runways airbase={airbase} />,
+      value: airbase.runways.length ? <Runways airbase={airbase} /> : null,
     },
     {
       title: 'TACAN',

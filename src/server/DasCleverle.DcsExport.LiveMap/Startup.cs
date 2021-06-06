@@ -8,6 +8,7 @@ using DasCleverle.DcsExport.LiveMap.State;
 using DasCleverle.DcsExport.LiveMap.State.Handlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,8 +27,7 @@ namespace DasCleverle.DcsExport.LiveMap
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages()
-                .AddRazorRuntimeCompilation()
+            services.AddControllers()
                 .AddJsonOptions(json =>
                 {
                     json.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -35,18 +35,26 @@ namespace DasCleverle.DcsExport.LiveMap
                 });
 
             services.AddSignalR()
-                .AddJsonProtocol(options => 
+                .AddJsonProtocol(options =>
                 {
                     options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                     options.PayloadSerializerOptions.Converters.Add(new JsonExportEventConverter());
                 });
 
+            services.AddSpaStaticFiles(spa =>
+            {
+                spa.RootPath = "ClientApp/build";
+            });
+
+            services.Configure<MapboxOptions>(Configuration);
             services.AddDcsExportListener(Configuration.GetSection("ExportListener"));
 
-            services.AddTransient<IExportEventHandler, HubExportEventHandler>();
+            services.AddSingleton<HubExportEventHandler>();
+            services.AddTransient<IExportEventHandler>(sp => sp.GetRequiredService<HubExportEventHandler>());
+            services.AddHostedService(sp => sp.GetRequiredService<HubExportEventHandler>());
 
             services.AddSingleton<ILiveState, LiveState>();
-            services.AddTransient<IWriteableLiveState>(sp => (IWriteableLiveState) sp.GetService<ILiveState>());
+            services.AddTransient<IWriteableLiveState>(sp => (IWriteableLiveState)sp.GetService<ILiveState>());
 
             services.AddTransient<IExportEventHandler<InitPayload>, InitHandler>();
             services.AddTransient<IExportEventHandler<TimePayload>, TimeHandler>();
@@ -73,17 +81,25 @@ namespace DasCleverle.DcsExport.LiveMap
             }
 
             app.UseStaticFiles();
+            app.UseSpaStaticFiles();
 
             app.UseRouting();
 
-            app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
                 endpoints.MapControllers();
 
                 endpoints.MapHub<LiveMapHub>("/hub/livemap");
+            });
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
             });
         }
     }

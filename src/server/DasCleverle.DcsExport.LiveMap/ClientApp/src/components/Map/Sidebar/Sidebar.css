@@ -1,0 +1,26 @@
+.sidebar {
+  position: absolute;
+  width: 450px;
+  padding: var(--bs-gutter-x,.75rem);
+  word-break: break-all;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar > div {
+  margin-bottom: 1rem;
+}
+
+.property-card .card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.property-card .card-body .property-title {
+  font-weight: bold;
+  margin-top: 0.6rem;
+}
+
+.property-card .card-body > .property-title:first-of-type {
+  margin-top: 0;
+}

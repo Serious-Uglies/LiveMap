@@ -33,8 +33,12 @@ export const liveStateSlice = createSlice({
     },
 
     init: (state, { payload }) => {
+      if (Array.prototype.isPrototypeOf(payload)) {
+        payload = last(payload);
+      }
+
       Object.assign(state, {
-        ...(last(payload) || payload),
+        ...payload,
         phase: state.phase,
         objects: arrayToObject(payload.objects, (o) => o.id) || {},
         airbases: arrayToObject(payload.airbases, (o) => o.id) || {},

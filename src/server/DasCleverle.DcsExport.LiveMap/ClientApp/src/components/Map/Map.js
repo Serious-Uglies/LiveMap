@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 import { Popup } from 'react-map-gl';
 
 import Alert from 'react-bootstrap/Alert';
@@ -10,26 +11,13 @@ import Sidebar from './Sidebar/Sidebar';
 import MissionSidebarCard from './Sidebar/MissionSidebarCard';
 import AirbaseSidebarCard from './Sidebar/AirbaseSidebarCard';
 import Backdrop from './Backdrop';
+import ObjectPopup from './ObjectPopup';
 
 import { connect } from '../../api/liveState';
 import { useViewport } from './hooks';
 import layers from './layers';
 
 import './Map.css';
-import { createSelector } from 'reselect';
-
-const ObjectPopup = ({ objects }) => {
-  return (
-    <div className="mt-2">
-      {objects.map((o) => (
-        <div className="mt-1" key={o.id}>
-          <strong>{o.typeName}</strong>
-          <div>{o.name}</div>
-        </div>
-      ))}
-    </div>
-  );
-};
 
 const layersSelector = createSelector(
   (state) => state.liveState,

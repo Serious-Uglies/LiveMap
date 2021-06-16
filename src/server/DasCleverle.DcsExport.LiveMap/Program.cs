@@ -14,11 +14,6 @@ namespace DasCleverle.DcsExport.LiveMap
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.ConfigureKestrel(kestrel =>
-                    {
-                        kestrel.ListenAnyIP(5000);
-                        kestrel.ListenAnyIP(5001, o => o.UseHttps());
-                    });
                     webBuilder.UseStartup<Startup>();
                 });
     }

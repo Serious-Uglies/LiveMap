@@ -1,0 +1,47 @@
+{
+  "navbar": {
+    "brand": "DCS - Live Map",
+    "home": "Start"
+  },
+  "sidebar": {
+    "mission": {
+      "title": "Aktuelle Mission",
+      "name": "Mission",
+      "theatre": "Schauplatz",
+      "time": "Datum",
+      "timeValue": "{{time, datetime}}"
+    },
+    "airbase": {
+      "title": "Ausgewähltes Airfield",
+      "name": "Name",
+
+      "frequency": "Tower",
+      "frequencyList": "{{frequencies, join(frequency)}}",
+      "frequencyListNone": "Keine Frequenz bekannt",
+
+      "runways": "Runways",
+      "runwayEdge": "<0>{{edge}}</0>",
+      "runwayILS": " (ILS: {{ils.frequency, frequency}})",
+
+      "tacan": "TACAN",
+      "tacanList": "{{tacan, join('format.tacan')}}",
+      "tacanListNone": "",
+
+      "vor": "VOR",
+      "vorList": "{{vor, join('format.beacon')}}",
+      "vorListNone": "",
+
+      "ndb": "NDB",
+      "ndbList": "{{ndb, join('format.beacon')}}",
+      "ndbListNone": ""
+    }
+  },
+  "objectPopup": {
+    "unit": "{{count}}x {{name}}",
+    "player": "{{count}}x {{name}} ({{player}})"
+  },
+  "format": {
+    "tacan": "{{value.channel}}{{value.mode}} ({{value.callsign}})",
+    "beacon": "{{value.frequency, frequency}} ({{value.callsign}})"
+  }
+}

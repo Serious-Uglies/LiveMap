@@ -8,8 +8,10 @@ import './App.css';
 
 export default function App() {
   return (
-    <Layout>
-      <Route exact path="/" component={Map} />
-    </Layout>
+    <React.Suspense fallback={<p>Loading ...</p>}>
+      <Layout>
+        <Route exact path="/" component={Map} />
+      </Layout>
+    </React.Suspense>
   );
 }

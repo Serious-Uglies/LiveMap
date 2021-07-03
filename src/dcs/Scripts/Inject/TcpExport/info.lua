@@ -2,37 +2,25 @@ local json = require("json")
 
 local info = {}
 
-local timezones = {
-    Caucasus = '+04:00',
-    Nevada = '-07:00',
-    PersianGulf = '+04:00',
-    Syria = '+03:00',
-    TheChannel = '+00:00',
-    Normandy = '+01:00'
-}
-
-local function getDate()
+local function getTime()
     local time = timer.getAbsTime()
 
     local seconds = time % 60
     local minutes = (time / 60) % 60
     local hours = (time / 60 / 60) % 60
 
-    local theatre = env.mission.theatre
-    local timezone = timezones[theatre]
-
     local date = env.mission.date
 
     return string.format(
-        "%.4d-%.2d-%.2dT%.2d:%.2d:%.2d%s",
+        "%.4d-%.2d-%.2dT%.2d:%.2d:%.2d",
         date.Year, date.Month, date.Day,
-        hours, minutes, seconds, timezone
+        hours, minutes, seconds
     )
 end
 
 function info.getTime()
     return {
-        time = getDate()
+        time = getTime()
     }
 end
 
@@ -51,7 +39,7 @@ end
 
 function info.getInit()
     return {
-        date = getDate(),
+        time = getTime(),
         missionName = TcpExportHook.missionName,
         theatre = env.mission.theatre,
         mapCenter = getMapCenter(),

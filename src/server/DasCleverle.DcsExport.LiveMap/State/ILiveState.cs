@@ -19,7 +19,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
 
         Position MapCenter { get; }
 
-        DateTimeOffset Time { get; }
+        DateTime Time { get; }
     }
 
     public interface IWriteableLiveState 
@@ -36,6 +36,6 @@ namespace DasCleverle.DcsExport.LiveMap.State
 
         Position MapCenter { get; set; }
 
-        DateTimeOffset Time { get; set; }
+        DateTime Time { get; set; }
     }
 }

@@ -4,6 +4,6 @@ namespace DasCleverle.DcsExport.Listener.Model
 {
     public class TimePayload
     {
-        public DateTimeOffset Time { get; init; }
+        public DateTime Time { get; init; }
     }
 }

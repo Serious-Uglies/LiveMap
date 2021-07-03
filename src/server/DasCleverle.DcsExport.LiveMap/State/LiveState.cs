@@ -13,7 +13,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
         private string _missionName;
         private string _theatre;
         private Position _mapCenter;
-        private DateTimeOffset _time;
+        private DateTime _time;
 
         ConcurrentDictionary<int, AddObjectPayload> IWriteableLiveState.Objects => _objects;
 
@@ -37,7 +37,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
             set => _mapCenter = value;
         }
 
-        DateTimeOffset IWriteableLiveState.Time
+        DateTime IWriteableLiveState.Time
         {
             get => _time;
             set => _time = value;
@@ -59,7 +59,7 @@ namespace DasCleverle.DcsExport.LiveMap.State
 
         public Position MapCenter => _mapCenter;
 
-        public DateTimeOffset Time => _time;
+        public DateTime Time => _time;
 
         public bool IsRunning => _isRunning;
     }

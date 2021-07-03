@@ -3,24 +3,17 @@ import { useSelector } from 'react-redux';
 
 import SidebarCard from './SidebarCard';
 
+const format = new Intl.DateTimeFormat('de-DE', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+});
+
 export default function MissionSidebarCard() {
-  const timeFormat = useSelector((state) => {
-    const theatre = state.liveState.theatre;
-    if (!theatre) {
-      return null;
-    }
-
-    return new Intl.DateTimeFormat('de-DE', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-  });
-
-  const formatTime = (time) => (timeFormat ? timeFormat.format(time) : '');
+  const formatTime = (time) => format.format(time);
 
   const missionProperties = useSelector((state) => [
     { title: 'Mission', value: state.liveState.missionName },

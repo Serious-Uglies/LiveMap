@@ -4,7 +4,7 @@ namespace DasCleverle.DcsExport.Listener.Model
 {
     public record InitPayload
     {
-        public DateTimeOffset Date { get; init; }
+        public DateTime Time { get; init; }
 
         public string MissionName { get; init; }
 

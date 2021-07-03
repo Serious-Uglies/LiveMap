@@ -8,7 +8,6 @@ const theatres = {
       longitude: 40.72214289492385,
       zoom: 6.69,
     },
-    timezone: 'Asia/Tbilisi',
   },
   Nevada: {
     viewport: {
@@ -16,7 +15,6 @@ const theatres = {
       longitude: -115.3220498166852,
       zoom: 6.66,
     },
-    timezone: 'America/Los_Angeles',
   },
   PersianGulf: {
     viewport: {
@@ -24,7 +22,6 @@ const theatres = {
       longitude: 55.9127513841311,
       zoom: 6.04,
     },
-    timezone: 'Asia/Dubai',
   },
   Syria: {
     viewport: {
@@ -32,7 +29,6 @@ const theatres = {
       longitude: 37.71425723879233,
       zoom: 6.37,
     },
-    timezone: 'Asia/Damascus',
   },
 };
 

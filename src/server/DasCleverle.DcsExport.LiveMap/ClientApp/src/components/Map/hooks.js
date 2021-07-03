@@ -9,6 +9,13 @@ const theatres = {
       zoom: 6.69,
     },
   },
+  MarianaIslands: {
+    viewport: {
+      latitude: 13.924587056525029,
+      longitude: 142.35254586809404,
+      zoom: 6.37,
+    },
+  },
   Nevada: {
     viewport: {
       latitude: 37.959029700616,

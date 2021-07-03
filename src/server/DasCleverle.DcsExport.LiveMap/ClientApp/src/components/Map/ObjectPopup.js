@@ -1,18 +1,19 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import './ObjectPopup.css';
 
 export default function ObjectPopup({ objects }) {
+  const { t } = useTranslation();
   const counts = objects.reduce((map, object) => {
-    const unitName = object.displayName || object.typeName;
-    const displayName = object.player
-      ? `${unitName} (${object.player})`
-      : unitName;
+    const name = object.displayName || object.typeName;
+    const player = object.player;
+    const key = object.player ? `${name}-${object.player}` : name;
 
-    if (map[displayName]) {
-      map[displayName]++;
+    if (map[key]) {
+      map[key].count++;
     } else {
-      map[displayName] = 1;
+      map[key] = { count: 1, name, player };
     }
 
     return map;
@@ -23,9 +24,12 @@ export default function ObjectPopup({ objects }) {
   return (
     <div className="object-popup">
       <ul className="list-unstyled">
-        {sorted.map(([displayName, count]) => (
-          <li className="mt-1" key={displayName}>
-            {count}x {displayName}
+        {sorted.map(([key, object]) => (
+          <li key={key} className="mt-1">
+            {t(
+              object.player ? 'objectPopup.player' : 'objectPopup.unit',
+              object
+            )}
           </li>
         ))}
       </ul>

@@ -1,3 +1,4 @@
+import React from 'react';
 import Card from 'react-bootstrap/Card';
 
 export default function SidebarCard({
@@ -23,12 +24,12 @@ export default function SidebarCard({
       </Card.Header>
       <Card.Body>
         {properties.map(
-          ({ title, value, format }) =>
+          ({ title, value }) =>
             value && (
-              <div key={title}>
+              <React.Fragment key={title}>
                 <div className="property-title">{title}</div>
                 {value}
-              </div>
+              </React.Fragment>
             )
         )}
       </Card.Body>

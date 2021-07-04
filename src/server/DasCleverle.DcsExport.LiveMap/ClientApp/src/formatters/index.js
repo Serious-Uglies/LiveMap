@@ -5,7 +5,8 @@ import frequency from './frequency';
 import join from './join';
 
 const formatters = { datetime, frequency, join };
-const formatterRe = /^([A-Za-z0-9]+)(\(('?([A-Za-z0-9.]+)'?)\))?$/;
+const formatterRe =
+  /^([A-Za-z0-9]+)(?:\((?:'([A-Za-z0-9.]+)'|([A-Za-z0-9.]+))\))?$/;
 
 export default function format(value, format, lng) {
   const match = formatterRe.exec(format);
@@ -14,13 +15,27 @@ export default function format(value, format, lng) {
     return value;
   }
 
+  // Capturing groups:
+  // 1: formatter
+  // 2: translation key
+  // 3: nested formatter
+  // (2 and 3 are mutually exclusive)
+
   const formatter = formatters[match[1]];
-  const argument = match[3];
 
-  const formatterArgument =
-    argument && argument.startsWith("'") && argument.endsWith("'")
-      ? (value) => i18next.t(match[4], { value })
-      : formatters[argument];
+  if (!formatter) {
+    return `Format error: Could not find formatter (format: ${format})`;
+  }
 
-  return formatter(value, formatterArgument, lng);
+  const translationKey = match[2];
+  const nestedFormatter = match[3];
+
+  let argument;
+  if (translationKey) {
+    argument = (value) => i18next.t(translationKey, { value });
+  } else if (nestedFormatter) {
+    argument = formatters[nestedFormatter];
+  }
+
+  return formatter(value, argument, lng);
 }

@@ -8,6 +8,10 @@ import MapboxLayer from './MapboxLayer';
 import './Mapbox.css';
 
 const mapOptions = {
+  scrollZoom: {
+    speed: 0.03,
+    smooth: true,
+  },
   dragRotate: false,
   touchZoomRotate: false,
   touchPitch: false,

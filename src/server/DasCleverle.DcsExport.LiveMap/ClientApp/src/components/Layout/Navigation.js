@@ -8,7 +8,11 @@ import Nav from 'react-bootstrap/Nav';
 import './Navigation.css';
 
 export default function Navigation() {
-  const { t } = useTranslation();
+  const { t, ready } = useTranslation();
+
+  if (!ready) {
+    return <header />;
+  }
 
   return (
     <header>

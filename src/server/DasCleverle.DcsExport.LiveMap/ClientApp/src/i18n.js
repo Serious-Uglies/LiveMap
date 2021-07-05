@@ -24,6 +24,10 @@ i18n
 
       format: format,
     },
+
+    react: {
+      useSuspense: false,
+    },
   });
 
 export default i18n;

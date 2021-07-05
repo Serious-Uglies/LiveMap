@@ -5,13 +5,12 @@ import Layout from './components/Layout/Layout';
 import Map from './components/Map/Map';
 
 import './App.css';
+import './i18n';
 
 export default function App() {
   return (
-    <React.Suspense fallback={<p>Loading ...</p>}>
-      <Layout>
-        <Route exact path="/" component={Map} />
-      </Layout>
-    </React.Suspense>
+    <Layout>
+      <Route exact path="/" component={Map} />
+    </Layout>
   );
 }

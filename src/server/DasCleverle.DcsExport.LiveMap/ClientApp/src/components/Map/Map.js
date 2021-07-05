@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import { Popup } from 'react-map-gl';
@@ -30,6 +31,7 @@ const layersSelector = createSelector(
 
 export default function Map() {
   const dispatch = useDispatch();
+  const { ready: translationsReady } = useTranslation();
 
   useEffect(() => dispatch(connect()), [dispatch]);
 
@@ -79,7 +81,7 @@ export default function Map() {
   const handleObjectPopupDismiss = () => setObjectPopup({ show: false });
   const handleAirbaseCardDismiss = () => setAirbase(null);
 
-  const showBackdrop = phase !== 'loaded' || !isRunning;
+  const showBackdrop = !translationsReady || phase !== 'loaded' || !isRunning;
 
   return (
     <>

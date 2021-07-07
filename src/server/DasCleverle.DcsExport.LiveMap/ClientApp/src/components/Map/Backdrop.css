@@ -1,7 +1,3 @@
-.backdrop-wrapper {
-  z-index: 1040;
-}
-
 .backdrop {
   position: absolute;
   top: 0;

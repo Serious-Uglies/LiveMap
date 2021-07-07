@@ -4,6 +4,10 @@ a.navbar-brand {
   word-break: break-all;
 }
 
+.locale-picker {
+  margin-right: 1.5rem;
+}
+
 html {
   font-size: 14px;
 }

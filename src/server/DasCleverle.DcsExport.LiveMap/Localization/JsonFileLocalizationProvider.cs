@@ -1,5 +1,8 @@
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -15,76 +18,121 @@ namespace DasCleverle.DcsExport.LiveMap.Localization
         private readonly IFileProvider _fileProvider;
         private readonly IOptions<JsonFileLocalizationProviderOptions> _options;
 
+        private readonly ConcurrentDictionary<string, ResourceFile> _cache = new();
+        private bool _isLoaded;
+
         public JsonFileLocalizationProvider(IWebHostEnvironment webHost, IOptions<JsonFileLocalizationProviderOptions> options)
         {
             _fileProvider = webHost.WebRootFileProvider;
             _options = options;
         }
 
-        public async Task<ResourceCollection> GetLocalizationAsync(string locale, string ns)
+        public async Task<IEnumerable<Locale>> GetLocalesAsync()
         {
-            var contents = await LoadFileAsync(locale, ns, isOverride: false);
-            var overideContents = await LoadFileAsync(locale, ns, isOverride: true);
+            await LoadResourcesAsync();
 
-            if (overideContents != null)
-            {
-                var merged = new ResourceCollection(Merge(contents, overideContents));
-                return merged;
-            }
-
-            return contents;
+            return _cache.Values
+                .Select(x => x.Locale);
         }
 
-        private async Task<ResourceCollection> LoadFileAsync(string locale, string ns, bool isOverride)
+        public async Task<ResourceCollection> GetResourcesAsync(string locale)
         {
-            var basePath = _options.Value.BasePath;
-            var ov = isOverride ? ".override" : "";
-            var path = Path.Combine(basePath, locale, $"{ns}{ov}.json");
-            var file = _fileProvider.GetFileInfo(path);
+            await LoadResourcesAsync();
 
-            if (!file.Exists)
-            {
-                return null;
-            }
-
-            using var stream = file.CreateReadStream();
-            var resources = await JsonSerializer.DeserializeAsync<ResourceCollection>(stream, JsonSerializerOptions);
-
-            return resources;
+            return _cache.TryGetValue(locale, out var file)
+                ? file.Resources
+                : ResourceCollection.Empty;
         }
 
-        private static IEnumerable<Resource> Merge(ResourceCollection left, ResourceCollection right)
+        private async Task LoadResourcesAsync()
         {
-            foreach (var l in left)
+            if (!_options.Value.DisableCache)
             {
-                var merged = false;
-
-                foreach (var r in right)
+                if (_isLoaded)
                 {
-                    if (l.Key != r.Key)
+                    return;
+                }
+
+                _isLoaded = true;
+            }
+
+            var files = _fileProvider.GetDirectoryContents(_options.Value.BasePath)
+                .Where(f => Path.GetExtension(f.Name) == ".json" && !f.Name.Contains(".overrides."));
+
+            var overrides = _fileProvider.GetDirectoryContents(_options.Value.BasePath)
+                .Where(f => Path.GetExtension(f.Name) == ".json" && f.Name.Contains(".overrides."))
+                .ToDictionary(f => f.Name.Substring(0, f.Name.IndexOf('.')));
+
+            foreach (var file in files)
+            {
+                using var stream = file.CreateReadStream();
+                var rawFile = await JsonSerializer.DeserializeAsync<RawResourceFile>(stream, JsonSerializerOptions);
+
+                if (rawFile.Resources == null)
+                {
+                    throw new InvalidOperationException($"Could not find required JSON property 'resources' in resource file '{file.PhysicalPath}'.");
+                }
+
+                var id = Path.GetFileNameWithoutExtension(file.Name);
+                var label = rawFile.Label;
+                var resources = rawFile.Resources;
+
+                if (overrides.TryGetValue(id, out var @override)) 
+                {
+                    using var overrideStream = @override.CreateReadStream();
+                    var rawOverride = await JsonSerializer.DeserializeAsync<RawResourceFile>(overrideStream, JsonSerializerOptions);
+
+                    if (!string.IsNullOrEmpty(rawOverride.Label))
                     {
-                        continue;
+                        label = rawOverride.Label;
                     }
 
-                    merged = true;
-                    var children = new ResourceCollection(Merge(l.Children, r.Children));
-
-                    yield return r with { Children = children };
+                    if (rawOverride.Resources != null)
+                    {
+                        resources = rawFile.Resources.Merge(rawOverride.Resources);
+                    }
                 }
 
-                if (!merged)
+                var locale = new Locale
                 {
-                    yield return l;
-                }
+                    Id = id,
+                    Label = label
+                };
+
+                _cache.TryAdd(id, new ResourceFile
+                {
+                    Locale = locale,
+                    Resources = resources
+                });
             }
+
         }
 
         private static JsonSerializerOptions ConfigureJsonSerializer()
         {
-            var options = new JsonSerializerOptions();
+            var options = new JsonSerializerOptions
+            {
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                PropertyNameCaseInsensitive = true,
+            };
+
             options.Converters.Add(new JsonResourceCollectionConverter());
 
             return options;
+        }
+
+        private record ResourceFile 
+        {
+            public Locale Locale { get; init; }
+
+            public ResourceCollection Resources { get; init; }
+        }
+
+        private class RawResourceFile 
+        {
+            public string Label { get; init; }
+
+            public ResourceCollection Resources { get; init; }
         }
     }
 }

@@ -58,7 +58,7 @@ namespace DasCleverle.DcsExport.LiveMap
             services.AddTransient<IExportEventHandler<AddAirbasePayload>, AddAirbaseHandler>();
             services.AddTransient<IExportEventHandler<MissionEndPayload>, MissionEndHandler>();
 
-            services.AddTransient<ILocalizationProvider, JsonFileLocalizationProvider>();
+            services.AddSingleton<ILocalizationProvider, JsonFileLocalizationProvider>();
             services.Configure<JsonFileLocalizationProviderOptions>(options =>
             {
                 options.BasePath = "lang";

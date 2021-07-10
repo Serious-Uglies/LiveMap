@@ -33,7 +33,7 @@ function LocaleLabel({ locale: { flag, label } }) {
   return (
     <>
       {flag && <span className={`flag-icon flag-icon-${flag}`}></span>}
-      <span class="locale-label">{label}</span>
+      <span className="locale-label">{label}</span>
     </>
   );
 }

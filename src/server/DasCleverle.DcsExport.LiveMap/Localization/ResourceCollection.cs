@@ -23,35 +23,41 @@ namespace DasCleverle.DcsExport.LiveMap.Localization
 
         public ResourceCollection Merge(ResourceCollection other)
         {
-            return new ResourceCollection(DoMerge(other).ToArray());
+            return new ResourceCollection(DoMerge(other));
         }
 
-        private IEnumerable<Resource> DoMerge(IEnumerable<Resource> other)
+        private ICollection<Resource> DoMerge(IEnumerable<Resource> other)
         {
-            foreach (var l in Resources)
+            var merged = new Dictionary<string, Resource>();
+
+            var meByKey = Resources.ToDictionary(x => x.Key);
+            var otherByKey = other.ToDictionary(x => x.Key);
+
+            foreach (var me in meByKey)
             {
-                var merged = false;
-
-                foreach (var r in other)
+                if (!otherByKey.TryGetValue(me.Key, out var they))
                 {
-                    if (l.Key != r.Key)
-                    {
-                        continue;
-                    }
-
-                    merged = true;
-                    yield return r with
-                    {
-                        Children = l.Children.Merge(r.Children)
-                    };
+                    merged[me.Key] = me.Value;
+                    continue;
                 }
 
-                if (!merged)
+                merged[me.Key] = me.Value with
                 {
-                    yield return l;
-                }
+                    Children = me.Value.Children.Merge(they.Children)
+                };
             }
 
+            foreach (var they in otherByKey)
+            {
+                if (merged.ContainsKey(they.Key))
+                {
+                    continue;
+                }
+                
+                merged[they.Key] = they.Value;
+            }
+
+            return merged.Values;
         }
     }
 }

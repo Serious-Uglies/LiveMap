@@ -99,13 +99,12 @@ namespace DasCleverle.DcsExport.LiveMap.Localization
                     Label = label
                 };
 
-                _cache.TryAdd(id, new ResourceFile
+                _cache[id] = new ResourceFile
                 {
                     Locale = locale,
                     Resources = resources
-                });
+                };
             }
-
         }
 
         private static JsonSerializerOptions ConfigureJsonSerializer()

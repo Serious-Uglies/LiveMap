@@ -7,12 +7,3 @@ a.navbar-brand {
 .locale-picker {
   margin-right: 1.5rem;
 }
-
-html {
-  font-size: 14px;
-}
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}

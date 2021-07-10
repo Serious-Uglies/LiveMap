@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import 'flag-icon-css/css/flag-icon.min.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom';

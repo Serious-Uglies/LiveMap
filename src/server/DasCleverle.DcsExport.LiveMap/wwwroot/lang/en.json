@@ -1,6 +1,6 @@
 {
-  "locale": "en",
   "label": "English",
+  "flag": "us",
   "resources": {
     "phase": {
       "notRunning": "Currently there is no mission running. Check again later or ask somebody to launch a mission.",

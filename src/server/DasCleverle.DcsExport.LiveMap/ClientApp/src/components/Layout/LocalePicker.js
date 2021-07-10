@@ -7,25 +7,35 @@ import Spinner from 'react-bootstrap/Spinner';
 
 import { getAvailableLocales } from '../../api/locales';
 
-function getCurrentLocaleLabel(locales, currentLocale) {
-  const getLabel = (id) => {
-    const locale = locales.find((l) => l.id === id);
-    return locale && locale.label;
+import './LocalePicker.css';
+
+function getCurrentLocale(locales, currentLocale) {
+  const getLocale = (id) => {
+    return locales.find((l) => l.id === id);
   };
 
-  const label = getLabel(currentLocale);
+  const locale = getLocale(currentLocale);
 
-  if (label) {
-    return label;
+  if (locale) {
+    return locale;
   }
 
   const split = currentLocale.split('-');
 
   if (split.length > 0) {
-    return getLabel(split[0]);
+    return getLocale(split[0]);
   }
 
   return null;
+}
+
+function LocaleLabel({ locale: { flag, label } }) {
+  return (
+    <>
+      {flag && <span className={`flag-icon flag-icon-${flag}`}></span>}
+      <span class="locale-label">{label}</span>
+    </>
+  );
 }
 
 export default function LocalePicker() {
@@ -54,12 +64,12 @@ export default function LocalePicker() {
   return (
     <NavDropdown
       onSelect={handleSelect}
-      title={getCurrentLocaleLabel(locales, i18n.language)}
+      title={<LocaleLabel locale={getCurrentLocale(locales, i18n.language)} />}
       alignRight
     >
-      {locales.map(({ id, label }) => (
-        <NavDropdown.Item key={id} eventKey={id}>
-          {label}
+      {locales.map((locale) => (
+        <NavDropdown.Item key={locale.id} eventKey={locale.id}>
+          <LocaleLabel locale={locale} />
         </NavDropdown.Item>
       ))}
     </NavDropdown>

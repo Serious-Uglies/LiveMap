@@ -75,6 +75,7 @@ namespace DasCleverle.DcsExport.LiveMap.Localization
 
                 var id = Path.GetFileNameWithoutExtension(file.Name);
                 var label = rawFile.Label;
+                var flag = rawFile.Flag;
                 var resources = rawFile.Resources;
 
                 if (overrides.TryGetValue(id, out var @override)) 
@@ -87,6 +88,11 @@ namespace DasCleverle.DcsExport.LiveMap.Localization
                         label = rawOverride.Label;
                     }
 
+                    if (!string.IsNullOrEmpty(rawOverride.Flag))
+                    {
+                        flag = rawOverride.Flag;
+                    }
+
                     if (rawOverride.Resources != null)
                     {
                         resources = rawFile.Resources.Merge(rawOverride.Resources);
@@ -96,7 +102,8 @@ namespace DasCleverle.DcsExport.LiveMap.Localization
                 var locale = new Locale
                 {
                     Id = id,
-                    Label = label
+                    Flag = flag,
+                    Label = label,
                 };
 
                 _cache[id] = new ResourceFile
@@ -130,6 +137,8 @@ namespace DasCleverle.DcsExport.LiveMap.Localization
         private class RawResourceFile 
         {
             public string Label { get; init; }
+
+            public string Flag { get; init; }
 
             public ResourceCollection Resources { get; init; }
         }

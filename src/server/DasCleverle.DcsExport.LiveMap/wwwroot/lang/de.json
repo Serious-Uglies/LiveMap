@@ -1,5 +1,6 @@
 {
   "label": "Deutsch",
+  "flag": "de",
   "resources": {
     "phase": {
       "notRunning": "Aktuell läuft keine Mission. Schau später noch einmal vorbei, oder bitte jemanden eine Mission zu starten.",

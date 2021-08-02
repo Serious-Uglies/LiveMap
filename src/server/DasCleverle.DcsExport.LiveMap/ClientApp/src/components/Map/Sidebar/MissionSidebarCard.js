@@ -1,30 +1,26 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 import SidebarCard from './SidebarCard';
 
-const format = new Intl.DateTimeFormat('de-DE', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-});
-
 export default function MissionSidebarCard() {
-  const formatTime = (time) => format.format(time);
-
+  const { t } = useTranslation();
   const missionProperties = useSelector((state) => [
-    { title: 'Mission', value: state.liveState.missionName },
-    { title: 'Schauplatz', value: state.liveState.theatre },
+    { title: t('sidebar.mission.name'), value: state.liveState.missionName },
+    { title: t('sidebar.mission.theatre'), value: state.liveState.theatre },
     {
-      title: 'Datum',
-      value: formatTime(new Date(state.liveState.time)),
+      title: t('sidebar.mission.time'),
+      value: t('sidebar.mission.timeValue', {
+        time: new Date(state.liveState.time),
+      }),
     },
   ]);
 
   return (
-    <SidebarCard title="Aktuelle Mission" properties={missionProperties} />
+    <SidebarCard
+      title={t('sidebar.mission.title')}
+      properties={missionProperties}
+    />
   );
 }

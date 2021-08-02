@@ -1,0 +1,18 @@
+.btn-dismiss {
+  box-sizing: content-box;
+  width: 1.5em;
+  height: 1.5em;
+  color: #000;
+  background: transparent;
+  opacity: 0.5;
+  border: 0;
+}
+
+.btn-dismiss:hover {
+  opacity: 0.8;
+}
+
+.btn-dismiss > svg {
+  width: 1.5em;
+  height: 1.5em;
+}

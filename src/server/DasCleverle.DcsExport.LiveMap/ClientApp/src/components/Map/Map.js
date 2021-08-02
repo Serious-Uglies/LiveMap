@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import { Popup } from 'react-map-gl';
@@ -30,6 +31,7 @@ const layersSelector = createSelector(
 
 export default function Map() {
   const dispatch = useDispatch();
+  const { ready: translationsReady, t } = useTranslation();
 
   useEffect(() => dispatch(connect()), [dispatch]);
 
@@ -79,7 +81,7 @@ export default function Map() {
   const handleObjectPopupDismiss = () => setObjectPopup({ show: false });
   const handleAirbaseCardDismiss = () => setAirbase(null);
 
-  const showBackdrop = phase !== 'loaded' || !isRunning;
+  const showBackdrop = !translationsReady || phase !== 'loaded' || !isRunning;
 
   return (
     <>
@@ -114,20 +116,14 @@ export default function Map() {
         )}
         {phase === 'reconnecting' && (
           <Alert variant="danger" className="mt-2">
-            Die Verbindung zum Server ist abgebrochen. Versuche erneute
-            Verbindung ...
+            {t('phase.reconnecting')}
           </Alert>
         )}
         {phase === 'error' && (
-          <Alert variant="danger">
-            Die Verbindung konnte nicht hergestellt werden.
-          </Alert>
+          <Alert variant="danger">{t('phase.error')}</Alert>
         )}
         {phase === 'loaded' && !isRunning && (
-          <Alert variant="info">
-            Aktuell läuft keine Mission. Schau später noch einmal vorbei, oder
-            bitte jemanden eine Mission zu starten.
-          </Alert>
+          <Alert variant="info">{t('phase.notRunning')}</Alert>
         )}
       </Backdrop>
     </>

@@ -1,9 +1,11 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.Listener.Json;
 using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
+using DasCleverle.DcsExport.LiveMap.Localization;
 using DasCleverle.DcsExport.LiveMap.State;
 using DasCleverle.DcsExport.LiveMap.State.Handlers;
 using Microsoft.AspNetCore.Builder;
@@ -17,29 +19,24 @@ namespace DasCleverle.DcsExport.LiveMap
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
+
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers()
-                .AddJsonOptions(json =>
-                {
-                    json.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                    json.JsonSerializerOptions.Converters.Add(new JsonExportEventConverter());
-                });
+                .AddJsonOptions(json => ConfigureJsonSerializer(json.JsonSerializerOptions));
 
             services.AddSignalR()
-                .AddJsonProtocol(options =>
-                {
-                    options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                    options.PayloadSerializerOptions.Converters.Add(new JsonExportEventConverter());
-                });
+                .AddJsonProtocol(json => ConfigureJsonSerializer(json.PayloadSerializerOptions));
 
             services.AddSpaStaticFiles(spa =>
             {
@@ -63,6 +60,13 @@ namespace DasCleverle.DcsExport.LiveMap
             services.AddTransient<IExportEventHandler<RemoveObjectPayload>, RemoveObjectHandler>();
             services.AddTransient<IExportEventHandler<AddAirbasePayload>, AddAirbaseHandler>();
             services.AddTransient<IExportEventHandler<MissionEndPayload>, MissionEndHandler>();
+
+            services.AddSingleton<ILocalizationProvider, JsonFileLocalizationProvider>();
+            services.Configure<JsonFileLocalizationProviderOptions>(options =>
+            {
+                options.BasePath = "lang";
+                options.DisableCache = Environment.IsDevelopment();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,6 +105,13 @@ namespace DasCleverle.DcsExport.LiveMap
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+        }
+
+        private void ConfigureJsonSerializer(JsonSerializerOptions options)
+        {
+            options.Converters.Add(new JsonStringEnumConverter());
+            options.Converters.Add(new JsonExportEventConverter());
+            options.Converters.Add(new JsonResourceCollectionConverter());
         }
     }
 }

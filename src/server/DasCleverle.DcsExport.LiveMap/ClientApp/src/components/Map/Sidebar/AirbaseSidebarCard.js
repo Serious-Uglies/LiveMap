@@ -1,90 +1,105 @@
 import React from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import { useTranslation, Trans } from 'react-i18next';
 import SidebarCard from './SidebarCard';
 
-import { formatFrequency } from './util';
-
-const getILS = (runway, ilss) => ilss.find((i) => i.runway === runway);
-
-const renderEdge = (edge, ilss) => {
-  const ils = getILS(edge, ilss);
-  return (
-    <div key={edge}>
-      <strong>{edge}</strong>
-      {ils && <span> (ILS: {formatFrequency(ils.frequency)})</span>}
-    </div>
-  );
-};
-
-function Runways({ airbase }) {
-  const {
-    runways,
-    beacons: { ils },
-  } = airbase;
-
-  if (runways.length === 0) {
-    return null;
-  }
-
-  return (
-    <Row>
-      <Col>{runways.map((r) => renderEdge(r.edge1, ils))}</Col>
-      <Col>{runways.map((r) => renderEdge(r.edge2, ils))}</Col>
-    </Row>
-  );
-}
-
 export default function AirbaseSidebarCard({ airbase, onDismiss }) {
+  const { t } = useTranslation();
+  const { name, frequencies, runways, beacons } = airbase || {};
+
+  const { tacan, vor, ndb, ils } = beacons || {};
+
   const airbaseProperties = airbase && [
-    { title: 'Name', value: airbase.name },
+    { title: t('sidebar.airbase.name'), value: name },
     {
-      title: 'Tower',
-      value:
-        airbase.frequencies.length > 0
-          ? airbase.frequencies.map(formatFrequency).join(', ')
-          : 'Keine Frequenz bekannt',
+      title: t('sidebar.airbase.frequency'),
+      value: t(
+        frequencies.length > 0
+          ? 'sidebar.airbase.frequencyList'
+          : 'sidebar.airbase.frequencyListNone',
+        {
+          frequencies,
+        }
+      ),
     },
     {
-      title: 'Runways',
-      value: airbase.runways.length ? <Runways airbase={airbase} /> : null,
+      title: t('sidebar.airbase.runways'),
+      value: runways.length ? <Runways runways={runways} ils={ils} /> : null,
     },
     {
-      title: 'TACAN',
-      value:
-        airbase.beacons.tacan.length > 0
-          ? airbase.beacons.tacan
-              .map((t) => `${t.channel}${t.mode} (${t.callsign})`)
-              .join(', ')
-          : null,
+      title: t('sidebar.airbase.tacan'),
+      value: t(
+        tacan.length > 0
+          ? 'sidebar.airbase.tacanList'
+          : 'sidebar.airbase.tacanListNone',
+        {
+          tacan,
+        }
+      ),
     },
     {
-      title: 'VOR',
-      value:
-        airbase.beacons.vor.length > 0
-          ? airbase.beacons.vor
-              .map((v) => `${formatFrequency(v.frequency)} (${v.callsign})`)
-              .join(', ')
-          : null,
+      title: t('sidebar.airbase.vor'),
+      value: t(
+        vor.length > 0
+          ? 'sidebar.airbase.vorList'
+          : 'sidebar.airbase.vorListNone',
+        {
+          vor,
+        }
+      ),
     },
     {
-      title: 'NDB',
-      value:
-        airbase.beacons.ndb.length > 0
-          ? airbase.beacons.ndb
-              .map((v) => `${formatFrequency(v.frequency)} (${v.callsign})`)
-              .join(', ')
-          : null,
+      title: t('sidebar.airbase.ndb'),
+      value: t(
+        ndb.length > 0
+          ? 'sidebar.airbase.ndbList'
+          : 'sidebar.airbase.ndbListNone',
+        {
+          ndb,
+        }
+      ),
     },
   ];
 
   return (
     <SidebarCard
-      title="Ausgewähltes Airfield"
+      title={t('sidebar.airbase.title')}
       properties={airbaseProperties}
       dismissable
       visible={!!airbase}
       onDismiss={onDismiss}
     />
+  );
+}
+
+function Runways({ runways, ils }) {
+  return (
+    <Row>
+      <Col>
+        {runways.map((r) => (
+          <RunwayEdge key={r.edge1} edge={r.edge1} ils={ils} />
+        ))}
+      </Col>
+      <Col>
+        {runways.map((r) => (
+          <RunwayEdge key={r.edge1} edge={r.edge2} ils={ils} />
+        ))}
+      </Col>
+    </Row>
+  );
+}
+
+function RunwayEdge({ edge, ils }) {
+  const { t } = useTranslation();
+  const runwayILS = ils.find((i) => i.runway === edge);
+
+  return (
+    <div key={edge}>
+      <Trans i18nKey="sidebar.airbase.runwayEdge">
+        <strong>{{ edge }}</strong>
+      </Trans>
+      {runwayILS && t('sidebar.airbase.runwayILS', { ils: runwayILS })}
+    </div>
   );
 }

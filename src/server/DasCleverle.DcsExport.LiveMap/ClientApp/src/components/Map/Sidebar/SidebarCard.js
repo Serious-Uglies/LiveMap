@@ -1,4 +1,9 @@
+import React from 'react';
+
 import Card from 'react-bootstrap/Card';
+import { BsX } from 'react-icons/bs';
+
+import './SidebarCard.css';
 
 export default function SidebarCard({
   title,
@@ -13,22 +18,24 @@ export default function SidebarCard({
 
   return (
     <Card className="property-card">
-      <Card.Header>
-        {title}
+      <Card.Header className="d-flex align-items-center pr-2">
+        <div className="mr-auto">{title}</div>
         {dismissable && (
-          <div className="float-end">
-            <button className="btn-close" onClick={onDismiss}></button>
+          <div>
+            <button className="btn-dismiss" onClick={onDismiss}>
+              <BsX />
+            </button>
           </div>
         )}
       </Card.Header>
       <Card.Body>
         {properties.map(
-          ({ title, value, format }) =>
+          ({ title, value }) =>
             value && (
-              <div key={title}>
+              <React.Fragment key={title}>
                 <div className="property-title">{title}</div>
                 {value}
-              </div>
+              </React.Fragment>
             )
         )}
       </Card.Body>

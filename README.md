@@ -213,6 +213,25 @@ The Live Map uses the default `appsettings.json` configuration known from .NET. 
 }
 ```
 
+#### Localization
+
+The Frontend App uses [react-i18next](https://react.i18next.com/) for localization. The localization resources are provided by a backend API endpoint. 
+This endpoint sources its data from JSON files the `wwwroot/lang` directory. The base files for each supported locale are named in a format defined by RFC 3066 (e.g. `en-GB`, `de-DE`, `de`, `fr`). 
+The JSON contained in these files is stuctured as follows:
+```json
+{
+    "label": "A human readable label of the language, preferrably in the language the file describes.",
+    "flag": "A lower case ISO 3166 2-letter country code which shall be used to display a flag icon representing the language.",
+    "resources": {
+        // An object containig the various resources defined in the master file (en.json) that shall be overriden with translated values.
+    }
+}
+```
+The file `en.json` serves as the master file where all used resource keys can be found. The application will automatically fall back to the base language without a second subtag if one with a subtag can not be found. When no base language file can be found, it will then fall back to `en`.
+
+It is possible to overwrite specific resource keys without changing the actual language files. This feature is there to avoid loosing custom translations due to an update to the application. 
+To overwrite resource keys, a JSON file named `<language-code>.overrides.json` must be created. It follows the same structure as defined above. All values - even the label or flag - can be overriden at will.
+
 ## Development
 
 For development it is very convenient to setup a symbolic link for the TCP Export:

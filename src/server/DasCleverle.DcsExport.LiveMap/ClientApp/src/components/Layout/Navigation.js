@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import Helmet from 'react-helmet';
 
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
@@ -19,6 +20,9 @@ export default function Navigation() {
 
   return (
     <header>
+      <Helmet>
+        <title>{t('navbar.brand')}</title>
+      </Helmet>
       <Navbar bg="light" expand="lg">
         <Container fluid>
           <Navbar.Brand as={Link} to="/">

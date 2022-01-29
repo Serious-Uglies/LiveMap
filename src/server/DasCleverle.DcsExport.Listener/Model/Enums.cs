@@ -2,30 +2,6 @@ using System.ComponentModel;
 
 namespace DasCleverle.DcsExport.Listener.Model
 {
-    public enum EventType
-    {
-        [EventPayload(typeof(InitPayload))]
-        Init,
-
-        [EventPayload(typeof(MissionEndPayload))]
-        MissionEnd,
-
-        [EventPayload(typeof(AddObjectPayload))]
-        AddObject,
-
-        [EventPayload(typeof(RemoveObjectPayload))]
-        RemoveObject,
-
-        [EventPayload(typeof(UpdateObjectPayload))]
-        UpdateObject,
-
-        [EventPayload(typeof(AddAirbasePayload))]
-        AddAirbase,
-
-        [EventPayload(typeof(TimePayload))]
-        Time
-    }
-
     public enum Coalition
     {
         Neutral = 0,

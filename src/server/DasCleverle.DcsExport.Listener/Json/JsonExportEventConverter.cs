@@ -1,18 +1,21 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DasCleverle.DcsExport.Extensibility;
 using DasCleverle.DcsExport.Listener.Model;
 
 namespace DasCleverle.DcsExport.Listener.Json
 {
     public class JsonExportEventConverter : JsonConverter<IExportEvent>
     {
-        private delegate IExportEvent CreateInstanceDelegate(EventType eventType, ref Utf8JsonReader reader, JsonSerializerOptions options);
+        private delegate IExportEvent EventFactory(string eventType, ref Utf8JsonReader reader, JsonSerializerOptions options);
 
-        private static readonly Dictionary<EventType, CreateInstanceDelegate> DelegateCache = GetDelegateCache();
+        private static readonly ConcurrentDictionary<string, EventFactory> FactoryCache = new();
 
         public override IExportEvent Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -37,11 +40,7 @@ namespace DasCleverle.DcsExport.Listener.Json
                 throw new JsonException("Expected a string value token.");
             }
 
-            var typeString = reader.GetString();
-            if (!Enum.TryParse<EventType>(typeString, out var eventType))
-            {
-                throw new JsonException("Expected a valid value of EventType.");
-            }
+            var eventType = reader.GetString();
 
             if (!reader.Read() || reader.TokenType != JsonTokenType.PropertyName)
             {
@@ -73,10 +72,10 @@ namespace DasCleverle.DcsExport.Listener.Json
         {
             writer.WriteStartObject();
 
-            writer.WritePropertyName(options.PropertyNamingPolicy == JsonNamingPolicy.CamelCase ? "event" : "Event");
-            writer.WriteStringValue(value.Event.ToString());
+            writer.WritePropertyName(options.PropertyNamingPolicy.ConvertName("Event"));
+            writer.WriteStringValue(value.EventType.ToString());
 
-            writer.WritePropertyName(options.PropertyNamingPolicy == JsonNamingPolicy.CamelCase ? "payload" : "Payload");
+            writer.WritePropertyName(options.PropertyNamingPolicy.ConvertName("Payload"));
             if (value.Payload == null)
             {
                 writer.WriteNullValue();
@@ -89,50 +88,46 @@ namespace DasCleverle.DcsExport.Listener.Json
             writer.WriteEndObject();
         }
 
-        private static IExportEvent GetExportEvent(EventType eventType, ref Utf8JsonReader reader, JsonSerializerOptions options) 
-            => DelegateCache[eventType](eventType, ref reader, options);
-
-        private static Dictionary<EventType, CreateInstanceDelegate> GetDelegateCache()
+        private static IExportEvent GetExportEvent(string eventType, ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
-            var cache = new Dictionary<EventType, CreateInstanceDelegate>();
-
-            foreach (var eventType in Enum.GetValues<EventType>())
+            var factory = FactoryCache.GetOrAdd(eventType, type =>
             {
-                var method = typeof(JsonExportEventConverter).GetMethod(nameof(CreateInstance), BindingFlags.Static | BindingFlags.NonPublic);
-                var getPayloadMethod = method.MakeGenericMethod(GetPayloadType(eventType));
+                var (payloadType, _) = TypeLocator.GetTypesImplementingWithAttribute<EventPayloadAttribute>(typeof(IEventPayload))
+                    .FirstOrDefault(x => x.Attribute.EventType == type);
 
-                var eventTypeParam = Expression.Parameter(typeof(EventType), "eventType");
+                if (payloadType == null)
+                {
+                    return null;
+                }
+
+                var method = typeof(JsonExportEventConverter).GetMethod(nameof(CreateInstance), BindingFlags.Static | BindingFlags.NonPublic);
+                var getPayloadMethod = method.MakeGenericMethod(payloadType);
+
+                var eventTypeParam = Expression.Parameter(typeof(string), "eventType");
                 var readerParam = Expression.Parameter(typeof(Utf8JsonReader).MakeByRefType(), "reader");
                 var optionsParam = Expression.Parameter(typeof(JsonSerializerOptions), "options");
 
                 var callExpression = Expression.Call(null, getPayloadMethod, eventTypeParam, readerParam, optionsParam);
 
-                var lambda = Expression.Lambda<CreateInstanceDelegate>(callExpression, eventTypeParam, readerParam, optionsParam);
+                var lambda = Expression.Lambda<EventFactory>(callExpression, eventTypeParam, readerParam, optionsParam);
 
-                cache[eventType] = lambda.Compile();
-            }
+                return lambda.Compile();
+            });
 
-            return cache;
-        }
-
-        private static Type GetPayloadType(EventType eventType)
-        {
-            var field = typeof(EventType).GetField(Enum.GetName(eventType));
-            var attribute = field.GetCustomAttribute<EventPayloadAttribute>();
-
-            if (attribute == null)
+            if (factory == null)
             {
-                throw new ArgumentException($"Enum member '{eventType}' of EventType does not have an EventPayloadAttribute.");
+                _ = JsonSerializer.Deserialize<JsonElement>(ref reader, options);
+                return new UnknownExportEvent { EventType = eventType };
             }
 
-            return attribute.PayloadType;
+            return factory(eventType, ref reader, options);
         }
 
-        private static IExportEvent CreateInstance<T>(EventType eventType, ref Utf8JsonReader reader, JsonSerializerOptions options)
+        private static IExportEvent CreateInstance<T>(string eventType, ref Utf8JsonReader reader, JsonSerializerOptions options) where T : IEventPayload
         {
             return new ExportEvent<T>
             {
-                Event = eventType,
+                EventType = eventType,
                 Payload = JsonSerializer.Deserialize<T>(ref reader, options)
             };
         }

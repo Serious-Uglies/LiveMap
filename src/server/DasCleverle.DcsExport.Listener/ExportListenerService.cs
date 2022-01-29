@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DasCleverle.DcsExport.Listener.Model;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -115,6 +116,12 @@ namespace DasCleverle.DcsExport.Listener
             try
             {
                 var exportEvent = await _messageHandler.HandleMessageAsync(message, token);
+
+                if (exportEvent is UnknownExportEvent)
+                {
+                    _logger.LogWarning("Received export event with type {EventType} for which no payload type was registered. Please check that all extensions are loaded properly.", exportEvent.EventType);
+                    return;
+                }
 
                 foreach (var eventHandler in _eventHandlers)
                 {

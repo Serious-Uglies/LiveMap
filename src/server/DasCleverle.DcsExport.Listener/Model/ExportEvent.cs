@@ -2,28 +2,24 @@ namespace DasCleverle.DcsExport.Listener.Model
 {
     public interface IExportEvent
     {
-        public EventType Event { get; init; }
+        public string EventType { get; }
 
-        public object Payload { get; init; }
+        public IEventPayload Payload { get; }
     }
 
-    public interface IExportEvent<T>
+    public interface IExportEvent<T> where T : IEventPayload
     {
-        public EventType Event { get; init; }
+        public string EventType { get; }
 
-        public T Payload { get; init; }
+        public T Payload { get; }
     }
 
-    internal record ExportEvent<T> : IExportEvent, IExportEvent<T>
+    internal record ExportEvent<T> : IExportEvent, IExportEvent<T> where T : IEventPayload
     {
-        public EventType Event { get; init; }
+        public string EventType { get; init; }
 
         public T Payload { get; init; }
 
-        object IExportEvent.Payload
-        {
-            get => Payload;
-            init => Payload = (T)value;
-        }
+        IEventPayload IExportEvent.Payload => Payload;
     }
 }

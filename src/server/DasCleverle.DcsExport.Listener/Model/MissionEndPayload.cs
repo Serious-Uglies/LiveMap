@@ -1,7 +1,8 @@
 namespace DasCleverle.DcsExport.Listener.Model
 {
-    public record MissionEndPayload
+    [EventPayload("MissionEnd")]
+    public record MissionEndPayload : IEventPayload
     {
-        
+
     }
 }

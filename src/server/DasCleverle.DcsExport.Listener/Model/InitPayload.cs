@@ -2,7 +2,8 @@ using System;
 
 namespace DasCleverle.DcsExport.Listener.Model
 {
-    public record InitPayload
+    [EventPayload("Init")]
+    public record InitPayload : IEventPayload
     {
         public DateTime Time { get; init; }
 

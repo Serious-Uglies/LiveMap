@@ -2,7 +2,8 @@ using System.Collections.Generic;
 
 namespace DasCleverle.DcsExport.Listener.Model
 {
-    public record AddObjectPayload
+    [EventPayload("AddObject")]
+    public record AddObjectPayload :IEventPayload
     {
         public int Id { get; init; }
 

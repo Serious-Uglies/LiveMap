@@ -1,9 +1,8 @@
 namespace DasCleverle.DcsExport.Listener.Model;
 
-public record InitPayload
+[EventPayload("Init")]
+public record InitPayload : IEventPayload
 {
-    public DateTime Time { get; init; }
-
     public string? MissionName { get; init; }
 
     public string? Theatre { get; init; }

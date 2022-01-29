@@ -1,6 +1,7 @@
 namespace DasCleverle.DcsExport.Listener.Model;
 
-public record UpdateObjectPayload
+[EventPayload("UpdateObject")]
+public record UpdateObjectPayload : IEventPayload
 {
     public int Id { get; init; }
 

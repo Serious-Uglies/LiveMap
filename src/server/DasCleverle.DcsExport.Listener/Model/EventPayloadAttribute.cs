@@ -2,10 +2,10 @@ namespace DasCleverle.DcsExport.Listener.Model;
 
 public class EventPayloadAttribute : Attribute
 {
-    public Type PayloadType { get; set; }
+    public string EventType { get; }
 
-    public EventPayloadAttribute(Type payloadType)
+    public EventPayloadAttribute(string eventType)
     {
-        PayloadType = payloadType;
+        EventType = eventType;
     }
 }

@@ -1,6 +1,7 @@
 namespace DasCleverle.DcsExport.Listener.Model;
 
-public record AddObjectPayload
+[EventPayload("AddObject")]
+public record AddObjectPayload : IEventPayload
 {
     public int Id { get; init; }
 
@@ -12,7 +13,7 @@ public record AddObjectPayload
 
     public string? DisplayName { get; init; }
 
-    public Coalition Coalition { get; init; } 
+    public Coalition Coalition { get; init; }
 
     public string? Country { get; init; }
 

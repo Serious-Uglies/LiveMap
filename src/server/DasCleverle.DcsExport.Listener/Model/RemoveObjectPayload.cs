@@ -1,6 +1,7 @@
 namespace DasCleverle.DcsExport.Listener.Model;
 
-public record RemoveObjectPayload
+[EventPayload("RemoveObject")]
+public record RemoveObjectPayload : IEventPayload
 {
     public int Id { get; init; }
 }

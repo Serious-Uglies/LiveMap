@@ -20,11 +20,6 @@ public class RemoveObjectHandler : IExportEventHandler<RemoveObjectPayload>
 
     private void Handle(IExportEvent<RemoveObjectPayload> exportEvent, CancellationToken token)
     {
-        if (exportEvent.Event != EventType.RemoveObject)
-        {
-            return;
-        }
-
         _state.Objects.TryRemove(exportEvent.Payload.Id, out _);
     }
 }

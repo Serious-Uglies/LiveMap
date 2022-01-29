@@ -20,11 +20,6 @@ public class UpdateObjectHandler : IExportEventHandler<UpdateObjectPayload>
 
     private void Handle(IExportEvent<UpdateObjectPayload> exportEvent, CancellationToken token)
     {
-        if (exportEvent.Event != EventType.UpdateObject)
-        {
-            return;
-        }
-
         var id = exportEvent.Payload.Id;
         var position = exportEvent.Payload.Position;
 

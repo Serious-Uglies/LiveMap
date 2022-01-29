@@ -10,24 +10,24 @@ public interface IExportEventHandler
     Task HandleEventAsync(IExportEvent exportEvent, CancellationToken token);
 }
 
-public interface IExportEventHandler<T>
+public interface IExportEventHandler<T> where T : IEventPayload
 {
     Task HandleEventAsync(IExportEvent<T> exportEvent, CancellationToken token);
 }
 
-internal class GenericExportEventHandlerPropgator : IExportEventHandler
+internal class GenericExportEventHandlerPropagator : IExportEventHandler
 {
     private delegate Task GenericHandlerDelegate(object handlers, IExportEvent exportEvent, CancellationToken token);
 
     private static readonly ConcurrentDictionary<Type, Type?> EventHandlerTypeMap = new ConcurrentDictionary<Type, Type?>();
     private static readonly ConcurrentDictionary<Type, GenericHandlerDelegate?> HandlerMethodMap = new ConcurrentDictionary<Type, GenericHandlerDelegate?>();
 
-    private static readonly MethodInfo HandleGenericEventMethod = typeof(GenericExportEventHandlerPropgator)
+    private static readonly MethodInfo HandleGenericEventMethod = typeof(GenericExportEventHandlerPropagator)
         .GetMethod(nameof(HandleGenericEventAsync), BindingFlags.NonPublic | BindingFlags.Static)!;
 
     private readonly IServiceProvider _services;
 
-    public GenericExportEventHandlerPropgator(IServiceProvider services)
+    public GenericExportEventHandlerPropagator(IServiceProvider services)
     {
         _services = services;
     }
@@ -63,7 +63,7 @@ internal class GenericExportEventHandlerPropgator : IExportEventHandler
         await method(handlers, exportEvent, token);
     }
 
-    private static async Task HandleGenericEventAsync<T>(IEnumerable<IExportEventHandler<T>> handlers, IExportEvent<T> exportEvent, CancellationToken token)
+    private static async Task HandleGenericEventAsync<T>(IEnumerable<IExportEventHandler<T>> handlers, IExportEvent<T> exportEvent, CancellationToken token) where T : IEventPayload
     {
         foreach (var handler in handlers)
         {

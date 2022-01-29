@@ -22,11 +22,6 @@ public class AddObjectHandler : IExportEventHandler<AddObjectPayload>
 
     private void Handle(IExportEvent<AddObjectPayload> exportEvent, CancellationToken token)
     {
-        if (exportEvent.Event != EventType.AddObject)
-        {
-            return;
-        }
-
         _state.Objects.TryAdd(exportEvent.Payload.Id, exportEvent.Payload);
     }
 }

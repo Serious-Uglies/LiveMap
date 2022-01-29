@@ -1,6 +1,7 @@
 namespace DasCleverle.DcsExport.Listener.Model;
 
-public record AddAirbasePayload
+[EventPayload("AddAirbase")]
+public record AddAirbasePayload : IEventPayload
 {
     public string? Id { get; init; }
 

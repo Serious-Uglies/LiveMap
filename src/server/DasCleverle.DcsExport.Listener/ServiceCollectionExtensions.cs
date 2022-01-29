@@ -10,7 +10,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddHostedService<DcsExportListenerService>();
         services.AddTransient<IExportMessageHandler, JsonExportMessageHandler>();
-        services.AddTransient<IExportEventHandler, GenericExportEventHandlerPropgator>();
+        services.AddTransient<IExportEventHandler, GenericExportEventHandlerPropagator>();
 
         return services;
     }

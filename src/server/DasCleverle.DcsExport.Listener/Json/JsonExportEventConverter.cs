@@ -1,16 +1,18 @@
+using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DasCleverle.DcsExport.Extensibility;
 using DasCleverle.DcsExport.Listener.Model;
 
 namespace DasCleverle.DcsExport.Listener.Json;
 
 public class JsonExportEventConverter : JsonConverter<IExportEvent>
 {
-    private delegate IExportEvent CreateInstanceDelegate(EventType eventType, ref Utf8JsonReader reader, JsonSerializerOptions options);
+    private delegate IExportEvent EventFactory(string eventType, ref Utf8JsonReader reader, JsonSerializerOptions options);
 
-    private static readonly Dictionary<EventType, CreateInstanceDelegate> DelegateCache = GetDelegateCache();
+    private static readonly ConcurrentDictionary<string, EventFactory?> FactoryCache = new();
 
     public override IExportEvent Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
@@ -35,11 +37,7 @@ public class JsonExportEventConverter : JsonConverter<IExportEvent>
             throw new JsonException("Expected a string value token.");
         }
 
-        var typeString = reader.GetString();
-        if (!Enum.TryParse<EventType>(typeString, out var eventType))
-        {
-            throw new JsonException("Expected a valid value of EventType.");
-        }
+        var eventType = reader.GetString();
 
         if (!reader.Read() || reader.TokenType != JsonTokenType.PropertyName)
         {
@@ -57,7 +55,7 @@ public class JsonExportEventConverter : JsonConverter<IExportEvent>
             throw new JsonException("Expected a start object token.");
         }
 
-        var exportEvent = GetExportEvent(eventType, ref reader, options);
+        var exportEvent = GetExportEvent(eventType!, ref reader, options);
 
         if (!reader.Read() || reader.TokenType != JsonTokenType.EndObject)
         {
@@ -71,10 +69,10 @@ public class JsonExportEventConverter : JsonConverter<IExportEvent>
     {
         writer.WriteStartObject();
 
-        writer.WritePropertyName(options.PropertyNamingPolicy == JsonNamingPolicy.CamelCase ? "event" : "Event");
-        writer.WriteStringValue(value.Event.ToString());
+        writer.WritePropertyName(options.PropertyNamingPolicy?.ConvertName("Event") ?? "Event");
+        writer.WriteStringValue(value.EventType.ToString());
 
-        writer.WritePropertyName(options.PropertyNamingPolicy == JsonNamingPolicy.CamelCase ? "payload" : "Payload");
+        writer.WritePropertyName(options.PropertyNamingPolicy?.ConvertName("Payload") ?? "Payload");
         if (value.Payload == null)
         {
             writer.WriteNullValue();
@@ -87,58 +85,54 @@ public class JsonExportEventConverter : JsonConverter<IExportEvent>
         writer.WriteEndObject();
     }
 
-    private static IExportEvent GetExportEvent(EventType eventType, ref Utf8JsonReader reader, JsonSerializerOptions options) 
-        => DelegateCache[eventType](eventType, ref reader, options);
-
-    private static Dictionary<EventType, CreateInstanceDelegate> GetDelegateCache()
+    private static IExportEvent GetExportEvent(string eventType, ref Utf8JsonReader reader, JsonSerializerOptions options)
     {
-        var cache = new Dictionary<EventType, CreateInstanceDelegate>();
-
-        foreach (var eventType in Enum.GetValues<EventType>())
+        var factory = FactoryCache.GetOrAdd(eventType, type =>
         {
-            var method = typeof(JsonExportEventConverter).GetMethod(nameof(CreateInstance), BindingFlags.Static | BindingFlags.NonPublic)!;
-            var getPayloadMethod = method.MakeGenericMethod(GetPayloadType(eventType));
+            var (payloadType, _) = TypeLocator.GetTypesImplementingWithAttribute<EventPayloadAttribute>(typeof(IEventPayload))
+                .FirstOrDefault(x => x.Attribute.EventType == type);
 
-            var eventTypeParam = Expression.Parameter(typeof(EventType), "eventType");
+            if (payloadType == null)
+            {
+                return null;
+            }
+
+            var method = typeof(JsonExportEventConverter).GetMethod(nameof(CreateInstance), BindingFlags.Static | BindingFlags.NonPublic)!;
+            var getPayloadMethod = method.MakeGenericMethod(payloadType);
+
+            var eventTypeParam = Expression.Parameter(typeof(string), "eventType");
             var readerParam = Expression.Parameter(typeof(Utf8JsonReader).MakeByRefType(), "reader");
             var optionsParam = Expression.Parameter(typeof(JsonSerializerOptions), "options");
 
             var callExpression = Expression.Call(null, getPayloadMethod, eventTypeParam, readerParam, optionsParam);
 
-            var lambda = Expression.Lambda<CreateInstanceDelegate>(callExpression, eventTypeParam, readerParam, optionsParam);
+            var lambda = Expression.Lambda<EventFactory>(callExpression, eventTypeParam, readerParam, optionsParam);
 
-            cache[eventType] = lambda.Compile();
+            return lambda.Compile();
+        });
+
+        if (factory == null)
+        {
+            _ = JsonSerializer.Deserialize<JsonElement>(ref reader, options);
+            return new UnknownExportEvent { EventType = eventType };
         }
 
-        return cache;
+        return factory(eventType, ref reader, options);
     }
 
-    private static Type GetPayloadType(EventType eventType)
+    private static IExportEvent CreateInstance<T>(string eventType, ref Utf8JsonReader reader, JsonSerializerOptions options) where T : IEventPayload
     {
-        var name = Enum.GetName(eventType);
+        var payload = JsonSerializer.Deserialize<T>(ref reader, options);
 
-        if (string.IsNullOrEmpty(name)) 
+        if (payload == null)
         {
-            throw new ArgumentException($"Could not get enum name of EventType '{eventType}'.", nameof(eventType));
+            return new UnknownExportEvent { EventType = eventType };
         }
 
-        var field = typeof(EventType).GetField(name)!;
-        var attribute = field.GetCustomAttribute<EventPayloadAttribute>();
-
-        if (attribute == null)
+        return new ExportEvent<T>
         {
-            throw new ArgumentException($"Enum member '{eventType}' of EventType does not have an EventPayloadAttribute.", nameof(eventType));
-        }
-
-        return attribute.PayloadType;
-    }
-
-    private static IExportEvent CreateInstance<T>(EventType eventType, ref Utf8JsonReader reader, JsonSerializerOptions options)
-    {
-        return new ExportEvent<T?>
-        {
-            Event = eventType,
-            Payload = JsonSerializer.Deserialize<T>(ref reader, options)
+            EventType = eventType,
+            Payload = payload
         };
     }
 }

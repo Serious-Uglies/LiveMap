@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DasCleverle.DcsExport.Extensibility;
-using DasCleverle.DcsExport.Listener.Model;
+using DasCleverle.DcsExport.Listener.Abstractions;
 
 namespace DasCleverle.DcsExport.Listener.Json;
 

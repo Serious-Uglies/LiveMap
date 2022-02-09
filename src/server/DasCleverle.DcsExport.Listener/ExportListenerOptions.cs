@@ -1,6 +1,6 @@
 namespace DasCleverle.DcsExport.Listener;
 
-public class ExportListenerOptions
+public class TcpListenerOptions
 {
     public string Address { get; set; } = "127.0.0.1";
 

@@ -1,4 +1,4 @@
-using DasCleverle.DcsExport.Listener.Json;
+using DasCleverle.DcsExport.Listener.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -6,27 +6,26 @@ namespace DasCleverle.DcsExport.Listener;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddDcsExportListener(this IServiceCollection services)
+    public static IServiceCollection AddTcpExportListener(this IServiceCollection services)
     {
-        services.AddHostedService<DcsExportListenerService>();
-        services.AddTransient<IExportMessageHandler, JsonExportMessageHandler>();
+        services.AddHostedService<TcpExportListenerService>();
         services.AddTransient<IExportEventHandler, GenericExportEventHandlerPropagator>();
 
         return services;
     }
 
-    public static IServiceCollection AddDcsExportListener(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddTcpExportListener(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDcsExportListener();
-        services.Configure<ExportListenerOptions>(configuration);
+        services.AddTcpExportListener();
+        services.Configure<TcpListenerOptions>(configuration);
 
         return services;
     }
 
-    public static IServiceCollection AddDcsExportListener(this IServiceCollection services, string address, int port)
+    public static IServiceCollection AddTcpExportListener(this IServiceCollection services, string address, int port)
     {
-        services.AddDcsExportListener();
-        services.Configure<ExportListenerOptions>(options =>
+        services.AddTcpExportListener();
+        services.Configure<TcpListenerOptions>(options =>
         {
             options.Address = address;
             options.Port = port;

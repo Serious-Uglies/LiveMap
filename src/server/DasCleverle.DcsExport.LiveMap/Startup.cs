@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DasCleverle.DcsExport.Listener;
+using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Json;
 using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.LiveMap.Handlers;
@@ -39,7 +40,9 @@ public class Startup
         });
 
         services.Configure<MapboxOptions>(Configuration);
-        services.AddDcsExportListener(Configuration.GetSection("ExportListener"));
+
+        services.AddTcpExportListener(Configuration.GetSection("ExportListener"));
+        services.AddJsonMessageParser();
 
         services.AddSingleton<HubExportEventHandler>();
         services.AddTransient<IExportEventHandler>(sp => sp.GetRequiredService<HubExportEventHandler>());

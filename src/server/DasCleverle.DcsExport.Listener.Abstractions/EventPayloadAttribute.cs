@@ -1,4 +1,4 @@
-namespace DasCleverle.DcsExport.Listener.Model;
+namespace DasCleverle.DcsExport.Listener.Abstractions;
 
 public class EventPayloadAttribute : Attribute
 {

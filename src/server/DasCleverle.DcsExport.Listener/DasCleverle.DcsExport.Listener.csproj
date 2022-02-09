@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DasCleverle.DcsExport.Extensibility\DasCleverle.DcsExport.Extensibility.csproj" />
+    <ProjectReference Include="..\DasCleverle.DcsExport.Listener.Abstractions\DasCleverle.DcsExport.Listener.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

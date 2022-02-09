@@ -2,17 +2,17 @@ using System.Buffers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DasCleverle.DcsExport.Listener.Model;
+using DasCleverle.DcsExport.Listener.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace DasCleverle.DcsExport.Listener.Json;
 
-public class JsonExportMessageHandler : IExportMessageHandler
+public class JsonMessageParser : IMessageParser
 {
     private static readonly JsonSerializerOptions Options = GetOptions();
-    private readonly ILogger<JsonExportMessageHandler> _logger;
+    private readonly ILogger<JsonMessageParser> _logger;
 
-    public JsonExportMessageHandler(ILogger<JsonExportMessageHandler> logger)
+    public JsonMessageParser(ILogger<JsonMessageParser> logger)
     {
         _logger = logger;
     }

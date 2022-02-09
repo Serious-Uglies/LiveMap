@@ -3,27 +3,27 @@ using System.IO.Pipelines;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using DasCleverle.DcsExport.Listener.Model;
+using DasCleverle.DcsExport.Listener.Abstractions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace DasCleverle.DcsExport.Listener;
 
-internal class DcsExportListenerService : BackgroundService
+internal class TcpExportListenerService : BackgroundService
 {
     private readonly TcpListener _listener;
-    private readonly ILogger<DcsExportListenerService> _logger;
-    private readonly IExportMessageHandler _messageHandler;
+    private readonly ILogger<TcpExportListenerService> _logger;
+    private readonly IMessageParser _messageParser;
     private readonly IEnumerable<IExportEventHandler> _eventHandlers;
 
-    public DcsExportListenerService(ILogger<DcsExportListenerService> logger, IExportMessageHandler messageHandler, IEnumerable<IExportEventHandler> eventHandlers, IOptions<ExportListenerOptions> options)
+    public TcpExportListenerService(ILogger<TcpExportListenerService> logger, IMessageParser messageHandler, IEnumerable<IExportEventHandler> eventHandlers, IOptions<TcpListenerOptions> options)
     {
         var ipAddress = IPAddress.Parse(options.Value.Address);
 
         _listener = new TcpListener(ipAddress, options.Value.Port);
         _logger = logger;
-        _messageHandler = messageHandler;
+        _messageParser = messageHandler;
         _eventHandlers = eventHandlers;
     }
 
@@ -111,7 +111,7 @@ internal class DcsExportListenerService : BackgroundService
     {
         try
         {
-            var exportEvent = await _messageHandler.HandleMessageAsync(message, token);
+            var exportEvent = await _messageParser.HandleMessageAsync(message, token);
 
             if (exportEvent is UnknownExportEvent)
             {

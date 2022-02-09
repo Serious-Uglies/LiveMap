@@ -1,6 +1,5 @@
-using DasCleverle.DcsExport.Listener;
-using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.LiveMap.Hubs;
+using DasCleverle.DcsExport.Listener.Abstractions;
 using Microsoft.AspNetCore.SignalR;
 
 namespace DasCleverle.DcsExport.LiveMap.Handlers;

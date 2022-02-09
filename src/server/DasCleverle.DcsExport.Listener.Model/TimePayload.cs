@@ -1,3 +1,5 @@
+using DasCleverle.DcsExport.Listener.Abstractions;
+
 namespace DasCleverle.DcsExport.Listener.Model;
 
 [EventPayload("Time")]

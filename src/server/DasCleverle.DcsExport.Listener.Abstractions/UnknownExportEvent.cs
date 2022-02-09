@@ -1,6 +1,6 @@
-namespace DasCleverle.DcsExport.Listener.Model
+namespace DasCleverle.DcsExport.Listener.Abstractions
 {
-    public class UnknownExportEvent : IExportEvent
+    public record UnknownExportEvent : IExportEvent
     {
         public string EventType { get; init; } = "";
 

@@ -1,19 +1,9 @@
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
-using DasCleverle.DcsExport.Listener.Model;
+using DasCleverle.DcsExport.Listener.Abstractions;
 
 namespace DasCleverle.DcsExport.Listener;
-
-public interface IExportEventHandler
-{
-    Task HandleEventAsync(IExportEvent exportEvent, CancellationToken token);
-}
-
-public interface IExportEventHandler<T> where T : IEventPayload
-{
-    Task HandleEventAsync(IExportEvent<T> exportEvent, CancellationToken token);
-}
 
 internal class GenericExportEventHandlerPropagator : IExportEventHandler
 {

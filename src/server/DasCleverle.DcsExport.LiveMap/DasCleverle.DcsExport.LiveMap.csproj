@@ -5,6 +5,8 @@
     <ProjectReference Include="..\DasCleverle.DcsExport.Listener.Json\DasCleverle.DcsExport.Listener.Json.csproj" />
     <ProjectReference Include="..\DasCleverle.DcsExport.Listener.Model\DasCleverle.DcsExport.Listener.Model.csproj" />
     <ProjectReference Include="..\DasCleverle.DcsExport.Listener.Abstractions\DasCleverle.DcsExport.Listener.Abstractions.csproj" />
+    <ProjectReference Include="..\DasCleverle.DcsExport.State.Abstractions\DasCleverle.DcsExport.State.Abstractions.csproj" />
+    <ProjectReference Include="..\DasCleverle.DcsExport.State\DasCleverle.DcsExport.State.csproj" />
   </ItemGroup>
 
   <ItemGroup>

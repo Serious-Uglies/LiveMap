@@ -1,4 +1,4 @@
-using DasCleverle.DcsExport.LiveMap.State;
+using DasCleverle.DcsExport.State.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DasCleverle.DcsExport.LiveMap.Controllers;
@@ -7,13 +7,13 @@ namespace DasCleverle.DcsExport.LiveMap.Controllers;
 [Route("api/[controller]")]
 public class StateController : Controller
 {
-    private readonly ILiveState _state;
+    private readonly ILiveStateStore _store;
 
-    public StateController(ILiveState state)
+    public StateController(ILiveStateStore store)
     {
-        _state = state;
+        _store = store;
     }
 
     [HttpGet]
-    public ILiveState GetState() => _state;
+    public LiveState GetState() => _store.GetState();
 }

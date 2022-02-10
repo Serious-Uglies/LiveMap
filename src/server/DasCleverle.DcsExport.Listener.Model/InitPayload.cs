@@ -10,4 +10,6 @@ public record InitPayload : IEventPayload
     public string? Theatre { get; init; }
 
     public Position? MapCenter { get; init; }
+
+    public DateTime Time { get; init; }
 }

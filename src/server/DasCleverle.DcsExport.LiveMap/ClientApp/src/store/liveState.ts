@@ -16,17 +16,6 @@ const initialState: LiveState = {
   airbases: {},
 };
 
-function arrayToObject<T>(array: T[], getIndex: (item: T) => string) {
-  if (array === null || array === undefined) {
-    return null;
-  }
-
-  return array.reduce((prev: any, item) => {
-    prev[getIndex(item)] = item;
-    return prev;
-  }, {});
-}
-
 function last<T>(array: T[]) {
   return array[array.length - 1];
 }
@@ -44,8 +33,8 @@ export const liveStateSlice = createSlice({
         ...payload,
         phase: state.phase,
         time: payload.time ? payload.time : undefined,
-        objects: arrayToObject(payload.objects, (o) => String(o.id)) || {},
-        airbases: arrayToObject(payload.airbases, (o) => o.id) || {},
+        objects: payload.objects,
+        airbases: payload.airbases,
       });
     },
 

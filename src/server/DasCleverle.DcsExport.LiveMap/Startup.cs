@@ -3,12 +3,10 @@ using System.Text.Json.Serialization;
 using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Json;
-using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
 using DasCleverle.DcsExport.LiveMap.Localization;
-using DasCleverle.DcsExport.LiveMap.State;
-using DasCleverle.DcsExport.LiveMap.State.Handlers;
+using DasCleverle.DcsExport.State;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 namespace DasCleverle.DcsExport.LiveMap;
@@ -43,21 +41,11 @@ public class Startup
 
         services.AddTcpExportListener(Configuration.GetSection("ExportListener"));
         services.AddJsonMessageParser();
+        services.AddLiveState();
 
         services.AddSingleton<HubExportEventHandler>();
         services.AddTransient<IExportEventHandler>(sp => sp.GetRequiredService<HubExportEventHandler>());
         services.AddHostedService(sp => sp.GetRequiredService<HubExportEventHandler>());
-
-        services.AddSingleton<ILiveState, LiveState>();
-        services.AddTransient<IWriteableLiveState>(sp => (IWriteableLiveState)sp.GetRequiredService<ILiveState>());
-
-        services.AddTransient<IExportEventHandler<InitPayload>, InitHandler>();
-        services.AddTransient<IExportEventHandler<TimePayload>, TimeHandler>();
-        services.AddTransient<IExportEventHandler<AddObjectPayload>, AddObjectHandler>();
-        services.AddTransient<IExportEventHandler<UpdateObjectPayload>, UpdateObjectHandler>();
-        services.AddTransient<IExportEventHandler<RemoveObjectPayload>, RemoveObjectHandler>();
-        services.AddTransient<IExportEventHandler<AddAirbasePayload>, AddAirbaseHandler>();
-        services.AddTransient<IExportEventHandler<MissionEndPayload>, MissionEndHandler>();
 
         services.AddSingleton<ILocalizationProvider, JsonFileLocalizationProvider>();
         services.Configure<JsonFileLocalizationProviderOptions>(options =>

@@ -10,7 +10,6 @@ namespace DasCleverle.DcsExport.State
 {
     public class LiveStateStore : ILiveStateStore
     {
-        private delegate ValueTask Subscriber(ILiveStateStore state);
 
         private readonly object _syncRoot = new();
         private LiveState _state = new();
@@ -31,9 +30,16 @@ namespace DasCleverle.DcsExport.State
         public IDisposable Subscribe(Func<ILiveStateStore, ValueTask> fn)
         {
             var id = Guid.NewGuid();
-            var unsubscriber = new Unsubscriber(this, id);
+            var subscriber = new Subscriber
+            {
+                Id = id,
+                Callback = new SubscriberCallback(fn),
+                IsUnsubscribed = false
+            };
 
-            _subscribers.TryAdd(id, new Subscriber(fn));
+            var unsubscriber = new Unsubscriber(this, subscriber);
+
+            _subscribers.TryAdd(id, subscriber);
 
             return unsubscriber;
         }
@@ -72,17 +78,33 @@ namespace DasCleverle.DcsExport.State
             {
                 foreach (var subscriber in subscribers)
                 {
-                    await subscriber(this);
+                    if (subscriber.IsUnsubscribed)
+                    {
+                        continue;
+                    }
+
+                    await subscriber.Callback.Invoke(this);
                 }
             }
+        }
+
+        private delegate ValueTask SubscriberCallback(ILiveStateStore state);
+
+        private class Subscriber
+        {
+            public Guid Id { get; init; }
+
+            public SubscriberCallback Callback { get; init; }
+
+            public bool IsUnsubscribed { get; set; }
         }
 
         private class Unsubscriber : IDisposable
         {
             private readonly LiveStateStore _store;
-            private readonly Guid _subscriber;
+            private readonly Subscriber _subscriber;
 
-            public Unsubscriber(LiveStateStore store, Guid subscriber)
+            public Unsubscriber(LiveStateStore store, Subscriber subscriber)
             {
                 _store = store;
                 _subscriber = subscriber;
@@ -90,7 +112,8 @@ namespace DasCleverle.DcsExport.State
 
             public void Dispose()
             {
-                _store._subscribers.Remove(_subscriber, out _);
+                _subscriber.IsUnsubscribed = true;
+                _store._subscribers.Remove(_subscriber.Id, out _);
             }
         }
     }

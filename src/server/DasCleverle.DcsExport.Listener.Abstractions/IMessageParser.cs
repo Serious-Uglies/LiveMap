@@ -5,6 +5,6 @@ namespace DasCleverle.DcsExport.Listener;
 
 public interface IMessageParser
 {
-    Task<IExportEvent> HandleMessageAsync(ReadOnlySequence<byte> message, CancellationToken token);
+    Task<IExportEvent> ParseMessageAsync(ReadOnlySequence<byte> message, CancellationToken token);
 }
 

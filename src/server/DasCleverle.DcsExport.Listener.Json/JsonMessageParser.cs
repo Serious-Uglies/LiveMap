@@ -17,7 +17,7 @@ public class JsonMessageParser : IMessageParser
         _logger = logger;
     }
 
-    public Task<IExportEvent> HandleMessageAsync(ReadOnlySequence<byte> message, CancellationToken token)
+    public Task<IExportEvent> ParseMessageAsync(ReadOnlySequence<byte> message, CancellationToken token)
     {
         if (_logger.IsEnabled(LogLevel.Trace))
         {

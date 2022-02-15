@@ -111,7 +111,7 @@ internal class TcpExportListenerService : BackgroundService
     {
         try
         {
-            var exportEvent = await _messageParser.HandleMessageAsync(message, token);
+            var exportEvent = await _messageParser.ParseMessageAsync(message, token);
 
             if (exportEvent is UnknownExportEvent)
             {

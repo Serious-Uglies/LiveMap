@@ -1,63 +1,64 @@
 using System.ComponentModel;
 
-namespace DasCleverle.DcsExport.Listener.Model
+namespace DasCleverle.DcsExport.Listener.Model;
+
+public enum EventType
 {
-    public enum EventType
-    {
-        [EventPayload(typeof(InitPayload))]
-        Init,
+    Unknown,
 
-        [EventPayload(typeof(MissionEndPayload))]
-        MissionEnd,
+    [EventPayload(typeof(InitPayload))]
+    Init,
 
-        [EventPayload(typeof(AddObjectPayload))]
-        AddObject,
+    [EventPayload(typeof(MissionEndPayload))]
+    MissionEnd,
 
-        [EventPayload(typeof(RemoveObjectPayload))]
-        RemoveObject,
+    [EventPayload(typeof(AddObjectPayload))]
+    AddObject,
 
-        [EventPayload(typeof(UpdateObjectPayload))]
-        UpdateObject,
+    [EventPayload(typeof(RemoveObjectPayload))]
+    RemoveObject,
 
-        [EventPayload(typeof(AddAirbasePayload))]
-        AddAirbase,
+    [EventPayload(typeof(UpdateObjectPayload))]
+    UpdateObject,
 
-        [EventPayload(typeof(TimePayload))]
-        Time
-    }
+    [EventPayload(typeof(AddAirbasePayload))]
+    AddAirbase,
 
-    public enum Coalition
-    {
-        Neutral = 0,
-        Red = 1,
-        Blue = 2
-    }
+    [EventPayload(typeof(TimePayload))]
+    Time
+}
 
-    public enum ObjectAttribute
-    {
-        [Description("Planes")]
-        Fixed,
+public enum Coalition
+{
+    Neutral = 0,
+    Red = 1,
+    Blue = 2
+}
 
-        [Description("AWACS")]
-        Awacs,
+public enum ObjectAttribute
+{
+    [Description("Planes")]
+    Fixed,
 
-        [Description("Tankers")]
-        Tanker,
+    [Description("AWACS")]
+    Awacs,
 
-        [Description("Helicopters")]
-        Rotary,
+    [Description("Tankers")]
+    Tanker,
 
-        [Description("Ground Units")]
-        Ground,
+    [Description("Helicopters")]
+    Rotary,
 
-        [Description("Ships")]
-        Water
-    }
+    [Description("Ground Units")]
+    Ground,
 
-    public enum ObjectType
-    {
-        Unknown = 0,
-        Unit = 1,
-        Static = 2
-    }
+    [Description("Ships")]
+    Water
+}
+
+public enum ObjectType
+{
+    Unknown = 0,
+    Unit = 1,
+    Static = 2
 }

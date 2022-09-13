@@ -1,51 +1,48 @@
-using System.Threading;
-using System.Threading.Tasks;
 using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.Listener.Model;
 
-namespace DasCleverle.DcsExport.LiveMap.State.Handlers
+namespace DasCleverle.DcsExport.LiveMap.State.Handlers;
+
+public class UpdateObjectHandler : IExportEventHandler<UpdateObjectPayload>
 {
-    public class UpdateObjectHandler : IExportEventHandler<UpdateObjectPayload>
+    private readonly IWriteableLiveState _state;
+
+    public UpdateObjectHandler(IWriteableLiveState state)
     {
-        private readonly IWriteableLiveState _state;
+        _state = state;
+    }
 
-        public UpdateObjectHandler(IWriteableLiveState state)
+    public Task HandleEventAsync(IExportEvent<UpdateObjectPayload> exportEvent, CancellationToken token)
+    {
+        Handle(exportEvent, token);
+        return Task.CompletedTask;
+    }
+
+    private void Handle(IExportEvent<UpdateObjectPayload> exportEvent, CancellationToken token)
+    {
+        if (exportEvent.Event != EventType.UpdateObject)
         {
-            _state = state;
+            return;
         }
 
-        public Task HandleEventAsync(IExportEvent<UpdateObjectPayload> exportEvent, CancellationToken token)
-        {
-            Handle(exportEvent, token);
-            return Task.CompletedTask;
-        }
+        var id = exportEvent.Payload.Id;
+        var position = exportEvent.Payload.Position;
 
-        private void Handle(IExportEvent<UpdateObjectPayload> exportEvent, CancellationToken token)
+        var isUpdated = false;
+
+        do
         {
-            if (exportEvent.Event != EventType.UpdateObject)
+            if (!_state.Objects.TryGetValue(id, out var obj))
             {
                 return;
             }
 
-            var id = exportEvent.Payload.Id;
-            var position = exportEvent.Payload.Position;
-
-            var isUpdated = false;
-
-            do
+            var updated = obj with
             {
-                if (!_state.Objects.TryGetValue(id, out var obj))
-                {
-                    return;
-                }
+                Position = position
+            };
 
-                var updated = obj with
-                {
-                    Position = position
-                };
-
-                isUpdated = _state.Objects.TryUpdate(id, updated, obj);
-            } while (!isUpdated);
-        }
+            isUpdated = _state.Objects.TryUpdate(id, updated, obj);
+        } while (!isUpdated);
     }
 }

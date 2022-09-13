@@ -1,9 +1,6 @@
-using System;
+namespace DasCleverle.DcsExport.Listener.Model;
 
-namespace DasCleverle.DcsExport.Listener.Model
+public class TimePayload
 {
-    public class TimePayload
-    {
-        public DateTime Time { get; init; }
-    }
+    public DateTime Time { get; init; }
 }

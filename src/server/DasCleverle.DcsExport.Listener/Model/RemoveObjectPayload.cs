@@ -1,7 +1,6 @@
-namespace DasCleverle.DcsExport.Listener.Model
+namespace DasCleverle.DcsExport.Listener.Model;
+
+public record RemoveObjectPayload
 {
-    public record RemoveObjectPayload
-    {
-        public int Id { get; init; }
-    }
+    public int Id { get; init; }
 }

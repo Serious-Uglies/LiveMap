@@ -1,7 +1,6 @@
-namespace DasCleverle.DcsExport.Listener.Model
+namespace DasCleverle.DcsExport.Listener.Model;
+
+public record MissionEndPayload
 {
-    public record MissionEndPayload
-    {
-        
-    }
+    
 }

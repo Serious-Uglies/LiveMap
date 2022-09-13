@@ -1,63 +1,60 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace DasCleverle.DcsExport.LiveMap.Localization
+namespace DasCleverle.DcsExport.LiveMap.Localization;
+
+public class ResourceCollection : IEnumerable<Resource>
 {
-    public class ResourceCollection : IEnumerable<Resource>
+    public static readonly ResourceCollection Empty = new ResourceCollection();
+
+    public ResourceCollection() : this(Enumerable.Empty<Resource>()) { }
+
+    public ResourceCollection(IEnumerable<Resource> resources)
     {
-        public static readonly ResourceCollection Empty = new ResourceCollection();
+        Resources = resources;
+    }
 
-        public ResourceCollection() : this(Enumerable.Empty<Resource>()) { }
+    public IEnumerable<Resource> Resources { get; }
 
-        public ResourceCollection(IEnumerable<Resource> resources)
+    public IEnumerator<Resource> GetEnumerator() => Resources.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => Resources.GetEnumerator();
+
+    public ResourceCollection Merge(ResourceCollection other)
+    {
+        return new ResourceCollection(DoMerge(other));
+    }
+
+    private ICollection<Resource> DoMerge(IEnumerable<Resource> other)
+    {
+        var merged = new Dictionary<string, Resource>();
+
+        var meByKey = Resources.ToDictionary(x => x.Key);
+        var otherByKey = other.ToDictionary(x => x.Key);
+
+        foreach (var me in meByKey)
         {
-            Resources = resources;
-        }
-
-        public IEnumerable<Resource> Resources { get; }
-
-        public IEnumerator<Resource> GetEnumerator() => Resources?.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => Resources?.GetEnumerator();
-
-        public ResourceCollection Merge(ResourceCollection other)
-        {
-            return new ResourceCollection(DoMerge(other));
-        }
-
-        private ICollection<Resource> DoMerge(IEnumerable<Resource> other)
-        {
-            var merged = new Dictionary<string, Resource>();
-
-            var meByKey = Resources.ToDictionary(x => x.Key);
-            var otherByKey = other.ToDictionary(x => x.Key);
-
-            foreach (var me in meByKey)
+            if (!otherByKey.TryGetValue(me.Key, out var they))
             {
-                if (!otherByKey.TryGetValue(me.Key, out var they))
-                {
-                    merged[me.Key] = me.Value;
-                    continue;
-                }
-
-                merged[me.Key] = me.Value with
-                {
-                    Children = me.Value.Children.Merge(they.Children)
-                };
+                merged[me.Key] = me.Value;
+                continue;
             }
 
-            foreach (var they in otherByKey)
+            merged[me.Key] = me.Value with
             {
-                if (merged.ContainsKey(they.Key))
-                {
-                    continue;
-                }
-                
-                merged[they.Key] = they.Value;
-            }
-
-            return merged.Values;
+                Children = me.Value.Children.Merge(they.Children)
+            };
         }
+
+        foreach (var they in otherByKey)
+        {
+            if (merged.ContainsKey(they.Key))
+            {
+                continue;
+            }
+            
+            merged[they.Key] = they.Value;
+        }
+
+        return merged.Values;
     }
 }

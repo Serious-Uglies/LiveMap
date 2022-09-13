@@ -1,88 +1,85 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
-namespace DasCleverle.DcsExport.LiveMap.Localization
+namespace DasCleverle.DcsExport.LiveMap.Localization;
+
+public class JsonFileLocalizationProvider : ILocalizationProvider
 {
-    public class JsonFileLocalizationProvider : ILocalizationProvider
+    private static readonly JsonSerializerOptions JsonSerializerOptions = ConfigureJsonSerializer();
+
+    private readonly IFileProvider _fileProvider;
+    private readonly IOptions<JsonFileLocalizationProviderOptions> _options;
+
+    private readonly ConcurrentDictionary<string, ResourceFile> _cache = new();
+    private bool _isLoaded;
+
+    public JsonFileLocalizationProvider(IWebHostEnvironment webHost, IOptions<JsonFileLocalizationProviderOptions> options)
     {
-        private static readonly JsonSerializerOptions JsonSerializerOptions = ConfigureJsonSerializer();
+        _fileProvider = webHost.WebRootFileProvider;
+        _options = options;
+    }
 
-        private readonly IFileProvider _fileProvider;
-        private readonly IOptions<JsonFileLocalizationProviderOptions> _options;
+    public async Task<IEnumerable<Locale>> GetLocalesAsync()
+    {
+        await LoadResourcesAsync();
 
-        private readonly ConcurrentDictionary<string, ResourceFile> _cache = new();
-        private bool _isLoaded;
+        return _cache.Values
+            .Select(x => x.Locale)
+            .Where(x => x != null);
+    }
 
-        public JsonFileLocalizationProvider(IWebHostEnvironment webHost, IOptions<JsonFileLocalizationProviderOptions> options)
+    public async Task<ResourceCollection> GetResourcesAsync(string locale)
+    {
+        await LoadResourcesAsync();
+
+        return _cache.TryGetValue(locale, out var file)
+            ? file.Resources
+            : ResourceCollection.Empty;
+    }
+
+    private async Task LoadResourcesAsync()
+    {
+        if (!_options.Value.DisableCache)
         {
-            _fileProvider = webHost.WebRootFileProvider;
-            _options = options;
-        }
-
-        public async Task<IEnumerable<Locale>> GetLocalesAsync()
-        {
-            await LoadResourcesAsync();
-
-            return _cache.Values
-                .Select(x => x.Locale);
-        }
-
-        public async Task<ResourceCollection> GetResourcesAsync(string locale)
-        {
-            await LoadResourcesAsync();
-
-            return _cache.TryGetValue(locale, out var file)
-                ? file.Resources
-                : ResourceCollection.Empty;
-        }
-
-        private async Task LoadResourcesAsync()
-        {
-            if (!_options.Value.DisableCache)
+            if (_isLoaded)
             {
-                if (_isLoaded)
-                {
-                    return;
-                }
-
-                _isLoaded = true;
+                return;
             }
 
-            var files = _fileProvider.GetDirectoryContents(_options.Value.BasePath)
-                .Where(f => Path.GetExtension(f.Name) == ".json" && !f.Name.Contains(".overrides."));
+            _isLoaded = true;
+        }
 
-            var overrides = _fileProvider.GetDirectoryContents(_options.Value.BasePath)
-                .Where(f => Path.GetExtension(f.Name) == ".json" && f.Name.Contains(".overrides."))
-                .ToDictionary(f => f.Name.Substring(0, f.Name.IndexOf('.')));
+        var files = _fileProvider.GetDirectoryContents(_options.Value.BasePath)
+            .Where(f => Path.GetExtension(f.Name) == ".json" && !f.Name.Contains(".overrides."));
 
-            foreach (var file in files)
+        var overrides = _fileProvider.GetDirectoryContents(_options.Value.BasePath)
+            .Where(f => Path.GetExtension(f.Name) == ".json" && f.Name.Contains(".overrides."))
+            .ToDictionary(f => f.Name.Substring(0, f.Name.IndexOf('.')));
+
+        foreach (var file in files)
+        {
+            using var stream = file.CreateReadStream();
+            var rawFile = await JsonSerializer.DeserializeAsync<RawResourceFile>(stream, JsonSerializerOptions);
+
+            if (rawFile?.Resources == null)
             {
-                using var stream = file.CreateReadStream();
-                var rawFile = await JsonSerializer.DeserializeAsync<RawResourceFile>(stream, JsonSerializerOptions);
+                throw new InvalidOperationException($"Could not find required JSON property 'resources' in resource file '{file.PhysicalPath}'.");
+            }
 
-                if (rawFile.Resources == null)
+            var id = Path.GetFileNameWithoutExtension(file.Name);
+            var label = rawFile.Label;
+            var flag = rawFile.Flag;
+            var resources = rawFile.Resources;
+
+            if (overrides.TryGetValue(id, out var @override))
+            {
+                using var overrideStream = @override.CreateReadStream();
+                var rawOverride = await JsonSerializer.DeserializeAsync<RawResourceFile>(overrideStream, JsonSerializerOptions);
+
+                if (rawOverride != null)
                 {
-                    throw new InvalidOperationException($"Could not find required JSON property 'resources' in resource file '{file.PhysicalPath}'.");
-                }
-
-                var id = Path.GetFileNameWithoutExtension(file.Name);
-                var label = rawFile.Label;
-                var flag = rawFile.Flag;
-                var resources = rawFile.Resources;
-
-                if (overrides.TryGetValue(id, out var @override)) 
-                {
-                    using var overrideStream = @override.CreateReadStream();
-                    var rawOverride = await JsonSerializer.DeserializeAsync<RawResourceFile>(overrideStream, JsonSerializerOptions);
-
                     if (!string.IsNullOrEmpty(rawOverride.Label))
                     {
                         label = rawOverride.Label;
@@ -98,49 +95,49 @@ namespace DasCleverle.DcsExport.LiveMap.Localization
                         resources = rawFile.Resources.Merge(rawOverride.Resources);
                     }
                 }
-
-                var locale = new Locale
-                {
-                    Id = id,
-                    Flag = flag,
-                    Label = label,
-                };
-
-                _cache[id] = new ResourceFile
-                {
-                    Locale = locale,
-                    Resources = resources
-                };
             }
-        }
 
-        private static JsonSerializerOptions ConfigureJsonSerializer()
-        {
-            var options = new JsonSerializerOptions
+            var locale = new Locale
             {
-                ReadCommentHandling = JsonCommentHandling.Skip,
-                PropertyNameCaseInsensitive = true,
+                Id = id,
+                Flag = flag,
+                Label = label,
             };
 
-            options.Converters.Add(new JsonResourceCollectionConverter());
-
-            return options;
+            _cache[id] = new ResourceFile
+            {
+                Locale = locale,
+                Resources = resources
+            };
         }
+    }
 
-        private record ResourceFile 
+    private static JsonSerializerOptions ConfigureJsonSerializer()
+    {
+        var options = new JsonSerializerOptions
         {
-            public Locale Locale { get; init; }
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            PropertyNameCaseInsensitive = true,
+        };
 
-            public ResourceCollection Resources { get; init; }
-        }
+        options.Converters.Add(new JsonResourceCollectionConverter());
 
-        private class RawResourceFile 
-        {
-            public string Label { get; init; }
+        return options;
+    }
 
-            public string Flag { get; init; }
+    private record ResourceFile
+    {
+        public Locale Locale { get; init; } = Locale.Empty;
 
-            public ResourceCollection Resources { get; init; }
-        }
+        public ResourceCollection Resources { get; init; } = ResourceCollection.Empty;
+    }
+
+    private class RawResourceFile
+    {
+        public string? Label { get; init; }
+
+        public string? Flag { get; init; }
+
+        public ResourceCollection? Resources { get; init; }
     }
 }

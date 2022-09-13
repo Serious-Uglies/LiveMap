@@ -1,41 +1,38 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using DasCleverle.DcsExport.Listener.Model;
 
-namespace DasCleverle.DcsExport.LiveMap.State
+namespace DasCleverle.DcsExport.LiveMap.State;
+
+public interface ILiveState
 {
-    public interface ILiveState
-    {
-        bool IsRunning { get; }
+    bool IsRunning { get; }
 
-        ICollection<AddObjectPayload> Objects { get; }
+    ICollection<AddObjectPayload> Objects { get; }
 
-        ICollection<AddAirbasePayload> Airbases { get; }
+    ICollection<AddAirbasePayload> Airbases { get; }
 
-        string MissionName { get; }
+    string? MissionName { get; }
 
-        string Theatre { get; }
+    string? Theatre { get; }
 
-        Position MapCenter { get; }
+    Position? MapCenter { get; }
 
-        DateTime Time { get; }
-    }
+    DateTime Time { get; }
+}
 
-    public interface IWriteableLiveState 
-    {
-        bool IsRunning { get; set; }
+public interface IWriteableLiveState 
+{
+    bool IsRunning { get; set; }
 
-        ConcurrentDictionary<int, AddObjectPayload> Objects { get; }
+    ConcurrentDictionary<int, AddObjectPayload> Objects { get; }
 
-        ConcurrentDictionary<string, AddAirbasePayload> Airbases { get; }
+    ConcurrentDictionary<string, AddAirbasePayload> Airbases { get; }
 
-        string MissionName { get; set; }
+    string? MissionName { get; set; }
 
-        string Theatre { get; set; }
+    string? Theatre { get; set; }
 
-        Position MapCenter { get; set; }
+    Position? MapCenter { get; set; }
 
-        DateTime Time { get; set; }
-    }
+    DateTime Time { get; set; }
 }

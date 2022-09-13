@@ -1,9 +1,8 @@
-namespace DasCleverle.DcsExport.Listener.Model
-{
-    public record Position
-    {
-        public decimal Lat { get; init; }
+namespace DasCleverle.DcsExport.Listener.Model;
 
-        public decimal Long { get; init; }
-    }
+public record Position
+{
+    public decimal Lat { get; init; }
+
+    public decimal Long { get; init; }
 }

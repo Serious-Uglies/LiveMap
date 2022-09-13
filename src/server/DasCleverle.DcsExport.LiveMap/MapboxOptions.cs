@@ -1,9 +1,8 @@
-namespace DasCleverle.DcsExport.LiveMap
-{
-    public class MapboxOptions
-    {
-        public string MapboxToken { get; set; }
+namespace DasCleverle.DcsExport.LiveMap;
 
-        public string MapboxStyle { get; set; }
-    }
+public class MapboxOptions
+{
+    public string? MapboxToken { get; set; }
+
+    public string? MapboxStyle { get; set; }
 }

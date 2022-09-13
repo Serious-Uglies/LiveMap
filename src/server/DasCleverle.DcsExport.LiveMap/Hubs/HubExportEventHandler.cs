@@ -1,82 +1,75 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.LiveMap.Hubs;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-namespace DasCleverle.DcsExport.LiveMap.Handlers
+namespace DasCleverle.DcsExport.LiveMap.Handlers;
+
+public class HubExportEventHandler : BackgroundService, IExportEventHandler
 {
-    public class HubExportEventHandler : BackgroundService, IExportEventHandler
+    private readonly ILogger<HubExportEventHandler> _logger;
+    private readonly IHubContext<LiveMapHub, ILiveMapHub> _hubContext;
+
+    private readonly object _syncRoot = new object();
+    private readonly List<IExportEvent> _events = new List<IExportEvent>();
+
+    public HubExportEventHandler(ILogger<HubExportEventHandler> logger, IHubContext<LiveMapHub, ILiveMapHub> hubContext)
     {
-        private readonly ILogger<HubExportEventHandler> _logger;
-        private readonly IHubContext<LiveMapHub, ILiveMapHub> _hubContext;
+        _logger = logger;
+        _hubContext = hubContext;
+    }
 
-        private readonly object _syncRoot = new object();
-        private readonly List<IExportEvent> _events = new List<IExportEvent>();
-
-        public HubExportEventHandler(ILogger<HubExportEventHandler> logger, IHubContext<LiveMapHub, ILiveMapHub> hubContext)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        try
         {
-            _logger = logger;
-            _hubContext = hubContext;
-        }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            try
+            while (!stoppingToken.IsCancellationRequested)
             {
-                while (!stoppingToken.IsCancellationRequested)
+                try
                 {
-                    try
+                    await Task.Delay(1000, stoppingToken);
+
+                    var events = new List<IExportEvent>();
+
+                    lock (_syncRoot)
                     {
-                        await Task.Delay(1000, stoppingToken);
-
-                        var events = new List<IExportEvent>();
-
-                        lock (_syncRoot)
+                        if (_events.Count == 0) 
                         {
-                            if (_events.Count == 0) 
-                            {
-                                continue;
-                            }
-
-                            events.AddRange(_events);
-                            _events.Clear();
+                            continue;
                         }
 
-                        await _hubContext.Clients.All.Event(
-                            new SendEventRequest { Events = events },
-                            stoppingToken
-                        );
+                        events.AddRange(_events);
+                        _events.Clear();
                     }
-                    catch (OperationCanceledException)
-                    {
-                        throw;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Could not send events to hub clients.");
-                    }
+
+                    await _hubContext.Clients.All.Event(
+                        new SendEventRequest { Events = events },
+                        stoppingToken
+                    );
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not send events to hub clients.");
                 }
             }
-            catch (OperationCanceledException)
-            {
-                // ignored
-            }
         }
-
-        Task IExportEventHandler.HandleEventAsync(IExportEvent exportEvent, CancellationToken token)
+        catch (OperationCanceledException)
         {
-            lock (_syncRoot)
-            {
-                _events.Add(exportEvent);
-            }
-
-            return Task.CompletedTask;
+            // ignored
         }
+    }
+
+    Task IExportEventHandler.HandleEventAsync(IExportEvent exportEvent, CancellationToken token)
+    {
+        lock (_syncRoot)
+        {
+            _events.Add(exportEvent);
+        }
+
+        return Task.CompletedTask;
     }
 }

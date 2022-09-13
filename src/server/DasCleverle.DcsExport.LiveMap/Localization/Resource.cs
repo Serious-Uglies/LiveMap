@@ -1,13 +1,10 @@
-using System.Linq;
+namespace DasCleverle.DcsExport.LiveMap.Localization;
 
-namespace DasCleverle.DcsExport.LiveMap.Localization
+public record Resource
 {
-    public record Resource
-    {
-        public string Key { get; init; }
+    public string Key { get; init; } = "";
 
-        public string Value { get; init; }
+    public string? Value { get; init; }
 
-        public ResourceCollection Children { get; init; } = new ResourceCollection();
-    }
+    public ResourceCollection Children { get; init; } = new ResourceCollection();
 }

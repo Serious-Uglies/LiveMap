@@ -1,4 +1,3 @@
-namespace DasCleverle.DcsExport.Listener.Abstractions
-{
-    public interface IEventPayload { }
-}
+namespace DasCleverle.DcsExport.Listener.Abstractions;
+
+public interface IEventPayload { }

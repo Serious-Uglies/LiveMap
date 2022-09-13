@@ -1,16 +1,15 @@
 using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.State.Abstractions;
 
-namespace DasCleverle.DcsExport.State.Reducers
+namespace DasCleverle.DcsExport.State.Reducers;
+
+public class AddObjectReducer : Reducer<ObjectPayload>
 {
-    public class AddObjectReducer : Reducer<ObjectPayload>
+    protected override LiveState Reduce(LiveState state, ObjectPayload payload)
     {
-        protected override LiveState Reduce(LiveState state, ObjectPayload payload)
+        return state with
         {
-            return state with
-            {
-                Objects = state.Objects.SetItem(payload.Id, payload)
-            };
-        }
+            Objects = state.Objects.SetItem(payload.Id, payload)
+        };
     }
 }

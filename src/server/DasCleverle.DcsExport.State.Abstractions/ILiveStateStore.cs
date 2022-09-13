@@ -1,17 +1,14 @@
-using System;
-using System.Threading.Tasks;
 using DasCleverle.DcsExport.Listener.Abstractions;
 
-namespace DasCleverle.DcsExport.State.Abstractions
+namespace DasCleverle.DcsExport.State.Abstractions;
+
+public interface ILiveStateStore
 {
-    public interface ILiveStateStore
-    {
-        LiveState GetState();
+    LiveState GetState();
 
-        IDisposable Subscribe(Func<ILiveStateStore, ValueTask> fn);
+    IDisposable Subscribe(Func<ILiveStateStore, ValueTask> fn);
 
-        IDisposable Subscribe(Action<ILiveStateStore> fn);
+    IDisposable Subscribe(Action<ILiveStateStore> fn);
 
-        ValueTask DispatchAsync(IEventPayload payload);
-    }
+    ValueTask DispatchAsync(IEventPayload payload);
 }

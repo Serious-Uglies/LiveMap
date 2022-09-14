@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap/bin/Debug/net5.0/DasCleverle.DcsExport.LiveMap.dll",
+            "program": "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap/bin/Debug/net6.0/DasCleverle.DcsExport.LiveMap.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap",
             "stopAtEntry": false,

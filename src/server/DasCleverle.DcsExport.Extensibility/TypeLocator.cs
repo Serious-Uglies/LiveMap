@@ -18,4 +18,16 @@ public static class TypeLocator
             .Select(x => (Type: x, Attribute: x.GetCustomAttribute<TAttribute>()!))
             .Where(x => x.Attribute != null);
     }
+
+    public static IEnumerable<Type> GetTypesImplementing(Assembly assembly, Type interfaceType)
+    {
+        return assembly.GetExportedTypes().Where(x => x.IsAssignableTo(interfaceType));
+    }
+
+    public static IEnumerable<(Type Type, TAttribute Attribute)> GetTypesImplementingWithAttribute<TAttribute>(Assembly assembly, Type interfaceType) where TAttribute : Attribute
+    {
+        return GetTypesImplementing(assembly, interfaceType)
+            .Select(x => (Type: x, Attribute: x.GetCustomAttribute<TAttribute>()!))
+            .Where(x => x.Attribute != null);
+    }
 }

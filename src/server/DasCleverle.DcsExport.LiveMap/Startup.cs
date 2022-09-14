@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DasCleverle.DcsExport.Extensibility;
 using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Json;
@@ -53,6 +54,8 @@ public class Startup
             options.BasePath = "lang";
             options.DisableCache = Environment.IsDevelopment();
         });
+
+        ExtensionLoader.LoadExtensions(Environment.ContentRootPath + "/extensions", services);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

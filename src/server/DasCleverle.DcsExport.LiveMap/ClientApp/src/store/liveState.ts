@@ -1,46 +1,50 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { LiveState } from '../api/types';
+import {
+  AddAirbasePayload,
+  AddObjectPayload,
+  InitPayload,
+  RemoveObjectPayload,
+  UpdateObjectPayload,
+  UpdateTimePayload,
+} from './types';
 
-const initialState = {
-  phase: null,
+const initialState: LiveState = {
+  phase: 'uninitialized',
   isRunning: false,
   objects: {},
   airbases: {},
-  missionName: null,
-  theatre: null,
-  mapCenter: null,
-  time: null,
 };
 
-const arrayToObject = (array, getIndex) => {
+function arrayToObject<T>(array: T[], getIndex: (item: T) => string) {
   if (array === null || array === undefined) {
     return null;
   }
 
-  return array.reduce((prev, item) => {
+  return array.reduce((prev: any, item) => {
     prev[getIndex(item)] = item;
     return prev;
   }, {});
-};
+}
 
-const last = (array) => array[array.length - 1];
+function last<T>(array: T[]) {
+  return array[array.length - 1];
+}
 
 export const liveStateSlice = createSlice({
   name: 'liveState',
-  initialState: { ...initialState },
+  initialState: initialState,
   reducers: {
     setPhase: (state, { payload }) => {
       state.phase = payload;
     },
 
-    init: (state, { payload }) => {
-      if (Array.prototype.isPrototypeOf(payload)) {
-        payload = last(payload);
-      }
-
+    init: (state, { payload }: PayloadAction<InitPayload>) => {
       Object.assign(state, {
         ...payload,
         phase: state.phase,
-        objects: arrayToObject(payload.objects, (o) => o.id) || {},
+        time: payload.time ? new Date(payload.time) : undefined,
+        objects: arrayToObject(payload.objects, (o) => String(o.id)) || {},
         airbases: arrayToObject(payload.airbases, (o) => o.id) || {},
       });
     },
@@ -49,11 +53,11 @@ export const liveStateSlice = createSlice({
       Object.assign(state, { ...initialState, phase: state.phase });
     },
 
-    updateTime: (state, { payload }) => {
+    updateTime: (state, { payload }: PayloadAction<UpdateTimePayload[]>) => {
       state.time = last(payload).time;
     },
 
-    addObject: (state, { payload }) => {
+    addObject: (state, { payload }: PayloadAction<AddObjectPayload[]>) => {
       for (let object of payload) {
         if (state.objects[object.id]) {
           continue;
@@ -63,7 +67,10 @@ export const liveStateSlice = createSlice({
       }
     },
 
-    updateObject: (state, { payload }) => {
+    updateObject: (
+      state,
+      { payload }: PayloadAction<UpdateObjectPayload[]>
+    ) => {
       for (let update of payload) {
         const object = state.objects[update.id];
 
@@ -75,7 +82,10 @@ export const liveStateSlice = createSlice({
       }
     },
 
-    removeObject: (state, { payload }) => {
+    removeObject: (
+      state,
+      { payload }: PayloadAction<RemoveObjectPayload[]>
+    ) => {
       for (let { id } of payload) {
         if (!state.objects[id]) {
           continue;
@@ -85,7 +95,7 @@ export const liveStateSlice = createSlice({
       }
     },
 
-    addAirbase: (state, { payload }) => {
+    addAirbase: (state, { payload }: PayloadAction<AddAirbasePayload[]>) => {
       for (let airbase of payload) {
         if (state.airbases[airbase.id]) {
           continue;

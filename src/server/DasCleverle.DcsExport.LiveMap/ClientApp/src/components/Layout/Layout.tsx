@@ -3,7 +3,11 @@ import Navigation from './Navigation';
 
 import './Layout.css';
 
-export default function Layout({ children }) {
+type LayoutProps = {
+  children: React.ReactNode;
+};
+
+export default function Layout({ children }: LayoutProps) {
   return (
     <>
       <Navigation />

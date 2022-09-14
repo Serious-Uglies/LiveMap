@@ -28,7 +28,6 @@
         "frequencyListNone": "No frequencies published",
 
         "runways": "Runways",
-        "runwayEdge": "<0>{{edge}}</0>",
         "runwayILS": " (ILS: {{ils.frequency, frequency}})",
 
         "tacan": "TACAN",

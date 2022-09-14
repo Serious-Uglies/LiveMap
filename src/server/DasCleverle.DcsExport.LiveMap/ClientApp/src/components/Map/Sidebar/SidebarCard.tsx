@@ -5,14 +5,27 @@ import { BsX } from 'react-icons/bs';
 
 import './SidebarCard.css';
 
+interface SidebarCardProperty {
+  title: string;
+  value: React.ReactNode | null;
+}
+
+interface SidebarCardProps {
+  title: string;
+  properties?: SidebarCardProperty[];
+  visible?: boolean;
+  dismissable?: boolean;
+  onDismiss?: () => void;
+}
+
 export default function SidebarCard({
   title,
   properties,
   visible = true,
-  dismissable,
+  dismissable = false,
   onDismiss,
-}) {
-  if (!visible) {
+}: SidebarCardProps) {
+  if (!visible || !properties) {
     return null;
   }
 

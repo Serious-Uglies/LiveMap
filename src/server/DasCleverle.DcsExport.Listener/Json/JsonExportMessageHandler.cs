@@ -28,7 +28,7 @@ public class JsonExportMessageHandler : IExportMessageHandler
         var reader = new Utf8JsonReader(message);
         var exportEvent = JsonSerializer.Deserialize<IExportEvent>(ref reader, Options);
 
-        return Task.FromResult(exportEvent ?? EmptyExportEvent.Instance);
+        return Task.FromResult(exportEvent ?? new ExportEvent<EmptyPayload>() { Event = EventType.Unknown, Payload = new EmptyPayload() });
     }
 
     private static JsonSerializerOptions GetOptions()
@@ -46,14 +46,4 @@ public class JsonExportMessageHandler : IExportMessageHandler
         return options;
     }
 
-    private class EmptyExportEvent : IExportEvent
-    {
-        public static readonly EmptyExportEvent Instance = new();
-
-        public EventType Event { get; } = EventType.Unknown;
-
-        public object Payload { get; } = new EmptyPayload();
-    }
-
-    private class EmptyPayload { }
 }

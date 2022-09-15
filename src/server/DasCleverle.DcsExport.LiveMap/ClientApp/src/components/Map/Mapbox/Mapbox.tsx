@@ -6,16 +6,6 @@ import MapboxLayer from './MapboxLayer';
 
 import './Mapbox.css';
 
-// const mapOptions = {
-//   scrollZoom: {
-//     speed: 0.03,
-//     smooth: true,
-//   },
-//   dragRotate: false,
-//   touchZoomRotate: false,
-//   touchPitch: false,
-// };
-
 type MapboxProps = {
   children: React.ReactNode;
   interactiveLayerIds?: string[];
@@ -42,7 +32,7 @@ function Mapbox({
     return null;
   }
 
-  const onMouseEnter = (e: MapLayerMouseEvent) => {
+  const handleMouseEnter = (e: MapLayerMouseEvent) => {
     if (!e.features) {
       return;
     }
@@ -50,7 +40,7 @@ function Mapbox({
     setCursor('pointer');
   };
 
-  const onMouseLeave = (e: MapLayerMouseEvent) => {
+  const handleMouseLeave = (e: MapLayerMouseEvent) => {
     if (!e.features) {
       return;
     }
@@ -67,8 +57,11 @@ function Mapbox({
       mapboxAccessToken={config.mapboxToken}
       mapStyle={config.mapboxStyle}
       onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      dragRotate={false}
+      touchZoomRotate={false}
+      touchPitch={false}
     >
       {children}
     </Map>

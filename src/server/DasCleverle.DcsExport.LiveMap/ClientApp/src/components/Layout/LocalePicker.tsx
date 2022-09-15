@@ -42,9 +42,7 @@ function LocaleLabel({ locale }: LocaleLabelProps) {
 
   return (
     <>
-      {locale.flag && (
-        <span className={`flag-icon flag-icon-${locale.flag}`}></span>
-      )}
+      {locale.flag && <span className={`fi fi-${locale.flag}`}></span>}
       <span className="locale-label">{locale.label}</span>
     </>
   );

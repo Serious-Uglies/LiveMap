@@ -30,12 +30,12 @@ export default function Navigation() {
           </Navbar.Brand>
           <Navbar.Toggle />
           <Navbar.Collapse>
-            <Nav className="mr-auto">
+            <Nav>
               <Nav.Link as={Link} to="/">
                 {t('navbar.home')}
               </Nav.Link>
             </Nav>
-            <Nav>
+            <Nav className="d-flex flex-grow-1 justify-content-end">
               <LocalePicker />
             </Nav>
           </Navbar.Collapse>

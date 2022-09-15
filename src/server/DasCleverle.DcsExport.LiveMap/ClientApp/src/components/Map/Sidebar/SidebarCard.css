@@ -1,5 +1,6 @@
 .btn-dismiss {
   box-sizing: content-box;
+  padding: 0;
   width: 1.5em;
   height: 1.5em;
   color: #000;

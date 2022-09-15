@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
-import { Popup } from 'react-map-gl';
+import { MapLayerMouseEvent, Popup } from 'react-map-gl';
 
 import Alert from 'react-bootstrap/Alert';
 import Spinner from 'react-bootstrap/Spinner';
@@ -14,14 +13,22 @@ import AirbaseSidebarCard from './Sidebar/AirbaseSidebarCard';
 import Backdrop from './Backdrop';
 import ObjectPopup from './ObjectPopup';
 
+import { Airbase, MapObject } from '../../api/types';
 import { connect } from '../../api/liveState';
-import { useViewport } from './hooks';
+import { useViewState } from './hooks';
 import layers from './layers';
 
 import './Map.css';
+import { RootState, useAppDispatch, useAppSelector } from '../../store';
+
+interface ObjectPopupState {
+  objects?: MapObject[];
+  props: { latitude: number; longitude: number };
+  show: boolean;
+}
 
 const layersSelector = createSelector(
-  (state) => state.liveState,
+  (state: RootState) => state.liveState,
   (liveState) =>
     layers.map((layer) => ({
       ...layer,
@@ -30,56 +37,66 @@ const layersSelector = createSelector(
 );
 
 export default function Map() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { ready: translationsReady, t } = useTranslation();
 
-  useEffect(() => dispatch(connect()), [dispatch]);
+  useEffect(() => {
+    dispatch(connect());
+  }, [dispatch]);
 
-  const [viewport, setViewport] = useViewport();
-  const layers = useSelector(layersSelector);
+  const [viewState, setViewState] = useViewState();
+  const layers = useAppSelector(layersSelector);
 
-  const phase = useSelector((state) => state.liveState.phase);
-  const isRunning = useSelector((state) => state.liveState.isRunning);
-  const objects = useSelector((state) => state.liveState.objects);
-  const airbases = useSelector((state) => state.liveState.airbases);
+  const phase = useAppSelector((state) => state.liveState.phase);
+  const isRunning = useAppSelector((state) => state.liveState.isRunning);
+  const objects = useAppSelector((state) => state.liveState.objects);
+  const airbases = useAppSelector((state) => state.liveState.airbases);
 
-  const [objectPopup, setObjectPopup] = useState({ show: false });
-  const [airbase, setAirbase] = useState();
+  const [objectPopup, setObjectPopup] = useState<ObjectPopupState>({
+    show: false,
+    props: { latitude: 0, longitude: 0 },
+  });
+  const [airbase, setAirbase] = useState<Airbase | undefined>();
 
-  const handleMapClick = (event) => {
-    const objectFeatures = event.features.filter(
+  const handleMapClick = (event: MapLayerMouseEvent) => {
+    const objectFeatures = event.features?.filter(
       (f) => f.layer.id === 'objects'
     );
 
-    if (objectFeatures.length) {
+    if (objectFeatures?.length) {
       const selectedObjects = objectFeatures.map(
-        (f) => objects[f.properties.id]
+        (f) => objects[f.properties?.id]
       );
 
       const longitude =
-        objectFeatures.reduce((s, f) => s + f.geometry.coordinates[0], 0) /
-        objectFeatures.length;
+        objectFeatures.reduce(
+          (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[0],
+          0
+        ) / objectFeatures.length;
 
       const latitude =
-        objectFeatures.reduce((s, f) => s + f.geometry.coordinates[1], 0) /
-        objectFeatures.length;
+        objectFeatures.reduce(
+          (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[1],
+          0
+        ) / objectFeatures.length;
 
       const props = { longitude, latitude };
 
       setObjectPopup({ objects: selectedObjects, props, show: true });
     }
 
-    const selectedAirbase = event.features.find(
+    const selectedAirbase = event.features?.find(
       (f) => f.layer.id === 'airbases'
     );
 
-    if (selectedAirbase) {
+    if (selectedAirbase?.properties) {
       setAirbase(airbases[selectedAirbase.properties.id]);
     }
   };
 
-  const handleObjectPopupDismiss = () => setObjectPopup({ show: false });
-  const handleAirbaseCardDismiss = () => setAirbase(null);
+  const handleObjectPopupDismiss = () =>
+    setObjectPopup({ show: false, props: { latitude: 0, longitude: 0 } });
+  const handleAirbaseCardDismiss = () => setAirbase(undefined);
 
   const showBackdrop = !translationsReady || phase !== 'loaded' || !isRunning;
 
@@ -87,9 +104,9 @@ export default function Map() {
     <>
       <Mapbox
         onClick={handleMapClick}
-        viewport={viewport}
-        onViewportChange={setViewport}
-        interactiveLayerIds={layers.map((l) => l.id)}
+        viewState={viewState}
+        setViewState={setViewState}
+        interactiveLayerIds={layers.map((l) => l.config.id)}
       >
         {objectPopup.show && (
           <Popup {...objectPopup.props} onClose={handleObjectPopupDismiss}>
@@ -98,7 +115,7 @@ export default function Map() {
         )}
 
         {layers.map((layer) => (
-          <Mapbox.Layer key={layer.id} {...layer} />
+          <Mapbox.Layer key={layer.config.id} {...layer} />
         ))}
       </Mapbox>
       {!showBackdrop && (

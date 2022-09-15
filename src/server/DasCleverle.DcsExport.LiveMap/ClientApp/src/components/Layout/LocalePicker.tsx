@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getAvailableLocales, Locale } from '../../api/locales';
 
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Spinner from 'react-bootstrap/Spinner';
 
-import { getAvailableLocales } from '../../api/locales';
-
 import './LocalePicker.css';
 
-function getCurrentLocale(locales, currentLocale) {
-  const getLocale = (id) => {
+function getCurrentLocale(
+  locales: Locale[],
+  currentLocale: string
+): Locale | undefined {
+  const getLocale = (id: string) => {
     return locales.find((l) => l.id === id);
   };
 
@@ -26,26 +28,33 @@ function getCurrentLocale(locales, currentLocale) {
     return getLocale(split[0]);
   }
 
-  return null;
+  return undefined;
 }
 
-function LocaleLabel({ locale: { flag, label } }) {
+type LocaleLabelProps = {
+  locale?: Locale;
+};
+
+function LocaleLabel({ locale }: LocaleLabelProps) {
+  if (!locale) {
+    return null;
+  }
+
   return (
     <>
-      {flag && <span className={`flag-icon flag-icon-${flag}`}></span>}
-      <span className="locale-label">{label}</span>
+      {locale.flag && <span className={`fi fi-${locale.flag}`}></span>}
+      <span className="locale-label">{locale.label}</span>
     </>
   );
 }
 
 export default function LocalePicker() {
-  const [locales, setLocales] = useState(null);
+  const [locales, setLocales] = useState<Locale[]>([]);
   const { i18n } = useTranslation();
 
-  useEffect(
-    () => getAvailableLocales().then((locales) => setLocales(locales)),
-    []
-  );
+  useEffect(() => {
+    getAvailableLocales().then((locales) => setLocales(locales));
+  }, []);
 
   if (locales === null) {
     return (
@@ -59,13 +68,15 @@ export default function LocalePicker() {
     return null;
   }
 
-  const handleSelect = (locale) => i18n.changeLanguage(locale);
+  const handleSelect = (locale: string | null) => {
+    i18n.changeLanguage(locale ?? undefined);
+  };
 
   return (
     <NavDropdown
       onSelect={handleSelect}
       title={<LocaleLabel locale={getCurrentLocale(locales, i18n.language)} />}
-      alignRight
+      align="end"
     >
       {locales.map((locale) => (
         <NavDropdown.Item key={locale.id} eventKey={locale.id}>

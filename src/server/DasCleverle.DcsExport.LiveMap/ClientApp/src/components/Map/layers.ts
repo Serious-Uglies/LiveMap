@@ -1,16 +1,28 @@
+import { AnyLayer } from 'mapbox-gl';
+import { LiveState } from '../../api/types';
 import {
   createAirbaseFeature,
   createObjectFeature,
+  FeatureFactory,
+  FeatureUpdater,
   updateObjectFeature,
 } from './features';
 
-const layers = [
+export interface LayerConfig {
+  getData: (liveState: LiveState) => any;
+  createFeature: FeatureFactory;
+  updateFeature?: FeatureUpdater;
+  config: AnyLayer;
+}
+
+const layers: LayerConfig[] = [
   {
-    id: 'objects',
     getData: (liveState) => liveState.objects,
     createFeature: createObjectFeature,
     updateFeature: updateObjectFeature,
-    layer: {
+    config: {
+      id: 'objects',
+      type: 'symbol',
       layout: {
         'icon-image': '{icon}',
         'icon-allow-overlap': true,
@@ -20,10 +32,11 @@ const layers = [
     },
   },
   {
-    id: 'airbases',
     getData: (liveState) => liveState.airbases,
     createFeature: createAirbaseFeature,
-    layer: {
+    config: {
+      id: 'airbases',
+      type: 'symbol',
       layout: {
         'icon-image': '{icon}',
         'icon-allow-overlap': true,

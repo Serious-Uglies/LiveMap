@@ -1,4 +1,4 @@
-export default function frequency(value) {
+export default function frequency(value: any) {
   const unit = value > 1000000 ? 'MHz' : 'kHz';
   const converted = unit === 'MHz' ? value / 1000000 : value / 1000;
 

@@ -4,6 +4,7 @@ namespace DasCleverle.DcsExport.Listener.Model;
 
 public enum EventType
 {
+    [EventPayload(typeof(EmptyPayload))]
     Unknown,
 
     [EventPayload(typeof(InitPayload))]
@@ -62,3 +63,5 @@ public enum ObjectType
     Unit = 1,
     Static = 2
 }
+
+internal class EmptyPayload { }

@@ -1,4 +1,4 @@
-import React from 'react';
+import { Routes } from 'react-router-dom';
 import { Route } from 'react-router';
 
 import Layout from './components/Layout/Layout';
@@ -10,7 +10,9 @@ import './i18n';
 export default function App() {
   return (
     <Layout>
-      <Route exact path="/" component={Map} />
+      <Routes>
+        <Route path="/" element={<Map />} />
+      </Routes>
     </Layout>
   );
 }

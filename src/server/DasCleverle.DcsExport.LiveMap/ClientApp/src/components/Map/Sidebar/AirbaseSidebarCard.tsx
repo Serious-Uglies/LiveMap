@@ -1,10 +1,18 @@
-import React from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { Airbase, AirbaseBeacon, AirbaseRunway } from '../../../api/types';
 import SidebarCard from './SidebarCard';
 
-export default function AirbaseSidebarCard({ airbase, onDismiss }) {
+interface AirbaseSidebarCardProps {
+  airbase?: Airbase;
+  onDismiss: () => void;
+}
+
+export default function AirbaseSidebarCard({
+  airbase,
+  onDismiss,
+}: AirbaseSidebarCardProps) {
   const { t } = useTranslation();
   const { name, frequencies, runways, beacons } = airbase || {};
 
@@ -15,7 +23,7 @@ export default function AirbaseSidebarCard({ airbase, onDismiss }) {
     {
       title: t('sidebar.airbase.frequency'),
       value: t(
-        frequencies.length > 0
+        frequencies?.length
           ? 'sidebar.airbase.frequencyList'
           : 'sidebar.airbase.frequencyListNone',
         {
@@ -25,12 +33,12 @@ export default function AirbaseSidebarCard({ airbase, onDismiss }) {
     },
     {
       title: t('sidebar.airbase.runways'),
-      value: runways.length ? <Runways runways={runways} ils={ils} /> : null,
+      value: runways?.length ? <Runways runways={runways} ils={ils} /> : null,
     },
     {
       title: t('sidebar.airbase.tacan'),
       value: t(
-        tacan.length > 0
+        tacan?.length
           ? 'sidebar.airbase.tacanList'
           : 'sidebar.airbase.tacanListNone',
         {
@@ -41,9 +49,7 @@ export default function AirbaseSidebarCard({ airbase, onDismiss }) {
     {
       title: t('sidebar.airbase.vor'),
       value: t(
-        vor.length > 0
-          ? 'sidebar.airbase.vorList'
-          : 'sidebar.airbase.vorListNone',
+        vor?.length ? 'sidebar.airbase.vorList' : 'sidebar.airbase.vorListNone',
         {
           vor,
         }
@@ -52,9 +58,7 @@ export default function AirbaseSidebarCard({ airbase, onDismiss }) {
     {
       title: t('sidebar.airbase.ndb'),
       value: t(
-        ndb.length > 0
-          ? 'sidebar.airbase.ndbList'
-          : 'sidebar.airbase.ndbListNone',
+        ndb?.length ? 'sidebar.airbase.ndbList' : 'sidebar.airbase.ndbListNone',
         {
           ndb,
         }
@@ -73,7 +77,12 @@ export default function AirbaseSidebarCard({ airbase, onDismiss }) {
   );
 }
 
-function Runways({ runways, ils }) {
+interface RunwaysProps {
+  runways: AirbaseRunway[];
+  ils?: AirbaseBeacon[];
+}
+
+function Runways({ runways, ils }: RunwaysProps) {
   return (
     <Row>
       <Col>
@@ -90,15 +99,18 @@ function Runways({ runways, ils }) {
   );
 }
 
-function RunwayEdge({ edge, ils }) {
+interface RunwayEdgeProps {
+  edge: string;
+  ils?: AirbaseBeacon[];
+}
+
+function RunwayEdge({ edge, ils }: RunwayEdgeProps) {
   const { t } = useTranslation();
-  const runwayILS = ils.find((i) => i.runway === edge);
+  const runwayILS = ils?.find((i) => i.runway === edge);
 
   return (
     <div key={edge}>
-      <Trans i18nKey="sidebar.airbase.runwayEdge">
-        <strong>{{ edge }}</strong>
-      </Trans>
+      <strong>{edge}</strong>
       {runwayILS && t('sidebar.airbase.runwayILS', { ils: runwayILS })}
     </div>
   );

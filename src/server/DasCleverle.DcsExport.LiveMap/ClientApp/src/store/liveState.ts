@@ -33,8 +33,8 @@ export const liveStateSlice = createSlice({
         ...payload,
         phase: state.phase,
         time: payload.time ? payload.time : undefined,
-        objects: payload.objects,
-        airbases: payload.airbases,
+        objects: payload.objects ?? {},
+        airbases: payload.airbases ?? {},
       });
     },
 

@@ -8,8 +8,8 @@ export interface PayloadAction<T = any> extends Action<string> {
 export interface InitPayload {
   phase: Phase;
   isRunning: boolean;
-  objects: Map<MapObject>;
-  airbases: Map<Airbase>;
+  objects?: Map<MapObject>;
+  airbases?: Map<Airbase>;
   missionName?: string;
   theatre?: string;
   mapCenter?: string;

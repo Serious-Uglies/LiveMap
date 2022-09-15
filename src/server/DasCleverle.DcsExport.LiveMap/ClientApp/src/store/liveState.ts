@@ -43,7 +43,7 @@ export const liveStateSlice = createSlice({
       Object.assign(state, {
         ...payload,
         phase: state.phase,
-        time: payload.time ? new Date(payload.time) : undefined,
+        time: payload.time ? payload.time : undefined,
         objects: arrayToObject(payload.objects, (o) => String(o.id)) || {},
         airbases: arrayToObject(payload.airbases, (o) => o.id) || {},
       });

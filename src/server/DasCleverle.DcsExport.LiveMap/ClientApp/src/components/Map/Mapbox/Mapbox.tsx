@@ -32,6 +32,7 @@ function Mapbox({
   onClick,
 }: MapboxProps) {
   const [config, setConfig] = useState<MapboxConfiguration | null>();
+  const [cursor, setCursor] = useState('auto');
 
   useEffect(() => {
     getMapboxConfig().then((config) => setConfig(config));
@@ -41,15 +42,33 @@ function Mapbox({
     return null;
   }
 
+  const onMouseEnter = (e: MapLayerMouseEvent) => {
+    if (!e.features) {
+      return;
+    }
+
+    setCursor('pointer');
+  };
+
+  const onMouseLeave = (e: MapLayerMouseEvent) => {
+    if (!e.features) {
+      return;
+    }
+
+    setCursor('auto');
+  };
+
   return (
     <Map
       {...viewState}
       onMove={(e) => setViewState(e.viewState)}
-      style={{ width: '100%', height: '100%' }}
-      onClick={onClick}
+      cursor={cursor}
       interactiveLayerIds={interactiveLayerIds}
       mapboxAccessToken={config.mapboxToken}
       mapStyle={config.mapboxStyle}
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {children}
     </Map>

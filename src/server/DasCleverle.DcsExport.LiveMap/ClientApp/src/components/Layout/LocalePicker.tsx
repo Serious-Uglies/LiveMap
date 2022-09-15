@@ -78,7 +78,7 @@ export default function LocalePicker() {
     <NavDropdown
       onSelect={handleSelect}
       title={<LocaleLabel locale={getCurrentLocale(locales, i18n.language)} />}
-      className="justify-content-right"
+      align="end"
     >
       {locales.map((locale) => (
         <NavDropdown.Item key={locale.id} eventKey={locale.id}>

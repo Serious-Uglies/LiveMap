@@ -31,8 +31,8 @@ export default function SidebarCard({
 
   return (
     <Card className="property-card">
-      <Card.Header className="d-flex align-items-center pr-2">
-        <div className="mr-auto">{title}</div>
+      <Card.Header className="d-flex align-items-center">
+        <div className="flex-grow-1">{title}</div>
         {dismissable && (
           <div>
             <button className="btn-dismiss" onClick={onDismiss}>

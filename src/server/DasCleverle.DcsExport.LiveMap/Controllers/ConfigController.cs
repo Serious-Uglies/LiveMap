@@ -1,3 +1,5 @@
+using DasCleverle.DcsExport.LiveMap.Definitions;
+using DasCleverle.DcsExport.Mapbox.Layers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -8,8 +10,8 @@ namespace DasCleverle.DcsExport.LiveMap.Controllers;
 public class ConfigController : Controller
 {
     [HttpGet("mapbox")]
-    public MapboxOptions GetMapboxConfig([FromServices] IOptionsSnapshot<MapboxOptions> options)
-    {
-        return options.Value;
-    }
+    public MapboxOptions GetMapboxConfig([FromServices] IOptionsSnapshot<MapboxOptions> options) => options.Value;
+
+    [HttpGet("layers")]
+    public IEnumerable<ILayer> GetLayers() => LayerDefinition.Layers;
 }

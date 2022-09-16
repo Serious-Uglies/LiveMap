@@ -1,5 +1,9 @@
+using System.Text.Json.Serialization;
+using DasCleverle.DcsExport.Mapbox.Json;
+
 namespace DasCleverle.DcsExport.Mapbox.Expressions;
 
+[JsonConverter(typeof(JsonExpressionConverter))]
 public abstract class Expression
 {
     public static ConstantExpression<T> Constant<T>(T value)
@@ -19,6 +23,7 @@ public abstract class Expression
     public static implicit operator Expression(decimal value) => Constant(value);
 }
 
+[JsonConverter(typeof(JsonExpressionConverter))]
 public abstract class Expression<T> : Expression
 {
     public static implicit operator Expression<T>(T value)

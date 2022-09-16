@@ -7,6 +7,7 @@ using DasCleverle.DcsExport.Listener.Json;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
 using DasCleverle.DcsExport.LiveMap.Localization;
+using DasCleverle.DcsExport.Mapbox.Json;
 using DasCleverle.DcsExport.State;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
@@ -98,7 +99,9 @@ public class Startup
 
     private void ConfigureJsonSerializer(JsonSerializerOptions options)
     {
-        options.Converters.Add(new JsonStringEnumConverter());
+        options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+
+        options.Converters.Add(new JsonStringEnumWithNamingPolicyConverter(JsonKebabCaseNamingPolicy.Instance));
         options.Converters.Add(new JsonExportEventConverter());
         options.Converters.Add(new JsonResourceCollectionConverter());
     }

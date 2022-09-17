@@ -5,7 +5,7 @@ namespace DasCleverle.DcsExport.GeoJson.Json;
 
 internal class JsonPositionConverter : JsonConverter<Position>
 {
-    public override Position? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override Position Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var position = JsonSerializer.Deserialize<double[]>(ref reader, options)!;
 

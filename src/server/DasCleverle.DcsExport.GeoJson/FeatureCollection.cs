@@ -12,6 +12,13 @@ public record FeatureCollection : IEnumerable<IFeature>
 
     public ImmutableList<IFeature> Features { get; init; } = ImmutableList<IFeature>.Empty;
 
+    public FeatureCollection() { }
+
+    public FeatureCollection(IEnumerable<IFeature> features)
+    {
+        Features = ImmutableList.CreateRange(features);
+    }
+
     public IEnumerator<IFeature> GetEnumerator() => Features.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => Features.GetEnumerator();

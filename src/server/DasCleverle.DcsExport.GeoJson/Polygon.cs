@@ -9,6 +9,28 @@ public record Polygon : IGeometry<ImmutableList<LinearRing>>, IEnumerable<Linear
 
     public ImmutableList<LinearRing> Coordinates { get; init; } = ImmutableList<LinearRing>.Empty;
 
+    public Polygon() {}
+
+    public Polygon(IEnumerable<Position> ring) 
+    {
+        Coordinates = ImmutableList.Create(new LinearRing(ring));
+    }
+
+    public Polygon(IEnumerable<IEnumerable<Position>> rings) 
+    {
+        Coordinates = ImmutableList.CreateRange(rings.Select(r => new LinearRing(r)));
+    }
+
+    public Polygon(LinearRing ring) 
+    {
+        Coordinates = ImmutableList.Create(ring);
+    }
+
+    public Polygon(IEnumerable<LinearRing> rings) 
+    {
+        Coordinates = ImmutableList.CreateRange(rings);
+    }
+
     public IEnumerator<LinearRing> GetEnumerator() => Coordinates.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => Coordinates.GetEnumerator();

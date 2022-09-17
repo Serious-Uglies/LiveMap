@@ -4,7 +4,7 @@ using DasCleverle.DcsExport.GeoJson.Json;
 namespace DasCleverle.DcsExport.GeoJson;
 
 [JsonConverter(typeof(JsonPositionConverter))]
-public record Position
+public record struct Position
 {
     public static readonly Position Zero = new();
 
@@ -21,5 +21,26 @@ public record Position
         Altitude = altitude;
     }
 
-    public Position() {}
+    public void Deconstruct(out double longitude, out double latitude)
+    {
+        longitude = Longitude;
+        latitude = Latitude;
+    }
+
+    public void Deconstruct(out double longitude, out double latitude, out double? altitude)
+    {
+        longitude = Longitude;
+        latitude = Latitude;
+        altitude = Altitude;
+    }
+
+    public static implicit operator Position((double Longitude, double Latitude) twoTuple)
+    {
+        return new Position(twoTuple.Longitude, twoTuple.Latitude);
+    }
+
+    public static implicit operator Position((double Longitude, double Latitude, double? Altitude) threeTuple)
+    {
+        return new Position(threeTuple.Longitude, threeTuple.Latitude, threeTuple.Altitude);
+    }
 }

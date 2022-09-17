@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 
 namespace DasCleverle.DcsExport.GeoJson;
@@ -32,6 +33,6 @@ public record Feature<TGeometry, TProperties> : IFeature where TGeometry : IGeom
     object? IFeature.Properties => Properties;
 }
 
-public record Feature<TGeometry> : Feature<TGeometry, IDictionary<string, object>> where TGeometry : IGeometry { }
+public record Feature<TGeometry> : Feature<TGeometry, ImmutableDictionary<string, object>> where TGeometry : IGeometry { }
 
 public record Feature : Feature<IGeometry> { }

@@ -9,6 +9,13 @@ public record LineString : IGeometry<ImmutableList<Position>>, IEnumerable<Posit
 
     public ImmutableList<Position> Coordinates { get; init; } = ImmutableList<Position>.Empty;
 
+    public LineString() {}
+
+    public LineString(IEnumerable<Position> positions)
+    {
+        Coordinates = ImmutableList.CreateRange(positions);
+    }
+
     public IEnumerator<Position> GetEnumerator() => Coordinates.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => Coordinates.GetEnumerator();

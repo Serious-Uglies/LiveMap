@@ -12,6 +12,13 @@ public record GeometryCollection : IEnumerable<IGeometry>
 
     public ImmutableList<IGeometry> Geometries { get; init; } = ImmutableList<IGeometry>.Empty;
 
+    public GeometryCollection() { }
+
+    public GeometryCollection(IEnumerable<IGeometry> geometries)
+    {
+        Geometries = ImmutableList.CreateRange(geometries);
+    }
+
     public IEnumerator<IGeometry> GetEnumerator() => Geometries.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => Geometries.GetEnumerator();

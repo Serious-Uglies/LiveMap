@@ -89,6 +89,5 @@ export interface LiveState {
   airbases: Map<Airbase>;
   missionName?: string;
   theatre?: string;
-  mapCenter?: string;
   time?: string;
 }

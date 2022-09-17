@@ -13,7 +13,6 @@ public class InitReducer : Reducer<InitPayload>
 
             MissionName = payload.MissionName,
             Theatre = payload.Theatre,
-            MapCenter = payload.MapCenter,
             Time = payload.Time
         };
     }

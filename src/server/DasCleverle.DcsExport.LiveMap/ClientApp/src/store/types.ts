@@ -12,7 +12,6 @@ export interface InitPayload {
   airbases?: Map<Airbase>;
   missionName?: string;
   theatre?: string;
-  mapCenter?: string;
   time?: string;
 }
 

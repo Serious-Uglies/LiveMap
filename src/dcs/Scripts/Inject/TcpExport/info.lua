@@ -24,25 +24,12 @@ function info.getTime()
     }
 end
 
-local function getMapCenter()
-    local point = {
-        x = env.mission.map.centerX,
-        y = env.mission.map.centerY,
-        z = 0
-    }
-    local lat, long = coord.LOtoLL(point)
-    return {
-        lat = lat,
-        long = long
-    }
-end
 
 function info.getInit()
     return {
         time = getTime(),
         missionName = TcpExportHook.missionName,
         theatre = env.mission.theatre,
-        mapCenter = getMapCenter(),
     }
 end
 

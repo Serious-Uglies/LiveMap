@@ -15,7 +15,6 @@ public class MissionEndReducer : Reducer<MissionEndPayload>
             Objects = ImmutableDictionary<int, ObjectPayload>.Empty,
             Airbases = ImmutableDictionary<string, AirbasePayload>.Empty,
             MissionName = null,
-            MapCenter = null,
             Time = default
         };
     }

@@ -15,7 +15,5 @@ public record LiveState
 
     public string? Theatre { get; init; }
 
-    public Position? MapCenter { get; init; }
-
     public DateTime Time { get; init; }
 }

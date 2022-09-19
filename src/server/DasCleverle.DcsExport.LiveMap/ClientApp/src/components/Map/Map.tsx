@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { createSelector } from 'reselect';
 import { MapLayerMouseEvent, Popup } from 'react-map-gl';
 
 import Alert from 'react-bootstrap/Alert';
@@ -16,10 +15,11 @@ import ObjectPopup from './ObjectPopup';
 import { Airbase, MapObject } from '../../api/types';
 import { connect } from '../../api/liveState';
 import { useViewState } from './hooks';
-import layers from './layers';
 
 import './Map.css';
-import { RootState, useAppDispatch, useAppSelector } from '../../store';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { getLayers } from '../../api/config';
+import { AnyLayer } from 'mapbox-gl';
 
 interface ObjectPopupState {
   objects?: MapObject[];
@@ -27,71 +27,53 @@ interface ObjectPopupState {
   show: boolean;
 }
 
-const layersSelector = createSelector(
-  (state: RootState) => state.liveState,
-  (liveState) =>
-    layers.map((layer) => ({
-      ...layer,
-      data: layer.getData(liveState),
-    }))
-);
-
 export default function Map() {
   const dispatch = useAppDispatch();
-  const { ready: translationsReady, t } = useTranslation();
-
-  useEffect(() => {
-    dispatch(connect());
-  }, [dispatch]);
-
   const [viewState, setViewState] = useViewState();
-  const layers = useAppSelector(layersSelector);
-
-  const phase = useAppSelector((state) => state.liveState.phase);
-  const isRunning = useAppSelector((state) => state.liveState.isRunning);
-  const objects = useAppSelector((state) => state.liveState.objects);
-  const airbases = useAppSelector((state) => state.liveState.airbases);
-
+  const [layers, setLayers] = useState<AnyLayer[]>([]);
   const [objectPopup, setObjectPopup] = useState<ObjectPopupState>({
     show: false,
     props: { latitude: 0, longitude: 0 },
   });
   const [airbase, setAirbase] = useState<Airbase | undefined>();
+  const { ready: translationsReady, t } = useTranslation();
+
+  useEffect(() => {
+    dispatch(connect());
+    getLayers().then((layers) => setLayers(layers ?? []));
+  }, [dispatch]);
+
+  const phase = useAppSelector((state) => state.liveState.phase);
+  const isRunning = useAppSelector((state) => state.liveState.isRunning);
+  const mapFeatures = useAppSelector((state) => state.liveState.mapFeatures);
 
   const handleMapClick = (event: MapLayerMouseEvent) => {
-    const objectFeatures = event.features?.filter(
-      (f) => f.layer.id === 'objects'
-    );
-
-    if (objectFeatures?.length) {
-      const selectedObjects = objectFeatures.map(
-        (f) => objects[f.properties?.id]
-      );
-
-      const longitude =
-        objectFeatures.reduce(
-          (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[0],
-          0
-        ) / objectFeatures.length;
-
-      const latitude =
-        objectFeatures.reduce(
-          (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[1],
-          0
-        ) / objectFeatures.length;
-
-      const props = { longitude, latitude };
-
-      setObjectPopup({ objects: selectedObjects, props, show: true });
-    }
-
-    const selectedAirbase = event.features?.find(
-      (f) => f.layer.id === 'airbases'
-    );
-
-    if (selectedAirbase?.properties) {
-      setAirbase(airbases[selectedAirbase.properties.id]);
-    }
+    // const objectFeatures = event.features?.filter(
+    //   (f) => f.layer.id === 'objects'
+    // );
+    // if (objectFeatures?.length) {
+    //   const selectedObjects = objectFeatures.map(
+    //     (f) => objects[f.properties?.id]
+    //   );
+    //   const longitude =
+    //     objectFeatures.reduce(
+    //       (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[0],
+    //       0
+    //     ) / objectFeatures.length;
+    //   const latitude =
+    //     objectFeatures.reduce(
+    //       (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[1],
+    //       0
+    //     ) / objectFeatures.length;
+    //   const props = { longitude, latitude };
+    //   setObjectPopup({ objects: selectedObjects, props, show: true });
+    // }
+    // const selectedAirbase = event.features?.find(
+    //   (f) => f.layer.id === 'airbases'
+    // );
+    // if (selectedAirbase?.properties) {
+    //   setAirbase(airbases[selectedAirbase.properties.id]);
+    // }
   };
 
   const handleObjectPopupDismiss = () =>
@@ -106,7 +88,7 @@ export default function Map() {
         onClick={handleMapClick}
         viewState={viewState}
         setViewState={setViewState}
-        interactiveLayerIds={layers.map((l) => l.config.id)}
+        interactiveLayerIds={layers.map((l) => l.id)}
       >
         {objectPopup.show && (
           <Popup {...objectPopup.props} onClose={handleObjectPopupDismiss}>
@@ -115,7 +97,11 @@ export default function Map() {
         )}
 
         {layers.map((layer) => (
-          <Mapbox.Layer key={layer.config.id} {...layer} />
+          <Mapbox.Layer
+            key={layer.id}
+            layer={layer}
+            source={mapFeatures[layer.id]}
+          />
         ))}
       </Mapbox>
       {!showBackdrop && (

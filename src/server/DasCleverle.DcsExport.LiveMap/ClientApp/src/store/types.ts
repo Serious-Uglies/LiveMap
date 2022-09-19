@@ -1,5 +1,12 @@
 import { Action } from 'redux';
-import { Map, Airbase, MapObject, Phase, Position } from '../api/types';
+import {
+  Airbase,
+  LiveState,
+  MapFeatures,
+  MapObject,
+  Phase,
+  Position,
+} from '../api/types';
 
 export interface PayloadAction<T = any> extends Action<string> {
   payload: T;
@@ -8,8 +15,7 @@ export interface PayloadAction<T = any> extends Action<string> {
 export interface InitPayload {
   phase: Phase;
   isRunning: boolean;
-  objects?: Map<MapObject>;
-  airbases?: Map<Airbase>;
+  mapFeatures: MapFeatures;
   missionName?: string;
   theatre?: string;
   time?: string;
@@ -17,6 +23,10 @@ export interface InitPayload {
 
 export interface UpdateTimePayload {
   time: string;
+}
+
+export interface UpdatePayload {
+  state: LiveState;
 }
 
 export type AddObjectPayload = MapObject;

@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
 import { Layer, Source } from 'react-map-gl';
-import produce from 'immer';
 import { AnyLayer } from 'mapbox-gl';
 import { FeatureFactory, FeatureUpdater } from '../features';
 
@@ -9,10 +7,8 @@ interface Data {
 }
 
 interface MapboxLayerProps {
-  data: Data;
-  createFeature: FeatureFactory;
-  updateFeature?: FeatureUpdater;
-  config: Partial<AnyLayer>;
+  source: GeoJSON.FeatureCollection;
+  layer: AnyLayer;
 }
 
 interface MapboxLayerState {
@@ -70,33 +66,28 @@ const updateLayer = (
   layer.data.features = updated;
 };
 
-export default function MapboxLayer({
-  data,
-  createFeature,
-  updateFeature,
-  config,
-}: MapboxLayerProps) {
-  const [layer, setLayer] = useState<MapboxLayerState>({
-    data: {
-      type: 'FeatureCollection',
-      features: [],
-    },
-    ids: {},
-  });
+export default function MapboxLayer({ layer, source }: MapboxLayerProps) {
+  // const [layer, setLayer] = useState<MapboxLayerState>({
+  //   data: {
+  //     type: 'FeatureCollection',
+  //     features: [],
+  //   },
+  //   ids: {},
+  // });
 
-  useEffect(
-    () =>
-      setLayer((l) =>
-        produce(l, (draft) =>
-          updateLayer(draft, data, createFeature, updateFeature)
-        )
-      ),
-    [data, createFeature, updateFeature]
-  );
+  // useEffect(
+  //   () =>
+  //     setLayer((l) =>
+  //       produce(l, (draft) =>
+  //         updateLayer(draft, data, createFeature, updateFeature)
+  //       )
+  //     ),
+  //   [data, createFeature, updateFeature]
+  // );
 
   return (
-    <Source id={config.id} type="geojson" data={layer.data}>
-      <Layer {...(config as any)} />
+    <Source id={layer.id} type="geojson" data={source}>
+      <Layer {...layer} />
     </Source>
   );
 }

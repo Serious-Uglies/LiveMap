@@ -82,11 +82,14 @@ export interface Airbase {
   position?: Position;
 }
 
+export interface MapFeatures {
+  [source: string]: GeoJSON.FeatureCollection;
+}
+
 export interface LiveState {
   phase: Phase;
   isRunning: boolean;
-  objects: Map<MapObject>;
-  airbases: Map<Airbase>;
+  mapFeatures: MapFeatures;
   missionName?: string;
   theatre?: string;
   time?: string;

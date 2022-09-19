@@ -12,7 +12,7 @@ import AirbaseSidebarCard from './Sidebar/AirbaseSidebarCard';
 import Backdrop from './Backdrop';
 import ObjectPopup from './ObjectPopup';
 
-import { Airbase, MapObject } from '../../api/types';
+import { Airbase } from '../../api/types';
 import { connect } from '../../api/liveState';
 import { useViewState } from './hooks';
 
@@ -22,9 +22,10 @@ import { getLayers } from '../../api/config';
 import { AnyLayer } from 'mapbox-gl';
 
 interface ObjectPopupState {
-  objects?: MapObject[];
-  props: { latitude: number; longitude: number };
   show: boolean;
+  features?: GeoJSON.Feature[];
+  latitude?: number;
+  longitude?: number;
 }
 
 export default function Map() {
@@ -33,7 +34,6 @@ export default function Map() {
   const [layers, setLayers] = useState<AnyLayer[]>([]);
   const [objectPopup, setObjectPopup] = useState<ObjectPopupState>({
     show: false,
-    props: { latitude: 0, longitude: 0 },
   });
   const [airbase, setAirbase] = useState<Airbase | undefined>();
   const { ready: translationsReady, t } = useTranslation();
@@ -48,36 +48,28 @@ export default function Map() {
   const mapFeatures = useAppSelector((state) => state.liveState.mapFeatures);
 
   const handleMapClick = (event: MapLayerMouseEvent) => {
-    // const objectFeatures = event.features?.filter(
-    //   (f) => f.layer.id === 'objects'
-    // );
-    // if (objectFeatures?.length) {
-    //   const selectedObjects = objectFeatures.map(
-    //     (f) => objects[f.properties?.id]
-    //   );
-    //   const longitude =
-    //     objectFeatures.reduce(
-    //       (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[0],
-    //       0
-    //     ) / objectFeatures.length;
-    //   const latitude =
-    //     objectFeatures.reduce(
-    //       (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[1],
-    //       0
-    //     ) / objectFeatures.length;
-    //   const props = { longitude, latitude };
-    //   setObjectPopup({ objects: selectedObjects, props, show: true });
-    // }
-    // const selectedAirbase = event.features?.find(
-    //   (f) => f.layer.id === 'airbases'
-    // );
-    // if (selectedAirbase?.properties) {
-    //   setAirbase(airbases[selectedAirbase.properties.id]);
-    // }
+    const features = event.features?.filter((f) => f.layer.id === 'objects');
+
+    if (!features?.length) {
+      setObjectPopup({ features: [], show: false });
+      return;
+    }
+
+    const longitude =
+      features.reduce(
+        (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[0],
+        0
+      ) / features.length;
+    const latitude =
+      features.reduce(
+        (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[1],
+        0
+      ) / features.length;
+
+    setObjectPopup({ features, longitude, latitude, show: true });
   };
 
-  const handleObjectPopupDismiss = () =>
-    setObjectPopup({ show: false, props: { latitude: 0, longitude: 0 } });
+  const handleObjectPopupDismiss = () => setObjectPopup({ show: false });
   const handleAirbaseCardDismiss = () => setAirbase(undefined);
 
   const showBackdrop = !translationsReady || phase !== 'loaded' || !isRunning;
@@ -91,8 +83,12 @@ export default function Map() {
         interactiveLayerIds={layers.map((l) => l.id)}
       >
         {objectPopup.show && (
-          <Popup {...objectPopup.props} onClose={handleObjectPopupDismiss}>
-            <ObjectPopup objects={objectPopup.objects} />
+          <Popup
+            latitude={objectPopup.latitude ?? 0}
+            longitude={objectPopup.longitude ?? 0}
+            onClose={handleObjectPopupDismiss}
+          >
+            <ObjectPopup features={objectPopup.features} />
           </Popup>
         )}
 

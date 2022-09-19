@@ -1,13 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { MapObject } from '../../api/types';
 
 import './ObjectPopup.css';
 
 interface ObjectPopupProps {
-  objects?: MapObject[];
+  features?: GeoJSON.Feature[];
 }
 
-interface ObjectPopupAggreated {
+interface FeatureList {
   [key: string]: {
     count: number;
     name: string;
@@ -15,17 +14,21 @@ interface ObjectPopupAggreated {
   };
 }
 
-export default function ObjectPopup({ objects }: ObjectPopupProps) {
+export default function ObjectPopup({ features }: ObjectPopupProps) {
   const { t } = useTranslation();
 
-  if (!objects) {
+  if (!features) {
     return null;
   }
 
-  const counts = objects.reduce((map: ObjectPopupAggreated, object) => {
-    const name = object.displayName || object.typeName || '';
-    const player = object.player;
-    const key = object.player ? `${name}-${object.player}` : name;
+  const counts = features.reduce((map: FeatureList, feature) => {
+    if (!feature.properties) {
+      return map;
+    }
+
+    const name = feature.properties.name;
+    const player = feature.properties.player;
+    const key = player ? `${name}-${player}` : name;
 
     if (map[key]) {
       map[key].count++;
@@ -41,11 +44,11 @@ export default function ObjectPopup({ objects }: ObjectPopupProps) {
   return (
     <div className="object-popup">
       <ul className="list-unstyled">
-        {sorted.map(([key, object]) => (
+        {sorted.map(([key, feature]) => (
           <li key={key} className="mt-1">
             {t(
-              object.player ? 'objectPopup.player' : 'objectPopup.unit',
-              object
+              feature.player ? 'objectPopup.player' : 'objectPopup.unit',
+              feature
             )}
           </li>
         ))}

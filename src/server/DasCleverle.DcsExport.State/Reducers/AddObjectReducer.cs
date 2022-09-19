@@ -23,7 +23,9 @@ public class AddObjectReducer : Reducer<ObjectPayload>
             new() 
             {
                 ["icon"] = $"{coalition}-{iconType}-{pilot}",
-                ["sortKey"] = GetSortKey(payload)
+                ["sortKey"] = GetSortKey(payload),
+                ["player"] = payload.Player,
+                ["name"] = payload.DisplayName ?? payload.TypeName ?? "",
             }
         );
 

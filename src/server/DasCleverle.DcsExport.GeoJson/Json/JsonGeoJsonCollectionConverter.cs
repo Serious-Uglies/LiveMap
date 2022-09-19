@@ -44,7 +44,7 @@ internal abstract class JsonGeoJsonCollectionConverter<TCollection, TItem> : Jso
     }
 }
 
-internal class JsonFeatureCollectionConverter : JsonGeoJsonCollectionConverter<FeatureCollection, IFeature>
+internal class JsonFeatureCollectionConverter : JsonGeoJsonCollectionConverter<FeatureCollection, Feature>
 {
     protected override GeoJsonType Type => GeoJsonType.FeatureCollection;
 
@@ -52,13 +52,10 @@ internal class JsonFeatureCollectionConverter : JsonGeoJsonCollectionConverter<F
 
     protected override FeatureCollection CreateCollection(ref Utf8JsonReader reader, JsonSerializerOptions options)
     {
-        var features = JsonSerializer.Deserialize<IEnumerable<Feature>>(ref reader, options)!;
-        var collection = new FeatureCollection
+        return new FeatureCollection
         {
-            Features = ImmutableList.CreateRange<IFeature>(features)
+            Features = JsonSerializer.Deserialize<ImmutableList<Feature>>(ref reader, options)!
         };
-
-        return collection;
     }
 }
 
@@ -70,12 +67,9 @@ internal class JsonGeometryCollectionConverter : JsonGeoJsonCollectionConverter<
 
     protected override GeometryCollection CreateCollection(ref Utf8JsonReader reader, JsonSerializerOptions options)
     {
-        var geometries = JsonSerializer.Deserialize<ImmutableList<IGeometry>>(ref reader, options)!;
-        var collection = new GeometryCollection
+        return new GeometryCollection
         {
-            Geometries = geometries
+            Geometries = JsonSerializer.Deserialize<ImmutableList<IGeometry>>(ref reader, options)!
         };
-
-        return collection;
     }
 }

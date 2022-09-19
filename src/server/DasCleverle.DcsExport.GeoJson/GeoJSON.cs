@@ -23,41 +23,22 @@ public static class GeoJSON
 
     public static MultiPolygon MultiPolygon(params Polygon[] polygons) => new MultiPolygon(polygons);
 
-    public static Feature<TGeometry> Feature<TGeometry>(string id, TGeometry geometry, IDictionary<string, object>? properties = null) where TGeometry : IGeometry
-        => new Feature<TGeometry> 
+    public static Feature Feature(string id, IGeometry geometry, Dictionary<string, object?>? properties = null) 
+        => new Feature 
         {
             Id = id,
             Geometry = geometry,
-            Properties = properties == null ? null : ImmutableDictionary.CreateRange(properties)
+            Properties = properties == null ? ImmutableDictionary<string, object?>.Empty : ImmutableDictionary.CreateRange(properties)
         };
 
-    public static Feature<TGeometry> Feature<TGeometry>(TGeometry geometry, IDictionary<string, object>? properties = null) where TGeometry : IGeometry
-        => new Feature<TGeometry> 
+    public static Feature Feature(IGeometry geometry, Dictionary<string, object?>? properties = null) 
+        => new Feature 
         {
             Geometry = geometry,
-            Properties = properties == null ? null : ImmutableDictionary.CreateRange(properties)
+            Properties = properties == null ? ImmutableDictionary<string, object?>.Empty : ImmutableDictionary.CreateRange(properties)
         };
 
-    public static Feature<TGeometry, TProperties> Feature<TGeometry, TProperties>(string id, TGeometry geometry, TProperties? properties = null) 
-        where TGeometry : IGeometry 
-        where TProperties : class
-        => new Feature<TGeometry, TProperties> 
-        {
-            Id = id,
-            Geometry = geometry,
-            Properties = properties,
-        };
-
-    public static Feature<TGeometry, TProperties> Feature<TGeometry, TProperties>(TGeometry geometry, TProperties? properties = null) 
-        where TGeometry : IGeometry 
-        where TProperties : class
-        => new Feature<TGeometry, TProperties> 
-        {
-            Geometry = geometry,
-            Properties = properties,
-        };
-
-    public static FeatureCollection FeatureCollection(params IFeature[] features) => new FeatureCollection(features);
+    public static FeatureCollection FeatureCollection(params Feature[] features) => new FeatureCollection(features);
     
     public static GeometryCollection GeometryCollection(params IGeometry[] geometries) => new GeometryCollection(geometries);
 }

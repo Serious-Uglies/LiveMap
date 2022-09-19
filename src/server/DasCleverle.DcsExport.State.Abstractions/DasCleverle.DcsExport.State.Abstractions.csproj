@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DasCleverle.DcsExport.Listener.Model\DasCleverle.DcsExport.Listener.Model.csproj" />
     <ProjectReference Include="..\DasCleverle.DcsExport.Listener.Abstractions\DasCleverle.DcsExport.Listener.Abstractions.csproj" />
+    <ProjectReference Include="..\DasCleverle.DcsExport.GeoJson\DasCleverle.DcsExport.GeoJson.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

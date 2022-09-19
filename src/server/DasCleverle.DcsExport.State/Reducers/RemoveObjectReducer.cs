@@ -7,9 +7,6 @@ public class RemoveObjectReducer : Reducer<RemoveObjectPayload>
 {
     protected override LiveState Reduce(LiveState state, RemoveObjectPayload payload)
     {
-        return state with
-        {
-            Objects = state.Objects.Remove(payload.Id)
-        };
+        return state.RemoveMapFeature("objects", payload.Id.ToString());
     }
 }

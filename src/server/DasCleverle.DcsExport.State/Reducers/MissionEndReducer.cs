@@ -11,9 +11,7 @@ public class MissionEndReducer : Reducer<MissionEndPayload>
         return state with
         {
             IsRunning = false,
-
-            Objects = ImmutableDictionary<int, ObjectPayload>.Empty,
-            Airbases = ImmutableDictionary<string, AirbasePayload>.Empty,
+            MapFeatures = ImmutableDictionary<string, GeoJson.FeatureCollection>.Empty,
             MissionName = null,
             Time = default
         };

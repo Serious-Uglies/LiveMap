@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using DasCleverle.DcsExport.Listener.Model;
+using DasCleverle.DcsExport.GeoJson;
 
 namespace DasCleverle.DcsExport.State.Abstractions;
 
@@ -7,9 +7,7 @@ public record LiveState
 {
     public bool IsRunning { get; init; }
 
-    public ImmutableDictionary<int, ObjectPayload> Objects { get; init; } = ImmutableDictionary<int, ObjectPayload>.Empty;
-
-    public ImmutableDictionary<string, AirbasePayload> Airbases { get; init; } = ImmutableDictionary<string, AirbasePayload>.Empty;
+    public ImmutableDictionary<string, FeatureCollection> MapFeatures { get; init; } = ImmutableDictionary<string, FeatureCollection>.Empty;
 
     public string? MissionName { get; init; }
 

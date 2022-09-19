@@ -2,7 +2,7 @@ namespace DasCleverle.DcsExport.Listener.Model;
 
 public record Position
 {
-    public decimal Lat { get; init; }
+    public double Lat { get; init; }
 
-    public decimal Long { get; init; }
+    public double Long { get; init; }
 }

@@ -1,16 +1,16 @@
-using DasCleverle.DcsExport.Listener.Abstractions;
+using DasCleverle.DcsExport.State.Abstractions;
 using Microsoft.AspNetCore.SignalR;
 
 namespace DasCleverle.DcsExport.LiveMap.Hubs;
 
-public interface ILiveMapHub
+public interface ILiveStateHub
 {
-    Task Event(SendEventRequest request, CancellationToken token = default);
+    Task Update(UpdateRequest request, CancellationToken token = default);
 }
 
-public class SendEventRequest
+public class UpdateRequest
 {
-    public IEnumerable<IExportEvent> Events { get; init; } = Enumerable.Empty<IExportEvent>();
+    public LiveState? State { get; init; }
 }
 
-public class LiveMapHub : Hub<ILiveMapHub> { }
+public class LiveStateHub : Hub<ILiveStateHub> { }

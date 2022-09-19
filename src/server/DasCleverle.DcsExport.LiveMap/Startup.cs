@@ -2,7 +2,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using DasCleverle.DcsExport.Extensibility;
 using DasCleverle.DcsExport.Listener;
-using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Json;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
@@ -45,9 +44,7 @@ public class Startup
         services.AddJsonMessageParser();
         services.AddLiveState();
 
-        services.AddSingleton<HubExportEventHandler>();
-        services.AddTransient<IExportEventHandler>(sp => sp.GetRequiredService<HubExportEventHandler>());
-        services.AddHostedService(sp => sp.GetRequiredService<HubExportEventHandler>());
+        services.AddHostedService<LiveStateHubService>();
 
         services.AddSingleton<ILocalizationProvider, JsonFileLocalizationProvider>();
         services.Configure<JsonFileLocalizationProviderOptions>(options =>
@@ -82,8 +79,7 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-
-            endpoints.MapHub<LiveMapHub>("/hub/livemap");
+            endpoints.MapHub<LiveStateHub>("/hub/state");
         });
 
         app.UseSpa(spa =>

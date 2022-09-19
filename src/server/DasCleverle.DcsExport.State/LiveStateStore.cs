@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.State.Abstractions;
 
@@ -6,10 +5,9 @@ namespace DasCleverle.DcsExport.State;
 
 public class LiveStateStore : ILiveStateStore
 {
-
     private readonly object _syncRoot = new();
     private LiveState _state = new();
-    private readonly ConcurrentDictionary<Guid, Subscriber> _subscribers = new();
+    private readonly Dictionary<Guid, Subscriber> _subscribers = new();
 
     private readonly IReducer[] _reducers;
 
@@ -25,19 +23,22 @@ public class LiveStateStore : ILiveStateStore
 
     public IDisposable Subscribe(Func<ILiveStateStore, ValueTask> fn)
     {
-        var id = Guid.NewGuid();
-        var subscriber = new Subscriber
+        lock (_syncRoot)
         {
-            Id = id,
-            Callback = new SubscriberCallback(fn),
-            IsUnsubscribed = false
-        };
+            var id = Guid.NewGuid();
+            var subscriber = new Subscriber
+            {
+                Id = id,
+                Callback = new SubscriberCallback(fn),
+                IsUnsubscribed = false
+            };
 
-        var unsubscriber = new Unsubscriber(this, subscriber);
+            var unsubscriber = new Unsubscriber(this, subscriber);
 
-        _subscribers.TryAdd(id, subscriber);
+            _subscribers.Add(id, subscriber);
 
-        return unsubscriber;
+            return unsubscriber;
+        }
     }
 
     public IDisposable Subscribe(Action<ILiveStateStore> fn)
@@ -51,25 +52,32 @@ public class LiveStateStore : ILiveStateStore
 
     public async ValueTask DispatchAsync(IEventPayload payload)
     {
-        LiveState state;
+        LiveState newState;
+        LiveState oldState;
         List<Subscriber>? subscribers;
 
         lock (_syncRoot)
         {
-            state = _state;
+            newState = _state;
+            oldState = _state;
             subscribers = _subscribers.Count > 0 ? new List<Subscriber>(_subscribers.Values) : null;
         }
 
         for (int i = 0; i < _reducers.Length; i++)
         {
-            state = await _reducers[i].ReduceAsync(state, payload);
+            newState = await _reducers[i].ReduceAsync(newState, payload);
+        }
+
+        if (oldState == newState)
+        {
+            return;
         }
 
         lock (_syncRoot)
         {
-            _state = state;
+            _state = newState;
         }
-        
+
         if (subscribers != null)
         {
             foreach (var subscriber in subscribers)
@@ -108,8 +116,11 @@ public class LiveStateStore : ILiveStateStore
 
         public void Dispose()
         {
-            _subscriber.IsUnsubscribed = true;
-            _store._subscribers.Remove(_subscriber.Id, out _);
+            lock (_store._syncRoot)
+            {
+                _subscriber.IsUnsubscribed = true;
+                _store._subscribers.Remove(_subscriber.Id, out _);
+            }
         }
     }
 }

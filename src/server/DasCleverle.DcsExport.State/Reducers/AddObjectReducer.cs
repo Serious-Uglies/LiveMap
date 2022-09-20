@@ -20,12 +20,12 @@ public class AddObjectReducer : Reducer<ObjectPayload>
         var feature = Feature(
             payload.Id.ToString(),
             Point(payload.Position.Long, payload.Position.Lat),
-            new() 
+            new()
             {
                 ["icon"] = $"{coalition}-{iconType}-{pilot}",
                 ["sortKey"] = GetSortKey(payload),
                 ["player"] = payload.Player,
-                ["name"] = payload.DisplayName ?? payload.TypeName ?? "",
+                ["name"] = GetName(payload)
             }
         );
 
@@ -61,9 +61,24 @@ public class AddObjectReducer : Reducer<ObjectPayload>
 
     private static double GetSortKey(ObjectPayload payload)
     {
-        return payload.Type == ObjectType.Unit 
+        return payload.Type == ObjectType.Unit
             && (payload.Attributes.Contains(ObjectAttribute.Fixed) || payload.Attributes.Contains(ObjectAttribute.Rotary))
             ? 1
             : 0;
+    }
+
+    private static string GetName(ObjectPayload payload)
+    {
+        if (!string.IsNullOrEmpty(payload.DisplayName))
+        {
+            return payload.DisplayName;
+        }
+
+        if (!string.IsNullOrEmpty(payload.TypeName))
+        {
+            return payload.TypeName;
+        }
+
+        return "";
     }
 }

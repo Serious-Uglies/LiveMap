@@ -9,6 +9,7 @@ public class LiveStateHubService : BackgroundService
     private readonly ILogger<LiveStateHubService> _logger;
     private readonly IHubContext<LiveStateHub, ILiveStateHub> _hubContext;
     private readonly ILiveStateStore _store;
+    private long _lastVersion;
 
     public LiveStateHubService(ILogger<LiveStateHubService> logger, ILiveStateStore store, IHubContext<LiveStateHub, ILiveStateHub> hubContext)
     {
@@ -23,12 +24,17 @@ public class LiveStateHubService : BackgroundService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var state = _store.GetState();
+                var (state, version) = _store.GetVersionedState();
 
-                await _hubContext.Clients.All.Update(new UpdateRequest 
+                if (_lastVersion < version)
                 {
-                    State = state
-                });
+                    await _hubContext.Clients.All.Update(new UpdateRequest
+                    {
+                        State = state
+                    });
+
+                    _lastVersion = version;
+                }
 
                 await Task.Delay(1000, stoppingToken);
             }

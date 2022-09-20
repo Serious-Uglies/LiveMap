@@ -6,9 +6,11 @@ public interface ILiveStateStore
 {
     LiveState GetState();
 
-    IDisposable Subscribe(Func<ILiveStateStore, ValueTask> fn);
+    (LiveState State, long Version) GetVersionedState();
 
-    IDisposable Subscribe(Action<ILiveStateStore> fn);
+    ValueTask<IAsyncDisposable> SubscribeAsync(Func<LiveState, ValueTask> fn);
+
+    ValueTask<IAsyncDisposable> SubscribeAsync(Action<LiveState> fn);
 
     ValueTask DispatchAsync(IEventPayload payload);
 }

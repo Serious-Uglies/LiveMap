@@ -5,10 +5,11 @@ namespace DasCleverle.DcsExport.State;
 
 public class LiveStateStore : ILiveStateStore
 {
-    private readonly object _syncRoot = new();
+    private readonly Lock _lock = new();
     private LiveState _state = new();
-    private readonly Dictionary<Guid, Subscriber> _subscribers = new();
+    private long _version;
 
+    private readonly Dictionary<Guid, Subscriber> _subscribers = new();
     private readonly IReducer[] _reducers;
 
     public LiveStateStore(IEnumerable<IReducer> reducers)
@@ -21,16 +22,22 @@ public class LiveStateStore : ILiveStateStore
         return _state;
     }
 
-    public IDisposable Subscribe(Func<ILiveStateStore, ValueTask> fn)
+    public (LiveState State, long Version) GetVersionedState()
     {
-        lock (_syncRoot)
+        return (_state, _version);
+    }
+
+    public async ValueTask<IAsyncDisposable> SubscribeAsync(Func<LiveState, ValueTask> fn)
+    {
+        await _lock.WaitAsync();
+
+        try
         {
             var id = Guid.NewGuid();
             var subscriber = new Subscriber
             {
                 Id = id,
                 Callback = new SubscriberCallback(fn),
-                IsUnsubscribed = false
             };
 
             var unsubscriber = new Unsubscriber(this, subscriber);
@@ -39,11 +46,15 @@ public class LiveStateStore : ILiveStateStore
 
             return unsubscriber;
         }
+        finally
+        {
+            _lock.Release();
+        }
     }
 
-    public IDisposable Subscribe(Action<ILiveStateStore> fn)
+    public ValueTask<IAsyncDisposable> SubscribeAsync(Action<LiveState> fn)
     {
-        return Subscribe(store =>
+        return SubscribeAsync(store =>
         {
             fn(store);
             return new ValueTask();
@@ -52,58 +63,47 @@ public class LiveStateStore : ILiveStateStore
 
     public async ValueTask DispatchAsync(IEventPayload payload)
     {
-        LiveState newState;
-        LiveState oldState;
-        List<Subscriber>? subscribers;
+        await _lock.WaitAsync();
 
-        lock (_syncRoot)
-        {
-            newState = _state;
-            oldState = _state;
-            subscribers = _subscribers.Count > 0 ? new List<Subscriber>(_subscribers.Values) : null;
-        }
+        var newState = _state;
+        var oldState = _state;
 
-        for (int i = 0; i < _reducers.Length; i++)
+        try
         {
-            newState = await _reducers[i].ReduceAsync(newState, payload);
-        }
-
-        if (oldState == newState)
-        {
-            return;
-        }
-
-        lock (_syncRoot)
-        {
-            _state = newState;
-        }
-
-        if (subscribers != null)
-        {
-            foreach (var subscriber in subscribers)
+            for (int i = 0; i < _reducers.Length; i++)
             {
-                if (subscriber.IsUnsubscribed)
-                {
-                    continue;
-                }
-
-                await subscriber.Callback.Invoke(this);
+                newState = await _reducers[i].ReduceAsync(newState, payload);
             }
+
+            if (oldState == newState)
+            {
+                return;
+            }
+
+            _state = newState;
+            _version++;
+        }
+        finally
+        {
+            _lock.Release();
+        }
+
+        foreach (var subscriber in _subscribers.Values)
+        {
+            await subscriber.Callback.Invoke(newState);
         }
     }
 
-    private delegate ValueTask SubscriberCallback(ILiveStateStore state);
+    private delegate ValueTask SubscriberCallback(LiveState state);
 
     private class Subscriber
     {
         public Guid Id { get; init; }
 
         public SubscriberCallback Callback { get; init; } = new SubscriberCallback((s) => new ValueTask());
-
-        public bool IsUnsubscribed { get; set; }
     }
 
-    private class Unsubscriber : IDisposable
+    private class Unsubscriber : IAsyncDisposable
     {
         private readonly LiveStateStore _store;
         private readonly Subscriber _subscriber;
@@ -114,12 +114,17 @@ public class LiveStateStore : ILiveStateStore
             _subscriber = subscriber;
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            lock (_store._syncRoot)
+            await _store._lock.WaitAsync();
+
+            try
             {
-                _subscriber.IsUnsubscribed = true;
-                _store._subscribers.Remove(_subscriber.Id, out _);
+                _store._subscribers.Remove(_subscriber.Id);
+            }
+            finally
+            {
+                _store._lock.Release();
             }
         }
     }

@@ -1,77 +1,106 @@
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import { useTranslation } from 'react-i18next';
-import { Airbase, AirbaseBeacon, AirbaseRunway } from '../../../api/types';
 import SidebarCard from './SidebarCard';
 
 interface AirbaseSidebarCardProps {
-  airbase?: Airbase;
+  feature: GeoJSON.Feature | null;
   onDismiss: () => void;
 }
 
+interface AirbaseRunway {
+  name: string;
+  edge1: string;
+  edge2: string;
+  course: number;
+}
+
+interface AirbaseBeacon {
+  runway?: string;
+  callsign?: string;
+  frequency: string;
+}
+
 export default function AirbaseSidebarCard({
-  airbase,
+  feature,
   onDismiss,
 }: AirbaseSidebarCardProps) {
   const { t } = useTranslation();
-  const { name, frequencies, runways, beacons } = airbase || {};
 
-  const { tacan, vor, ndb, ils } = beacons || {};
+  if (!feature?.properties) {
+    return null;
+  }
 
-  const airbaseProperties = airbase && [
-    { title: t('sidebar.airbase.name'), value: name },
-    {
-      title: t('sidebar.airbase.frequency'),
-      value: t(
-        frequencies?.length
-          ? 'sidebar.airbase.frequencyList'
-          : 'sidebar.airbase.frequencyListNone',
+  // Unfortunately mapbox encodes nested properties as JSON
+  // so we need to handle it here somehow ...
+  const name = feature.properties.name;
+  const frequencies = JSON.parse(feature.properties.frequencies);
+  const runways = JSON.parse(feature.properties.runways);
+  const beacons = JSON.parse(feature.properties.beacons);
+  const { tacan, vor, ndb, ils } = beacons ?? {};
+
+  const airbaseProperties = feature
+    ? [
+        { title: t('sidebar.airbase.name'), value: name },
         {
-          frequencies,
-        }
-      ),
-    },
-    {
-      title: t('sidebar.airbase.runways'),
-      value: runways?.length ? <Runways runways={runways} ils={ils} /> : null,
-    },
-    {
-      title: t('sidebar.airbase.tacan'),
-      value: t(
-        tacan?.length
-          ? 'sidebar.airbase.tacanList'
-          : 'sidebar.airbase.tacanListNone',
+          title: t('sidebar.airbase.frequency'),
+          value: t(
+            frequencies?.length
+              ? 'sidebar.airbase.frequencyList'
+              : 'sidebar.airbase.frequencyListNone',
+            {
+              frequencies,
+            }
+          ),
+        },
         {
-          tacan,
-        }
-      ),
-    },
-    {
-      title: t('sidebar.airbase.vor'),
-      value: t(
-        vor?.length ? 'sidebar.airbase.vorList' : 'sidebar.airbase.vorListNone',
+          title: t('sidebar.airbase.runways'),
+          value: runways?.length ? (
+            <Runways runways={runways} ils={ils} />
+          ) : null,
+        },
         {
-          vor,
-        }
-      ),
-    },
-    {
-      title: t('sidebar.airbase.ndb'),
-      value: t(
-        ndb?.length ? 'sidebar.airbase.ndbList' : 'sidebar.airbase.ndbListNone',
+          title: t('sidebar.airbase.tacan'),
+          value: t(
+            tacan?.length
+              ? 'sidebar.airbase.tacanList'
+              : 'sidebar.airbase.tacanListNone',
+            {
+              tacan,
+            }
+          ),
+        },
         {
-          ndb,
-        }
-      ),
-    },
-  ];
+          title: t('sidebar.airbase.vor'),
+          value: t(
+            vor?.length
+              ? 'sidebar.airbase.vorList'
+              : 'sidebar.airbase.vorListNone',
+            {
+              vor,
+            }
+          ),
+        },
+        {
+          title: t('sidebar.airbase.ndb'),
+          value: t(
+            ndb?.length
+              ? 'sidebar.airbase.ndbList'
+              : 'sidebar.airbase.ndbListNone',
+            {
+              ndb,
+            }
+          ),
+        },
+      ]
+    : undefined;
 
   return (
     <SidebarCard
       title={t('sidebar.airbase.title')}
       properties={airbaseProperties}
       dismissable
-      visible={!!airbase}
+      visible={!!feature}
       onDismiss={onDismiss}
     />
   );

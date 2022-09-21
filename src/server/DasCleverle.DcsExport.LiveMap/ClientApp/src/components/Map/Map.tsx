@@ -12,7 +12,6 @@ import AirbaseSidebarCard from './Sidebar/AirbaseSidebarCard';
 import Backdrop from './Backdrop';
 import ObjectPopup from './ObjectPopup';
 
-import { Airbase } from '../../api/types';
 import { connect } from '../../api/liveState';
 import { useViewState } from './hooks';
 
@@ -35,7 +34,7 @@ export default function Map() {
   const [objectPopup, setObjectPopup] = useState<ObjectPopupState>({
     show: false,
   });
-  const [airbase, setAirbase] = useState<Airbase | undefined>();
+  const [airbase, setAirbase] = useState<GeoJSON.Feature | null>(null);
   const { ready: translationsReady, t } = useTranslation();
 
   useEffect(() => {
@@ -52,25 +51,30 @@ export default function Map() {
 
     if (!features?.length) {
       setObjectPopup({ features: [], show: false });
-      return;
+    } else {
+      const longitude =
+        features.reduce(
+          (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[0],
+          0
+        ) / features.length;
+      const latitude =
+        features.reduce(
+          (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[1],
+          0
+        ) / features.length;
+
+      setObjectPopup({ features, longitude, latitude, show: true });
     }
 
-    const longitude =
-      features.reduce(
-        (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[0],
-        0
-      ) / features.length;
-    const latitude =
-      features.reduce(
-        (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[1],
-        0
-      ) / features.length;
+    const airbase = event.features?.find((f) => f.layer.id === 'airbases');
 
-    setObjectPopup({ features, longitude, latitude, show: true });
+    if (airbase) {
+      setAirbase(airbase);
+    }
   };
 
   const handleObjectPopupDismiss = () => setObjectPopup({ show: false });
-  const handleAirbaseCardDismiss = () => setAirbase(undefined);
+  const handleAirbaseCardDismiss = () => setAirbase(null);
 
   const showBackdrop = !translationsReady || phase !== 'loaded' || !isRunning;
 
@@ -104,7 +108,7 @@ export default function Map() {
         <Sidebar>
           <MissionSidebarCard />
           <AirbaseSidebarCard
-            airbase={airbase}
+            feature={airbase}
             onDismiss={handleAirbaseCardDismiss}
           />
         </Sidebar>

@@ -6,7 +6,15 @@ interface MapboxLayerProps {
   layer: AnyLayer;
 }
 
-export default function MapboxLayer({ layer, source }: MapboxLayerProps) {
+const emptyFeatureCollection: GeoJSON.FeatureCollection = {
+  type: 'FeatureCollection',
+  features: [],
+};
+
+export default function MapboxLayer({
+  layer,
+  source = emptyFeatureCollection,
+}: MapboxLayerProps) {
   return (
     <Source id={layer.id} type="geojson" data={source}>
       <Layer {...layer} />

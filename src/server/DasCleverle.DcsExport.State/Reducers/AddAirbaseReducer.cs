@@ -24,7 +24,10 @@ public class AddAirbaseReducer : Reducer<AirbasePayload>
             {
                 ["name"] = payload.Name,
                 ["icon"] = $"{coalition}-{category}",
-                ["rotation"] = rotation
+                ["rotation"] = rotation ?? 0,
+                ["runways"] = payload.Runways,
+                ["frequencies"] = payload.Frequencies,
+                ["beacons"] = payload.Beacons
             }
         );
 

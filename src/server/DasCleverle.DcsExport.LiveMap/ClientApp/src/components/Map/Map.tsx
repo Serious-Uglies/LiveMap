@@ -21,7 +21,6 @@ import { getLayers } from '../../api/config';
 import { AnyLayer } from 'mapbox-gl';
 
 interface ObjectPopupState {
-  show: boolean;
   features?: GeoJSON.Feature[];
   latitude?: number;
   longitude?: number;
@@ -31,9 +30,7 @@ export default function Map() {
   const dispatch = useAppDispatch();
   const [viewState, setViewState] = useViewState();
   const [layers, setLayers] = useState<AnyLayer[]>([]);
-  const [objectPopup, setObjectPopup] = useState<ObjectPopupState>({
-    show: false,
-  });
+  const [objectPopup, setObjectPopup] = useState<ObjectPopupState>({});
   const [airbase, setAirbase] = useState<GeoJSON.Feature | null>(null);
   const { ready: translationsReady, t } = useTranslation();
 
@@ -49,9 +46,7 @@ export default function Map() {
   const handleMapClick = (event: MapLayerMouseEvent) => {
     const features = event.features?.filter((f) => f.layer.id === 'objects');
 
-    if (!features?.length) {
-      setObjectPopup({ features: [], show: false });
-    } else {
+    if (features?.length) {
       const longitude =
         features.reduce(
           (s, f) => s + (f.geometry as GeoJSON.Point).coordinates[0],
@@ -63,17 +58,14 @@ export default function Map() {
           0
         ) / features.length;
 
-      setObjectPopup({ features, longitude, latitude, show: true });
+      setObjectPopup({ features, longitude, latitude });
     }
 
     const airbase = event.features?.find((f) => f.layer.id === 'airbases');
-
-    if (airbase) {
-      setAirbase(airbase);
-    }
+    setAirbase(airbase ?? null);
   };
 
-  const handleObjectPopupDismiss = () => setObjectPopup({ show: false });
+  const handleObjectPopupDismiss = () => setObjectPopup({ features: [] });
   const handleAirbaseCardDismiss = () => setAirbase(null);
 
   const showBackdrop = !translationsReady || phase !== 'loaded' || !isRunning;
@@ -86,15 +78,16 @@ export default function Map() {
         setViewState={setViewState}
         interactiveLayerIds={layers.map((l) => l.id)}
       >
-        {objectPopup.show && (
+        {objectPopup.features?.length ? (
           <Popup
             latitude={objectPopup.latitude ?? 0}
             longitude={objectPopup.longitude ?? 0}
+            closeOnClick={false}
             onClose={handleObjectPopupDismiss}
           >
             <ObjectPopup features={objectPopup.features} />
           </Popup>
-        )}
+        ) : null}
 
         {layers.map((layer) => (
           <Mapbox.Layer

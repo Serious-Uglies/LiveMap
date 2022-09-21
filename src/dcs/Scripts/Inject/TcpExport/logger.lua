@@ -4,10 +4,6 @@ local function do_log(fn, msg, ...)
     fn("[TcpExport] " .. string.format(msg, ...))
 end
 
-function log.debug(msg, ...)
-    do_log(env.debug, msg, ...)
-end
-
 function log.info(msg, ...)
     do_log(env.info, msg, ...)
 end

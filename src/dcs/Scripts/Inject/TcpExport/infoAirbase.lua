@@ -1,3 +1,5 @@
+---@diagnostic disable: undefined-field, param-type-mismatch
+
 local terrain = require("terrain")
 local util = require("util")
 local info = require("info")
@@ -5,7 +7,9 @@ local config = require("config")
 
 local function getBeaconTypes()
     local env = setmetatable({}, { __index = _G })
-    pcall(setfenv(loadfile("./Scripts/World/Radio/BeaconTypes.lua"), env))
+    local beaconTypes = loadfile("./Scripts/World/Radio/BeaconTypes.lua")
+
+    pcall(setfenv(beaconTypes, env))
     setmetatable(env, nil)
 
     return env

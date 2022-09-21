@@ -112,11 +112,14 @@ function infoObject.getAllObjects(type, reduced)
     for _, side in pairs(coalition.side) do
         local coalitionObjects = infoObject.getCoalitionObjects(type, side, reduced)
 
-        for i = 1, #coalitionObjects do
-            local object = coalitionObjects[i]
+        if coalitionObjects ~= nil then
+            for i = 1, #coalitionObjects do
 
-            if object ~= nil then
-                table.insert(objects, object)
+                local object = coalitionObjects[i]
+
+                if object ~= nil then
+                    table.insert(objects, object)
+                end
             end
         end
     end

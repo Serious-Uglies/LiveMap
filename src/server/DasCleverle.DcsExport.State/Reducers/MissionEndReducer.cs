@@ -1,12 +1,14 @@
 using System.Collections.Immutable;
-using DasCleverle.DcsExport.Listener.Model;
+using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.State.Abstractions;
 
 namespace DasCleverle.DcsExport.State.Reducers;
 
-public class MissionEndReducer : Reducer<MissionEndPayload>
+public class MissionEndReducer : Reducer
 {
-    protected override LiveState Reduce(LiveState state, MissionEndPayload payload)
+    public override IEnumerable<string> EventTypes { get; } = new[] { "MissionEnd" };
+
+    protected override LiveState Reduce(LiveState state, IExportEvent exportEvent)
     {
         return state with
         {

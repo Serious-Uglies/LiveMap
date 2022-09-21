@@ -1,3 +1,4 @@
+using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.State.Abstractions;
 using static DasCleverle.DcsExport.GeoJson.GeoJSON;
@@ -6,26 +7,28 @@ namespace DasCleverle.DcsExport.State.Reducers;
 
 public class AddObjectReducer : Reducer<ObjectPayload>
 {
-    protected override LiveState Reduce(LiveState state, ObjectPayload payload)
+    protected override LiveState Reduce(LiveState state, IExportEvent<ObjectPayload> exportEvent)
     {
-        if (payload.Position == null)
+        var obj = exportEvent.Payload;
+
+        if (obj.Position == null)
         {
             return state;
         }
 
-        var iconType = GetIconType(payload);
-        var coalition = payload.Coalition.ToString().ToLowerInvariant();
-        var pilot = !string.IsNullOrEmpty(payload.Player) ? "player" : "ai";
+        var iconType = GetIconType(obj);
+        var coalition = obj.Coalition.ToString().ToLowerInvariant();
+        var pilot = !string.IsNullOrEmpty(obj.Player) ? "player" : "ai";
 
         var feature = Feature(
-            payload.Id.ToString(),
-            Point(payload.Position.Long, payload.Position.Lat),
+            obj.Id.ToString(),
+            Point(obj.Position.Long, obj.Position.Lat),
             new()
             {
                 ["icon"] = $"{coalition}-{iconType}-{pilot}",
-                ["sortKey"] = GetSortKey(payload),
-                ["player"] = payload.Player,
-                ["name"] = GetName(payload)
+                ["sortKey"] = GetSortKey(obj),
+                ["player"] = obj.Player,
+                ["name"] = GetName(obj)
             }
         );
 

@@ -89,8 +89,8 @@ public class JsonExportEventConverter : JsonConverter<IExportEvent>
     {
         var factory = FactoryCache.GetOrAdd(eventType, type =>
         {
-            var (payloadType, _) = TypeLocator.GetTypesImplementingWithAttribute<EventPayloadAttribute>(typeof(IEventPayload))
-                .FirstOrDefault(x => x.Attribute.EventType == type);
+            var payloadType = TypeLocator.GetTypesImplementing(typeof(IEventPayload))
+                .FirstOrDefault(x => x.GetCustomAttributes<EventPayloadAttribute>().Any(attribute => attribute.EventType == type));
 
             if (payloadType == null)
             {

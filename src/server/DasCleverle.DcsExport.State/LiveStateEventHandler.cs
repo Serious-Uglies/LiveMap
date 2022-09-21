@@ -14,6 +14,6 @@ public class LiveStateEventHandler : IExportEventHandler
 
     public async Task HandleEventAsync(IExportEvent exportEvent, CancellationToken token)
     {
-        await _store.DispatchAsync(exportEvent.Payload);
+        await _store.DispatchAsync(exportEvent);
     }
 }

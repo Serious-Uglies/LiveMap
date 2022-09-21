@@ -12,5 +12,5 @@ public interface ILiveStateStore
 
     ValueTask<IAsyncDisposable> SubscribeAsync(Action<LiveState> fn);
 
-    ValueTask DispatchAsync(IEventPayload payload);
+    ValueTask DispatchAsync(IExportEvent exportEvent);
 }

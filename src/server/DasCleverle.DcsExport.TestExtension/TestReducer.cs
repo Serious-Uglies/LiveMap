@@ -4,18 +4,21 @@ using Microsoft.Extensions.Logging;
 
 namespace DasCleverle.DcsExport.TestExtension;
 
-public class TestReducer : IReducer
+public class TestReducer : Reducer
 {
     private ILogger<TestReducer> _logger;
 
-    public TestReducer(ILogger<TestReducer> logger) 
+    public TestReducer(ILogger<TestReducer> logger)
     {
         _logger = logger;
     }
 
-    public ValueTask<LiveState> ReduceAsync(LiveState state, IEventPayload payload)
+    public override IEnumerable<string> EventTypes { get; } = Reducer.CatchAll;
+
+    protected override LiveState Reduce(LiveState state, IExportEvent exportEvent)
     {
-        _logger.LogInformation("Hello from TestReducer!");
-        return new ValueTask<LiveState>(state);
+        _logger.LogInformation("Hello from Test Reducer!");
+        return state;
     }
+
 }

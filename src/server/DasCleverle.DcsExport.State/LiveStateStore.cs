@@ -10,11 +10,13 @@ public class LiveStateStore : ILiveStateStore
     private long _version;
 
     private readonly Dictionary<Guid, Subscriber> _subscribers = new();
-    private readonly IReducer[] _reducers;
+    private readonly ILookup<string, IReducer> _reducers;
 
     public LiveStateStore(IEnumerable<IReducer> reducers)
     {
-        _reducers = reducers.ToArray();
+        _reducers = reducers
+            .SelectMany(x => x.EventTypes, (reducer, type) => (Reducer: reducer, EventType: type))
+            .ToLookup(x => x.EventType, x => x.Reducer);
     }
 
     public LiveState GetState()
@@ -61,7 +63,7 @@ public class LiveStateStore : ILiveStateStore
         });
     }
 
-    public async ValueTask DispatchAsync(IEventPayload payload)
+    public async ValueTask DispatchAsync(IExportEvent exportEvent)
     {
         await _lock.WaitAsync();
 
@@ -70,9 +72,12 @@ public class LiveStateStore : ILiveStateStore
 
         try
         {
-            for (int i = 0; i < _reducers.Length; i++)
+            var reducers = _reducers[exportEvent.EventType];
+            var catchAllReducers = _reducers["*"];
+
+            foreach (var reducer in reducers.Union(catchAllReducers))
             {
-                newState = await _reducers[i].ReduceAsync(newState, payload);
+                newState = await reducer.ReduceAsync(newState, exportEvent);
             }
 
             if (oldState == newState)

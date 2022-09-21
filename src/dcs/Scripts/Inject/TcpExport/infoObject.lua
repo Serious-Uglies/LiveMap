@@ -1,5 +1,5 @@
 local info = require("info")
-local config = require("config")
+local export = require("export")
 
 local infoObject = {}
 
@@ -28,7 +28,7 @@ function infoObject.getObject(object, reduced)
         return nil
     end
 
-    if not config.shouldExport(type, object) then
+    if not export.filter(type, object) then
         return nil
     end
 
@@ -58,7 +58,7 @@ function infoObject.getObject(object, reduced)
         objectInfo.player = object:getPlayerName()
     end
 
-    return config.extend(objectInfo, type, object)
+    return export.extend(objectInfo, type, object)
 end
 
 local function getUnits(side, reduced)

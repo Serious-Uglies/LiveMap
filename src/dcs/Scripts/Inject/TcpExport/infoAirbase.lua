@@ -3,7 +3,7 @@
 local terrain = require("terrain")
 local util = require("util")
 local info = require("info")
-local config = require("config")
+local export = require("export")
 
 local function getBeaconTypes()
     local env = setmetatable({}, { __index = _G })
@@ -137,7 +137,7 @@ function infoAirbase.getAirbase(airbase)
         return nil
     end
 
-    if not config.shouldExport("airbase", airbase) then
+    if not export.filter("airbase", airbase) then
         return nil
     end
 
@@ -181,7 +181,7 @@ function infoAirbase.getAirbase(airbase)
         return nil
     end
 
-    return config.extend(airbaseInfo, "airbase", airbase)
+    return export.extend(airbaseInfo, "airbase", airbase)
 end
 
 function infoAirbase.getAllAirbases()

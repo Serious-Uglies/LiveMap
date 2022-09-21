@@ -135,41 +135,11 @@ local config = {
             airbase = true
         },
 
-        -- Defines a function that determines whether an object should be exported.
-        -- This function is called AFTER the filtering through the coalition config
-        -- above. Return true to export, or false to not export.
-        --
-        -- The function receives two arguments:
-        --   1. objType (string):
-        --     The type of the object. Can be one of these values:
-        --       * unit
-        --       * static
-        --       * airbase
-        --   2. object (table):
-        --     The object to be exported. The object is a default DCS object and
-        --     all known DCS functions can be used on it.
-        -- Default value: nil
-        filter = nil,
-
-        -- Defines a function that extends the data to be exported.
-        -- Return value must be a table. The returned table will be applied to
-        -- the data to be exported. Data already defined in the export data will
-        -- be overridden when returned from the function. Return nil to not
-        -- append any data.
-        --
-        -- The function receives two arguments:
-        --   1. objType (string):
-        --     The type of the object. Can be one of these values:
-        --       * unit
-        --       * static
-        --       * airbase
-        --   2. object (table):
-        --     The object to be exported. The object is a default DCS object and
-        --     all known DCS functions can be used on it.
-        --   3. info (table):
-        --     The export data that has been collected up until this point.
-        -- Default value: nil
-        extend = nil,
+        -- Determines the extensions to be loaded
+        -- Default value: {}
+        extensions = {
+            "moose"
+        }
     }
 }
 ```

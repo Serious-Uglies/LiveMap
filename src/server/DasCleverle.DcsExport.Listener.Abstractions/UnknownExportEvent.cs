@@ -9,5 +9,8 @@ public record UnknownExportEvent : IExportEvent
     private class EmptyPayload : IEventPayload
     {
         public static readonly EmptyPayload Instance = new();
+
+        public IExtensionData Extensions { get; } = NoExtensionData.Instance;
     }
+
 }

@@ -3,7 +3,7 @@ using DasCleverle.DcsExport.Listener.Abstractions;
 namespace DasCleverle.DcsExport.Listener.Model;
 
 [EventPayload("AddAirbase")]
-public record AirbasePayload : IEventPayload
+public record AirbasePayload : EventPayload
 {
     public string? Id { get; init; }
 

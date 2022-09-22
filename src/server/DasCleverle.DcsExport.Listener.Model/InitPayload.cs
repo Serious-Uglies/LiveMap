@@ -3,7 +3,7 @@ using DasCleverle.DcsExport.Listener.Abstractions;
 namespace DasCleverle.DcsExport.Listener.Model;
 
 [EventPayload("Init")]
-public record InitPayload : IEventPayload
+public record InitPayload : EventPayload
 {
     public string? MissionName { get; init; }
 

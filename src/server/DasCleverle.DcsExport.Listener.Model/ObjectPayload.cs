@@ -2,7 +2,7 @@ using DasCleverle.DcsExport.Listener.Abstractions;
 namespace DasCleverle.DcsExport.Listener.Model;
 
 [EventPayload("AddObject")]
-public record ObjectPayload : IEventPayload
+public record ObjectPayload : EventPayload
 {
     public int Id { get; init; }
 

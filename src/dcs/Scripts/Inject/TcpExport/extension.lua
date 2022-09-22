@@ -96,4 +96,19 @@ function extension.registerEvents(eventHandlers)
     return eventHandlers
 end
 
+function extension.call(fn, callback, ...)
+    for name, ext in pairs(extension.extensions) do
+        if ext[fn] and type(ext[fn]) == "function" then
+            local success, result = pcall(ext[fn], ...)
+
+            if not success then
+                logger.error("An error ocurred in function '%s.%s'", name, fn)
+                logger.error("%s", result)
+            elseif callback and type(callback) == "function" then
+                callback(result, name)
+            end
+        end
+    end
+end
+
 return extension

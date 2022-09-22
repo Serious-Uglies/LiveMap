@@ -2,6 +2,7 @@ local tcp = require("tcp")
 local config = require("config")
 local info = require("info")
 local objects = require("infoObject")
+local extension = require("extension")
 
 local updates = {}
 local lastPositions = {}
@@ -41,6 +42,8 @@ local function update(_, t)
             end
         end
     end
+
+    extension.call("update", nil, units, statics)
 
     tcp.send("Time", info.getTime())
 

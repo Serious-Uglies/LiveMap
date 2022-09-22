@@ -1,19 +1,19 @@
-local log = {}
+local mod = {}
 
 local function do_log(fn, msg, ...)
     fn("[TcpExport] " .. string.format(msg, ...))
 end
 
-function log.info(msg, ...)
+function mod.info(msg, ...)
     do_log(env.info, msg, ...)
 end
 
-function log.warning(msg, ...)
+function mod.warning(msg, ...)
     do_log(env.warning, msg, ...)
 end
 
-function log.error(msg, ...)
+function mod.error(msg, ...)
     do_log(env.error, msg, ...)
 end
 
-return log
+return mod

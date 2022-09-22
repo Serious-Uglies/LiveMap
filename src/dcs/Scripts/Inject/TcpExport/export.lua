@@ -1,7 +1,8 @@
+local mod = {}
+
 local extension = require("extension")
 local config = require("config")
 local json   = require("json")
-
 
 local coalitionNames = {
     [coalition.side.BLUE] = "blue",
@@ -9,9 +10,7 @@ local coalitionNames = {
     [coalition.side.NEUTRAL] = "neutral"
 }
 
-local export = {}
-
-function export.filter(objType, object)
+function mod.filter(objType, object)
     local coalition = object:getCoalition()
     local coalitionName = coalitionNames[coalition]
     local coalitionConfig = config.export[coalitionName]
@@ -36,7 +35,7 @@ function export.filter(objType, object)
     return endResult
 end
 
-function export.extend(info, objType, object)
+function mod.extend(info, objType, object)
     local extensions = {}
     json.setType(extensions, "object")
 
@@ -51,4 +50,4 @@ function export.extend(info, objType, object)
     return info
 end
 
-return export
+return mod

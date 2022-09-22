@@ -1,5 +1,7 @@
 ---@diagnostic disable: undefined-field, param-type-mismatch
 
+local mod = {}
+
 local terrain = require("terrain")
 local util = require("util")
 local info = require("info")
@@ -19,8 +21,6 @@ local airdromeData = terrain.GetTerrainConfig("Airdromes")
 local radioData = TcpExportHook.airdromeRadios
 local beaconData = terrain.getBeacons()
 local beaconTypes = getBeaconTypes()
-
-local infoAirbase = {}
 
 local function getRunways(airdrome)
     local runways = {}
@@ -132,7 +132,7 @@ local function getBeacons(airdrome)
     }
 end
 
-function infoAirbase.getAirbase(airbase)
+function mod.getAirbase(airbase)
     if airbase == nil then
         return nil
     end
@@ -184,12 +184,12 @@ function infoAirbase.getAirbase(airbase)
     return export.extend(airbaseInfo, "airbase", airbase)
 end
 
-function infoAirbase.getAllAirbases()
+function mod.getAllAirbases()
     local airbases = world.getAirbases()
     local airbaseInfo = {}
 
     for i = 1, #airbases do
-        local airbase = infoAirbase.getAirbase(airbases[i])
+        local airbase = mod.getAirbase(airbases[i])
 
         if airbase ~= nil then
             table.insert(airbaseInfo, airbase)
@@ -199,4 +199,4 @@ function infoAirbase.getAllAirbases()
     return airbaseInfo
 end
 
-return infoAirbase
+return mod

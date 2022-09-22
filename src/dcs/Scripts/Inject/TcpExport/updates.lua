@@ -1,10 +1,11 @@
+local mod = {}
+
 local tcp = require("tcp")
 local config = require("config")
 local info = require("info")
 local objects = require("infoObject")
 local extension = require("extension")
 
-local updates = {}
 local lastPositions = {}
 
 local function hasMoved(unit)
@@ -50,8 +51,8 @@ local function update(_, t)
     return t + config.interval
 end
 
-function updates.init()
+function mod.init()
     timer.scheduleFunction(update, nil, timer.getTime() + 1)
 end
 
-return updates
+return mod

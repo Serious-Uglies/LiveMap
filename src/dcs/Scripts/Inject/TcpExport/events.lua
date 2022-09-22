@@ -1,9 +1,9 @@
+local mod = {}
+
 local tcp = require("tcp")
 local objects = require("infoObject")
 local logger = require("logger")
 local extension = require("extension")
-
-local events = {}
 
 local function addObjectHandler(event)
     if event == nil or event.initiator == nil then
@@ -29,7 +29,7 @@ local function missionEndHandler(event)
     tcp.close()
 end
 
-function events.init()
+function mod.init()
     local eventHandlers = {
         [world.event.S_EVENT_BIRTH] = { addObjectHandler },
         [world.event.S_EVENT_PLAYER_LEAVE_UNIT] = { removeObjectHandler },
@@ -55,4 +55,4 @@ function events.init()
     world.addEventHandler(eventHandlers)
 end
 
-return events
+return mod

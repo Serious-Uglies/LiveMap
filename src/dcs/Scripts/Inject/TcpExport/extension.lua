@@ -1,7 +1,8 @@
+local mod = {}
+
 local logger = require("logger")
 local config = require("config")
 
-local extension = {}
 local extensions = {}
 local waitFors = {}
 
@@ -21,7 +22,7 @@ local function loadModules()
 end
 
 local function init()
-    extension.extensions = {}
+    mod.extensions = {}
 
     for name, ext in pairs(extensions) do
         logger.info("Initializing extension %s", name)
@@ -31,7 +32,7 @@ local function init()
             logger.error("Failed to load extension %s", name)
             logger.error("%s", error)
         else
-            extension.extensions[name] = ext
+            mod.extensions[name] = ext
         end
     end
 end
@@ -58,7 +59,7 @@ local function wait(callback, t)
     return t + 1
 end
 
-function extension.init(callback)
+function mod.init(callback)
     loadModules()
 
     if #waitFors == 0 then
@@ -76,7 +77,7 @@ function extension.init(callback)
     end
 end
 
-function extension.registerEvents(eventHandlers)
+function mod.registerEvents(eventHandlers)
     for _, ext in pairs(extensions) do
         if ext.registerEvents then
             local handlers = ext.registerEvents()
@@ -96,8 +97,8 @@ function extension.registerEvents(eventHandlers)
     return eventHandlers
 end
 
-function extension.call(fn, callback, ...)
-    for name, ext in pairs(extension.extensions) do
+function mod.call(fn, callback, ...)
+    for name, ext in pairs(mod.extensions) do
         if ext[fn] and type(ext[fn]) == "function" then
             local success, result = pcall(ext[fn], ...)
 
@@ -111,4 +112,4 @@ function extension.call(fn, callback, ...)
     end
 end
 
-return extension
+return mod

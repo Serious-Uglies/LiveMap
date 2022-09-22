@@ -1,10 +1,10 @@
-local util = {}
+local mod = {}
 
-function util.radToDeg(radians)
+function mod.radToDeg(radians)
     return radians * 180 / math.pi
 end
 
-function util.power(base, exponent)
+function mod.power(base, exponent)
     local result = 1
 
     for i = 1, exponent do
@@ -14,7 +14,7 @@ function util.power(base, exponent)
     return result
 end
 
-function util.assign(target, ...)
+function mod.assign(target, ...)
     if target == nil or type(target) ~= "table" then
         error("Please provide a table as target.")
     end
@@ -26,7 +26,7 @@ function util.assign(target, ...)
 
                 if type(v) == "table" then
                     if type(tv or false) == "table" then
-                        util.assign(tv, v)
+                        mod.assign(tv, v)
                     else
                         target[k] = v
                     end
@@ -52,7 +52,7 @@ local function serializeValue(s)
     end
 end
 
-function util.serialize(name, value, level)
+function mod.serialize(name, value, level)
     local result = {}
 
     if level == nil then level = "" end
@@ -71,7 +71,7 @@ function util.serialize(name, value, level)
                 key = string.format("[%q]", k)
             end
 
-            table.insert(result, util.serialize(key, v, level.."  "))
+            table.insert(result, mod.serialize(key, v, level.."  "))
         end
 
         if level == "" then
@@ -86,7 +86,7 @@ function util.serialize(name, value, level)
     return table.concat(result)
 end
 
-function util.serializeSafe(name, value, visited)
+function mod.serializeSafe(name, value, visited)
     local result = {}
     visited = visited or {}       -- initial value
 
@@ -104,7 +104,7 @@ function util.serializeSafe(name, value, visited)
 
                 for k,v in pairs(value) do      -- save its fields
                     local fieldname = string.format("%s[%s]", name, serializeValue(k))
-                    table.insert(result, util.serializeSafe(fieldname, v, visited))
+                    table.insert(result, mod.serializeSafe(fieldname, v, visited))
                 end
             end
         else
@@ -117,4 +117,4 @@ function util.serializeSafe(name, value, visited)
     end
 end
 
-return util
+return mod

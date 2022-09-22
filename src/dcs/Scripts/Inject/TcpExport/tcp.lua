@@ -1,6 +1,8 @@
 package.path = "./LuaSocket/?.lua;" .. package.path
 package.cpath = "./LuaSocket/?.dll;" .. package.cpath
 
+local mod = {}
+
 local socket = require("socket")
 local json = require("json")
 local logger = require("logger")
@@ -103,12 +105,23 @@ local function flushSchedule(_, t)
     return t + nextFlush
 end
 
-local function connect()
+local function isArray(table)
+    return table ~= nil and table[1] ~= nil
+end
+
+local function appendBuffer(event, payload)
+    local data = { event = event, payload = payload }
+    local encoded = json.encode(data) .. "\n"
+
+    sendBuffer = sendBuffer .. encoded
+end
+
+function mod.connect()
     doConnect()
     scheduleId = timer.scheduleFunction(flushSchedule, nil, timer.getTime() + nextFlush)
 end
 
-local function close()
+function mod.close()
     timer.removeFunction(scheduleId)
 
     if sock == nil then
@@ -121,18 +134,7 @@ local function close()
     sock = nil
 end
 
-local function isArray(table)
-    return table ~= nil and table[1] ~= nil
-end
-
-local function appendBuffer(event, payload)
-    local data = { event = event, payload = payload }
-    local encoded = json.encode(data) .. "\n"
-
-    sendBuffer = sendBuffer .. encoded
-end
-
-local function send(event, payload)
+function mod.send(event, payload)
     if payload == nil then
         return
     end
@@ -153,8 +155,4 @@ local function send(event, payload)
     flush()
 end
 
-return {
-    connect = connect,
-    close = close,
-    send = send
-}
+return mod

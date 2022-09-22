@@ -1,7 +1,7 @@
+local mod = {}
+
 local info = require("info")
 local export = require("export")
-
-local infoObject = {}
 
 local function getType(object)
     local metatable = getmetatable(object)
@@ -17,7 +17,7 @@ local function getType(object)
     return "unknown"
 end
 
-function infoObject.getObject(object, reduced)
+function mod.getObject(object, reduced)
     if object == nil or not object:isExist() then
         return nil
     end
@@ -68,7 +68,7 @@ local function getUnits(side, reduced)
     for g = 1, #groups do
         local units = groups[g]:getUnits()
         for u = 1, #units do
-            local unit = infoObject.getObject(units[u], reduced)
+            local unit = mod.getObject(units[u], reduced)
 
             if objects ~= nil then
                 table.insert(objects, unit)
@@ -84,17 +84,17 @@ local function getStatics(side, reduced)
     local statics = coalition.getStaticObjects(side)
 
     for i = 1, #statics do
-        local static = infoObject.getObject(statics[i], reduced)
+        local static = mod.getObject(statics[i], reduced)
 
         if static ~= nil then
-            table.insert(objects, infoObject.getObject(statics[i], reduced))
+            table.insert(objects, mod.getObject(statics[i], reduced))
         end
     end
 
     return objects
 end
 
-function infoObject.getCoalitionObjects(type, side, reduced)
+function mod.getCoalitionObjects(type, side, reduced)
     if type == "unit" then
         return getUnits(side, reduced)
     end
@@ -106,11 +106,11 @@ function infoObject.getCoalitionObjects(type, side, reduced)
     return nil
 end
 
-function infoObject.getAllObjects(type, reduced)
+function mod.getAllObjects(type, reduced)
     local objects = {}
 
     for _, side in pairs(coalition.side) do
-        local coalitionObjects = infoObject.getCoalitionObjects(type, side, reduced)
+        local coalitionObjects = mod.getCoalitionObjects(type, side, reduced)
 
         if coalitionObjects ~= nil then
             for i = 1, #coalitionObjects do
@@ -131,4 +131,4 @@ function infoObject.getAllObjects(type, reduced)
     return objects
 end
 
-return infoObject
+return mod

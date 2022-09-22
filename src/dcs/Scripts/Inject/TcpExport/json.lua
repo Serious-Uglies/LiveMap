@@ -55,25 +55,9 @@ local function encode_nil(val)
   return "null"
 end
 
-
-local function encode_table(val, stack)
-  local res = {}
-  stack = stack or {}
-
-  -- Circular reference?
-  if stack[val] then error("circular reference") end
-
-  stack[val] = true
-
-  local mt = getmetatable(val)
-
-  -- Use __json_encode on metatable if available
-  if mt ~= nil and mt.__json_encode ~= nil then
-    return encode(mt.__json_encode(val), stack)
-  end
-
-  if rawget(val, 1) ~= nil or next(val) == nil then
+local function encode_array(val, stack)
     -- Treat as array -- check keys are valid and it is not sparse
+    local res = {}
     local n = 0
     for k in pairs(val) do
       if type(k) ~= "number" then
@@ -90,9 +74,11 @@ local function encode_table(val, stack)
     end
     stack[val] = nil
     return "[" .. table.concat(res, ",") .. "]"
+end
 
-  else
+local function encode_object(val, stack)
     -- Treat as an object
+    local res = {}
     for k, v in pairs(val) do
       if type(k) ~= "string" then
         error("invalid table: mixed or invalid key types")
@@ -101,9 +87,39 @@ local function encode_table(val, stack)
     end
     stack[val] = nil
     return "{" .. table.concat(res, ",") .. "}"
-  end
 end
 
+local function encode_table(val, stack)
+  stack = stack or {}
+
+  -- Circular reference?
+  if stack[val] then error("circular reference") end
+
+  stack[val] = true
+
+  local mt = getmetatable(val)
+
+  -- Use options on metatable if available
+  if mt ~= nil then
+    if mt.__json_encode ~= nil then
+        return encode(mt.__json_encode(val), stack)
+    end
+
+    if mt.__json_type ~= nil then
+        if mt.__json_type == "array" then
+          return encode_array(val, stack)
+        elseif mt.__json_type == "object" then
+          return encode_object(val, stack)
+        end
+    end
+  end
+
+  if rawget(val, 1) ~= nil or next(val) == nil then
+    return encode_array(val, stack)
+  else
+    return encode_object(val, stack)
+  end
+end
 
 local function encode_string(val)
   return '"' .. val:gsub('[%z\1-\31\\"]', escape_char) .. '"'
@@ -140,6 +156,13 @@ end
 function json.setEncoder(val, encoder)
     local meta = getmetatable(val) or {}
     meta.__json_encode = encoder
+
+    setmetatable(val, meta)
+end
+
+function json.setType(val, type)
+    local meta = getmetatable(val) or {}
+    meta.__json_type = type
 
     setmetatable(val, meta)
 end

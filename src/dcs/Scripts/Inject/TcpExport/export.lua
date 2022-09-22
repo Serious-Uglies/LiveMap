@@ -1,12 +1,29 @@
-local util = require("util")
 local logger = require("logger")
+local extension = require("extension")
 local config = require("config")
+local json   = require("json")
+
 
 local coalitionNames = {
     [coalition.side.BLUE] = "blue",
     [coalition.side.RED] = "red",
     [coalition.side.NEUTRAL] = "neutral"
 }
+
+local function callExtensions(fn, handleResult, ...)
+    for name, ext in pairs(extension.extensions) do
+        if ext[fn] and type(ext[fn]) == "function" then
+            local success, result = pcall(ext[fn], ...)
+
+            if not success then
+                logger.error("An error ocurred in function '%s.%s'", name, fn)
+                logger.error("%s", result)
+            else
+                handleResult(result, name)
+            end
+        end
+    end
+end
 
 local export = {}
 
@@ -19,36 +36,35 @@ function export.filter(objType, object)
         return false
     end
 
-    -- TODO call extensions
+    local endResult = true
 
-    return true
+    callExtensions(
+        "filter",
+        function(result)
+            if result == nil then
+                return
+            end
+
+            endResult = endResult and result
+        end,
+        objType, object)
+
+    return endResult
 end
 
 function export.extend(info, objType, object)
+    local extensions = {}
+    json.setType(extensions, "object")
+
+    callExtensions(
+        "extend",
+        function (result, name)
+            extensions[name] = result
+        end,
+        objType, object, info)
+
+    info["extensions"] = extensions
     return info
-
-    -- TODOD call extensions
-
-    -- local extends = {}
-    -- local results = {}
-
-    -- for _, extend in pairs(extends) do
-    --     local success, result = pcall(extend, objType, object, info)
-
-    --     if type(result) == "table" then
-    --         table.insert(results, result)
-    --     end
-
-    --     if not success then
-    --         logger.error("The 'extend' function returned error: %s", result)
-    --     end
-
-    --     if result ~= nil and type(result) ~= "table" then
-    --         logger.error("You must return a table from the 'extend' function.")
-    --     end
-    -- end
-
-    -- return util.assign(info, unpack(results))
 end
 
 return export

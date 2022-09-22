@@ -7,6 +7,8 @@ public interface IReducer
 {
     IEnumerable<string> EventTypes { get; }
 
+    int Order { get; }
+
     ValueTask<LiveState> ReduceAsync(LiveState state, IExportEvent exportEvent);
 }
 
@@ -21,6 +23,8 @@ public abstract class Reducer : IReducer
 
     public abstract IEnumerable<string> EventTypes { get; }
 
+    public virtual int Order => 0;
+
     public ValueTask<LiveState> ReduceAsync(LiveState state, IExportEvent exportEvent) 
         => new ValueTask<LiveState>(Reduce(state, exportEvent));
 
@@ -31,6 +35,8 @@ public abstract class Reducer : IReducer
 public abstract class Reducer<T> : IReducer, IReducer<T> where T : IEventPayload
 {
     public virtual IEnumerable<string> EventTypes { get; } = GetEventTypes();
+
+    public virtual int Order => 0;
 
     async ValueTask<LiveState> IReducer.ReduceAsync(LiveState state, IExportEvent exportEvent)
     {

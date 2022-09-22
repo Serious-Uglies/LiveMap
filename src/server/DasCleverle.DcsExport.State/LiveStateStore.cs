@@ -10,13 +10,12 @@ public class LiveStateStore : ILiveStateStore
     private long _version;
 
     private readonly Dictionary<Guid, Subscriber> _subscribers = new();
-    private readonly ILookup<string, IReducer> _reducers;
+    private readonly Dictionary<string, IReducer[]> _lookup = new();
+    private readonly IEnumerable<IReducer> _reducers;
 
     public LiveStateStore(IEnumerable<IReducer> reducers)
     {
-        _reducers = reducers
-            .SelectMany(x => x.EventTypes, (reducer, type) => (Reducer: reducer, EventType: type))
-            .ToLookup(x => x.EventType, x => x.Reducer);
+        _reducers = reducers;
     }
 
     public LiveState GetState()
@@ -72,10 +71,9 @@ public class LiveStateStore : ILiveStateStore
 
         try
         {
-            var reducers = _reducers[exportEvent.EventType];
-            var catchAllReducers = _reducers["*"];
+            var reducers = GetReducers(exportEvent.EventType);
 
-            foreach (var reducer in reducers.Union(catchAllReducers))
+            foreach (var reducer in reducers)
             {
                 newState = await reducer.ReduceAsync(newState, exportEvent);
             }
@@ -97,6 +95,22 @@ public class LiveStateStore : ILiveStateStore
         {
             await subscriber.Callback.Invoke(newState);
         }
+    }
+
+    private IReducer[] GetReducers(string eventType)
+    {
+        if (_lookup.TryGetValue(eventType, out var reducers))
+        {
+            return reducers;
+        }
+
+        reducers = _reducers
+            .Where(x => x.EventTypes.Contains(eventType) || x.EventTypes.Contains("*"))
+            .OrderBy(x => x.Order)
+            .ToArray();
+
+        _lookup[eventType] = reducers;
+        return reducers;
     }
 
     private delegate ValueTask SubscriberCallback(LiveState state);

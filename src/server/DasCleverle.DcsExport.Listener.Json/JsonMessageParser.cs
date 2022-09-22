@@ -28,6 +28,7 @@ public class JsonMessageParser : IMessageParser
         options.Converters.Add(new JsonStringEnumConverter());
         options.Converters.Add(new JsonExportEventConverter());
         options.Converters.Add(new JsonObjectAttributeSetConverter());
+        options.Converters.Add(new JsonExtensionDataConverter());
 
         return options;
     }

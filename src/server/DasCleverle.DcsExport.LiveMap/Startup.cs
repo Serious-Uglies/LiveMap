@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DasCleverle.DcsExport.Extensibility;
@@ -88,7 +89,14 @@ public class Startup
 
             if (env.IsDevelopment())
             {
-                spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+                if (Debugger.IsAttached)
+                {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+                }
+                else 
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
             }
         });
     }

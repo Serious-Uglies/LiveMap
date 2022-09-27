@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace DasCleverle.DcsExport.LiveMap.Client.Expressions;
 
-public delegate object? JexlExpression<T>(IJexlContext context, T value);
+public delegate object? JexlExpression<T>(T value);
 
 public static class Jexl
 {
@@ -15,7 +15,6 @@ public class Jexl<T>
 {
     public Expression<JexlExpression<T>> Expression { get; protected init; }
 
-    private readonly ParameterExpression _context;
     private readonly ParameterExpression _value;
 
     private JsonSerializerOptions? _options;
@@ -25,8 +24,7 @@ public class Jexl<T>
     {
         Expression = expression;
 
-        _context = expression.Parameters[0];
-        _value = expression.Parameters[1];
+        _value = expression.Parameters[0];
     }
 
     public string Compile(JsonSerializerOptions? options = null)
@@ -90,15 +88,21 @@ public class Jexl<T>
                 CompileNew(ne, to);
                 break;
 
+            case LambdaExpression le:
+                CompileLambda(le, to);
+                break;
+
             default:
                 throw new JexlException($"Unsupported expression type {node.NodeType} at {node}.");
         }
     }
 
+
     private void CompileUnary(UnaryExpression node, List<string> to)
     {
         switch (node.NodeType)
         {
+            case ExpressionType.Quote:
             case ExpressionType.Convert:
                 Compile(node.Operand, to);
                 break;
@@ -108,7 +112,7 @@ public class Jexl<T>
                 break;
 
             case ExpressionType.ArrayLength:
-                to.Add($"{CompileLocal(node.Operand)}.length");
+                to.Add($"{CompileLocal(node.Operand)} | length");
                 break;
 
             default:
@@ -158,31 +162,46 @@ public class Jexl<T>
             return;
         }
 
-        if (node.Object != _context)
+        if (node.Object != null || node.Method.DeclaringType != typeof(JexlExtensions))
         {
-            throw new JexlException("Unsupported method call on non-context.");
+            throw new JexlException($"Unsupported method call. Only methods on the type '{typeof(JexlExtensions)}' can be called.");
         }
 
-        if (node.Method.Name == "Translate")
+        switch (node.Method.Name)
         {
-            var key = CompileLocal(node.Arguments[0]);
-            var arg = node.Arguments[1] == null ? "" : CompileLocal(node.Arguments[1]);
+            case nameof(JexlExtensions.Translate):
+                var key = CompileLocal(node.Arguments[0]);
+                var arg = node.Arguments.Count == 1 || node.Arguments[1] == null
+                    ? ""
+                    : CompileLocal(node.Arguments[1]);
 
-            if (string.IsNullOrEmpty(arg))
-            {
-                to.Add($"translate({key})");
-            }
-            else
-            {
-                to.Add($"translate({key}, {arg})");
-            }
-        }
-        else if (node.Method.Name == "In")
-        {
-            var item = CompileLocal(node.Arguments[0]);
-            var search = CompileLocal(node.Arguments[1]);
+                to.Add(
+                    string.IsNullOrEmpty(arg) ? $"translate({key})" : $"translate({key}, {arg})"
+                );
+                break;
 
-            to.Add($"{item} in {search}");
+            case nameof(JexlExtensions.In):
+                var item = CompileLocal(node.Arguments[0]);
+                var search = CompileLocal(node.Arguments[1]);
+
+                to.Add($"{item} in {search}");
+                break;
+
+            case nameof(JexlExtensions.Map):
+                var array = CompileLocal(node.Arguments[0]);
+                var mapExpr = (LambdaExpression)((UnaryExpression)node.Arguments[1]).Operand;
+                var param = mapExpr.Parameters[0].Name;
+                var map = CompileLocal(mapExpr);
+
+                to.Add($"{array} | map(\"{param}\", {map})");
+                break;
+
+            case nameof(JexlExtensions.Join):
+                array = CompileLocal(node.Arguments[0]);
+                var joiner = CompileLocal(node.Arguments[1]);
+
+                to.Add($"{array} | join({joiner})");
+                break;
         }
     }
 
@@ -217,6 +236,15 @@ public class Jexl<T>
             {
                 stack.Push(ConvertName(me.Member.Name));
                 expr = me.Expression;
+            }
+            else if (expr is ParameterExpression pe)
+            {
+                if (pe.Name != null)
+                {
+                    stack.Push(ConvertName(pe.Name!));
+                }
+
+                break;
             }
             else
             {
@@ -255,19 +283,34 @@ public class Jexl<T>
     {
         if (!node.Type.Name.StartsWith("<>f__AnonymousType"))
         {
-            throw new JexlException("Only new epxression using an anonoymous type are supported.");
+            throw new JexlException("Unsupported new epxression not using an anonoymous type.");
         }
 
         to.Add("{");
 
         var propertiesWithArgs = node.Type.GetProperties().Zip(node.Arguments, (p, a) => (Property: p, Argument: a));
-        
+
         foreach (var (property, argument) in propertiesWithArgs)
         {
             to.Add($"{ConvertName(property.Name)}: {CompileLocal(argument)},");
         }
-         
+
         to.Add("}");
+    }
+
+    private void CompileLambda(LambdaExpression node, List<string> to)
+    {
+        if (node.Parameters.Count != 1)
+        {
+            throw new JexlException("Unsupported lambda expression with not exactly one parameter.");
+        }
+
+        if (node.Parameters[0].Name != "item")
+        {
+            throw new JexlException("Unsupported lambda expression with parameter not named 'item'.");
+        }
+
+        to.Add($"\"{CompileLocal(node.Body).Replace("\"", "\\\"")}\"");
     }
 
     private void CompileIndexer(Expression? @object, IEnumerable<Expression> arguments, List<string> to)
@@ -276,7 +319,7 @@ public class Jexl<T>
 
         if (count != 1)
         {
-            throw new JexlException("Unsupported index expression with less or more than one argument.");
+            throw new JexlException("Unsupported index expression with not exactly one argument.");
         }
 
         var obj = CompileLocal(@object);
@@ -285,6 +328,6 @@ public class Jexl<T>
         to.Add($"{obj}[{argument}]");
     }
 
-    private string ConvertName(string name) 
+    private string ConvertName(string name)
         => _options?.PropertyNamingPolicy?.ConvertName(name) ?? name;
 }

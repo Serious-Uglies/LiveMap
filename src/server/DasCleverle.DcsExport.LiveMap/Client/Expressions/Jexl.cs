@@ -13,7 +13,7 @@ public static class Jexl
 
 public class Jexl<T>
 {
-    public Expression<JexlExpression<T>> Expression { get; protected init; }
+    public Expression<JexlExpression<T>> Container { get; protected init; }
 
     private readonly ParameterExpression _value;
 
@@ -22,8 +22,7 @@ public class Jexl<T>
 
     public Jexl(Expression<JexlExpression<T>> expression)
     {
-        Expression = expression;
-
+        Container = expression;
         _value = expression.Parameters[0];
     }
 
@@ -35,7 +34,7 @@ public class Jexl<T>
         }
 
         _options = options;
-        _compiled = CompileLocal(Expression.Body);
+        _compiled = CompileLocal(Container.Body);
         return _compiled;
     }
 
@@ -96,7 +95,6 @@ public class Jexl<T>
                 throw new JexlException($"Unsupported expression type {node.NodeType} at {node}.");
         }
     }
-
 
     private void CompileUnary(UnaryExpression node, List<string> to)
     {
@@ -246,6 +244,15 @@ public class Jexl<T>
 
                 break;
             }
+            else if (expr is ConstantExpression ce && IsJexl(node.Type))
+            {
+                var callCompile = Expression.Call(node, "Compile", null, Expression.Constant(_options));
+                var lambda = Expression.Lambda<Func<string>>(callCompile);
+                var value = lambda.Compile().Invoke();
+                to.Add(value);
+
+                return;
+            }
             else
             {
                 stack.Push(CompileLocal(expr));
@@ -330,4 +337,7 @@ public class Jexl<T>
 
     private string ConvertName(string name)
         => _options?.PropertyNamingPolicy?.ConvertName(name) ?? name;
+
+    private static bool IsJexl(Type type)
+        => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Jexl<>);
 }

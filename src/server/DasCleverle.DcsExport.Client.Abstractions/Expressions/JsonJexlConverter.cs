@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace DasCleverle.DcsExport.LiveMap.Client.Expressions;
+namespace DasCleverle.DcsExport.Client.Abstractions.Expressions;
 
 public class JsonJexlConverter : JsonConverter<Jexl>
 {

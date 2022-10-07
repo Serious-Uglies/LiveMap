@@ -3,35 +3,7 @@ using System.Linq.Expressions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace DasCleverle.DcsExport.LiveMap.Client.Expressions;
-
-public delegate object? JexlExpression(JexlContext value);
-
-public class JexlContext
-{
-    public JexlContext this[string key] => throw new NotImplementedException();
-    public JexlContext this[int index] => throw new NotImplementedException();
-
-    public static bool operator <(JexlContext left, object right) => throw new NotImplementedException();
-    public static bool operator >(JexlContext left, object right) => throw new NotImplementedException();
-
-    public static bool operator <(object left, JexlContext right) => throw new NotImplementedException();
-    public static bool operator >(object left, JexlContext right) => throw new NotImplementedException();
-
-    public static bool operator <=(JexlContext left, object right) => throw new NotImplementedException();
-    public static bool operator >=(JexlContext left, object right) => throw new NotImplementedException();
-
-    public static bool operator <=(object left, JexlContext right) => throw new NotImplementedException();
-    public static bool operator >=(object left, JexlContext right) => throw new NotImplementedException();
-
-    public static bool operator ==(JexlContext left, object right) => throw new NotImplementedException();
-    public static bool operator !=(JexlContext left, object right) => throw new NotImplementedException();
-
-    public static implicit operator bool(JexlContext context) => throw new NotImplementedException();
-
-    public override bool Equals(object? obj) => throw new NotImplementedException();
-    public override int GetHashCode() => throw new NotImplementedException();
-}
+namespace DasCleverle.DcsExport.Client.Abstractions.Expressions;
 
 [JsonConverter(typeof(JsonJexlConverter))]
 public class Jexl
@@ -450,4 +422,32 @@ public class Jexl
 
     private static bool IsJexlExpression(Type type)
         => type == typeof(Expression<JexlExpression>);
+}
+
+public delegate object? JexlExpression(JexlContext value);
+
+public class JexlContext
+{
+    public JexlContext this[string key] => throw new NotImplementedException();
+    public JexlContext this[int index] => throw new NotImplementedException();
+
+    public static bool operator <(JexlContext left, object right) => throw new NotImplementedException();
+    public static bool operator >(JexlContext left, object right) => throw new NotImplementedException();
+
+    public static bool operator <(object left, JexlContext right) => throw new NotImplementedException();
+    public static bool operator >(object left, JexlContext right) => throw new NotImplementedException();
+
+    public static bool operator <=(JexlContext left, object right) => throw new NotImplementedException();
+    public static bool operator >=(JexlContext left, object right) => throw new NotImplementedException();
+
+    public static bool operator <=(object left, JexlContext right) => throw new NotImplementedException();
+    public static bool operator >=(object left, JexlContext right) => throw new NotImplementedException();
+
+    public static bool operator ==(JexlContext left, object right) => throw new NotImplementedException();
+    public static bool operator !=(JexlContext left, object right) => throw new NotImplementedException();
+
+    public static implicit operator bool(JexlContext context) => throw new NotImplementedException();
+
+    public override bool Equals(object? obj) => throw new NotImplementedException();
+    public override int GetHashCode() => throw new NotImplementedException();
 }

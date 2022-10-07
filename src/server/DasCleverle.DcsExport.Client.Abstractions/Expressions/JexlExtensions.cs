@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace DasCleverle.DcsExport.LiveMap.Client.Expressions;
+namespace DasCleverle.DcsExport.Client.Abstractions.Expressions;
 
 public static class JexlExtensions
 {

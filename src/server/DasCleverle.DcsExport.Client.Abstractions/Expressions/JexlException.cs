@@ -1,4 +1,4 @@
-namespace DasCleverle.DcsExport.LiveMap.Client.Expressions;
+namespace DasCleverle.DcsExport.Client.Abstractions.Expressions;
 
 public class JexlException : Exception
 {

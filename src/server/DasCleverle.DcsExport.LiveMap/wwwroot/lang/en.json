@@ -43,9 +43,11 @@
         "ndbListNone": ""
       }
     },
-    "objectPopup": {
-      "unit": "{{count}}x {{name}}",
-      "player": "{{count}}x {{name}} ({{player}})"
+    "popup": {
+      "object": {
+        "unit": "{{count}}x {{value.name}}",
+        "player": "{{count}}x {{value.name}} ({{value.player}})"
+      }
     },
     "format": {
       "tacan": "{{value.channel}}{{value.mode}} ({{value.callsign}})",

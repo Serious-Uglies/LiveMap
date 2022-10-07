@@ -1,29 +1,54 @@
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace DasCleverle.DcsExport.LiveMap.Client.Expressions;
 
-public delegate object? JexlExpression<T>(T value);
+public delegate object? JexlExpression(JexlContext value);
 
-public static class Jexl
+public class JexlContext
 {
-    public static Jexl<T> Create<T>(Expression<JexlExpression<T>> expression) => new Jexl<T>(expression);
+    public JexlContext this[string key] => throw new NotImplementedException();
+    public JexlContext this[int index] => throw new NotImplementedException();
+
+    public static bool operator <(JexlContext left, object right) => throw new NotImplementedException();
+    public static bool operator >(JexlContext left, object right) => throw new NotImplementedException();
+
+    public static bool operator <(object left, JexlContext right) => throw new NotImplementedException();
+    public static bool operator >(object left, JexlContext right) => throw new NotImplementedException();
+
+    public static bool operator <=(JexlContext left, object right) => throw new NotImplementedException();
+    public static bool operator >=(JexlContext left, object right) => throw new NotImplementedException();
+
+    public static bool operator <=(object left, JexlContext right) => throw new NotImplementedException();
+    public static bool operator >=(object left, JexlContext right) => throw new NotImplementedException();
+
+    public static bool operator ==(JexlContext left, object right) => throw new NotImplementedException();
+    public static bool operator !=(JexlContext left, object right) => throw new NotImplementedException();
+
+    public static implicit operator bool(JexlContext context) => throw new NotImplementedException();
+
+    public override bool Equals(object? obj) => throw new NotImplementedException();
+    public override int GetHashCode() => throw new NotImplementedException();
 }
 
-public class Jexl<T>
+[JsonConverter(typeof(JsonJexlConverter))]
+public class Jexl
 {
-    public Expression<JexlExpression<T>> Container { get; protected init; }
+    public static Jexl Create(Expression<JexlExpression> expression) => new Jexl(expression);
 
-    private readonly ParameterExpression _value;
+    public Expression<JexlExpression> Container { get; protected init; }
+
+    private readonly ParameterExpression _context;
 
     private JsonSerializerOptions? _options;
     private string? _compiled;
 
-    public Jexl(Expression<JexlExpression<T>> expression)
+    public Jexl(Expression<JexlExpression> expression)
     {
         Container = expression;
-        _value = expression.Parameters[0];
+        _context = expression.Parameters[0];
     }
 
     public string Compile(JsonSerializerOptions? options = null)
@@ -153,8 +178,7 @@ public class Jexl<T>
 
     private void CompileMethodCall(MethodCallExpression node, List<string> to)
     {
-        // Methods named "get_Item" are assumed to be indexers
-        if (node.Method.Name == "get_Item")
+        if (IsIndexer(node))
         {
             CompileIndexer(node.Object, node.Arguments, to);
             return;
@@ -185,8 +209,13 @@ public class Jexl<T>
                 to.Add($"{item} in {search}");
                 break;
 
-            case nameof(JexlExtensions.Map):
+            case nameof(JexlExtensions.Length):
                 var array = CompileLocal(node.Arguments[0]);
+                to.Add($"{array} | length");
+                break;
+
+            case nameof(JexlExtensions.Map):
+                array = CompileLocal(node.Arguments[0]);
                 var mapExpr = (LambdaExpression)((UnaryExpression)node.Arguments[1]).Operand;
                 var param = mapExpr.Parameters[0].Name;
                 var map = CompileLocal(mapExpr);
@@ -214,7 +243,7 @@ public class Jexl<T>
 
     private void CompileMember(MemberExpression node, List<string> to)
     {
-        if (node.Expression == _value)
+        if (node.Expression == _context)
         {
             to.Add(ConvertName(node.Member.Name));
             return;
@@ -225,17 +254,17 @@ public class Jexl<T>
             throw new JexlException($"Unsupported member access at {node}.");
         }
 
-        Expression? expr = node;
+        Expression? expression = node;
         var stack = new Stack<string>();
 
-        while (expr != _value)
+        while (expression != _context)
         {
-            if (expr is MemberExpression me)
+            if (expression is MemberExpression me)
             {
                 stack.Push(ConvertName(me.Member.Name));
-                expr = me.Expression;
+                expression = me.Expression;
             }
-            else if (expr is ParameterExpression pe)
+            else if (expression is ParameterExpression pe)
             {
                 if (pe.Name != null)
                 {
@@ -244,7 +273,7 @@ public class Jexl<T>
 
                 break;
             }
-            else if (expr is ConstantExpression ce && IsJexl(node.Type))
+            else if (expression is ConstantExpression ce && IsJexl(node.Type))
             {
                 var callCompile = Expression.Call(node, "Compile", null, Expression.Constant(_options));
                 var lambda = Expression.Lambda<Func<string>>(callCompile);
@@ -255,7 +284,7 @@ public class Jexl<T>
             }
             else
             {
-                stack.Push(CompileLocal(expr));
+                stack.Push(CompileLocal(expression));
                 break;
             }
         }
@@ -329,15 +358,78 @@ public class Jexl<T>
             throw new JexlException("Unsupported index expression with not exactly one argument.");
         }
 
-        var obj = CompileLocal(@object);
+        if (@object?.Type == typeof(JexlContext))
+        {
+            var arg = arguments.First();
+            var expression = @object;
+
+            if (@object == _context)
+            {
+                if (arg.Type != typeof(string) || arg is not ConstantExpression ce)
+                {
+                    throw new JexlException("Direct access to the context requires indexing with a string parameter.");
+                }
+
+                to.Add(ConvertName((string)ce.Value!));
+                return;
+            }
+
+            var stack = new Stack<string>();
+
+            while (true)
+            {
+                if (arg.Type == typeof(string) && arg is ConstantExpression ce)
+                {
+                    stack.Push(ConvertName((string)ce.Value!));
+                    stack.Push(".");
+                }
+                else
+                {
+                    stack.Push($"[{CompileLocal(arg)}]");
+                }
+
+                if (expression == _context)
+                {
+                    break;
+                }
+
+                if (expression is ParameterExpression pe)
+                {
+                    stack.Push(ConvertName(pe.Name!));
+                    break;
+                }
+
+                if (expression is MethodCallExpression me && IsIndexer(me) && me.Type == typeof(JexlContext))
+                {
+                    expression = me.Object;
+                    arg = me.Arguments[0];
+                }
+                else 
+                {
+                    break;
+                }
+            }
+
+            if (stack.Peek() == ".")
+            {
+                stack.Pop();
+            }
+
+            to.Add(string.Join("", stack));
+            return;
+        }
+
         var argument = CompileLocal(arguments.First());
+        var obj = CompileLocal(@object);
 
         to.Add($"{obj}[{argument}]");
     }
+
+    private static bool IsIndexer(MethodCallExpression expression) => expression.Method.Name == "get_Item";
 
     private string ConvertName(string name)
         => _options?.PropertyNamingPolicy?.ConvertName(name) ?? name;
 
     private static bool IsJexl(Type type)
-        => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Jexl<>);
+        => type == typeof(Jexl);
 }

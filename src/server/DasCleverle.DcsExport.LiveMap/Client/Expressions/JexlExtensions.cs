@@ -19,10 +19,21 @@ public static class JexlExtensions
     public static bool In(this string substring, string str)
         => throw new NotImplementedException();
 
-    public static IEnumerable<TResult> Map<TSource, TResult>(this IEnumerable<TSource> source, Expression<Func<TSource, TResult>> map)
-        => throw new NotImplementedException();
-        
-    public static string Join<TSource>(this IEnumerable<TSource> source, string joiner)
+    public static bool In(this object item, JexlContext context)
         => throw new NotImplementedException();
 
+    public static bool In(this string itemOrSubstring, JexlContext context) 
+        => throw new NotImplementedException();
+        
+    public static bool In(this JexlContext context, JexlContext other)
+        => throw new NotImplementedException();
+
+    public static int Length(this JexlContext context)
+        => throw new NotImplementedException();
+
+    public static JexlContext Map<TResult>(this JexlContext source, Expression<Func<JexlContext, TResult>> map)
+        => throw new NotImplementedException();
+
+    public static string Join(this JexlContext source, string joiner)
+        => throw new NotImplementedException();
 }

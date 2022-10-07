@@ -59,11 +59,11 @@ public class Jexl
         }
 
         _options = options;
-        _compiled = CompileLocal(Container.Body);
+        _compiled = Compile(Container.Body);
         return _compiled;
     }
 
-    private string CompileLocal(Expression? node)
+    private string Compile(Expression? node)
     {
         if (node == null)
         {
@@ -131,11 +131,11 @@ public class Jexl
                 break;
 
             case ExpressionType.Not:
-                to.Add($"!{CompileLocal(node.Operand)}");
+                to.Add($"!{Compile(node.Operand)}");
                 break;
 
             case ExpressionType.ArrayLength:
-                to.Add($"{CompileLocal(node.Operand)} | length");
+                to.Add($"{Compile(node.Operand)} | length");
                 break;
 
             default:
@@ -151,7 +151,7 @@ public class Jexl
             return;
         }
 
-        to.Add($"({CompileLocal(node.Left)})");
+        to.Add($"({Compile(node.Left)})");
 
         to.Add(node.NodeType switch
         {
@@ -173,7 +173,7 @@ public class Jexl
             _ => throw new JexlException($"Unsupported binary expression type '{node.NodeType}'")
         });
 
-        to.Add($"({CompileLocal(node.Right)})");
+        to.Add($"({Compile(node.Right)})");
     }
 
     private void CompileMethodCall(MethodCallExpression node, List<string> to)
@@ -192,10 +192,10 @@ public class Jexl
         switch (node.Method.Name)
         {
             case nameof(JexlExtensions.Translate):
-                var key = CompileLocal(node.Arguments[0]);
+                var key = Compile(node.Arguments[0]);
                 var arg = node.Arguments.Count == 1 || node.Arguments[1] == null
                     ? ""
-                    : CompileLocal(node.Arguments[1]);
+                    : Compile(node.Arguments[1]);
 
                 to.Add(
                     string.IsNullOrEmpty(arg) ? $"translate({key})" : $"translate({key}, {arg})"
@@ -203,29 +203,29 @@ public class Jexl
                 break;
 
             case nameof(JexlExtensions.In):
-                var item = CompileLocal(node.Arguments[0]);
-                var search = CompileLocal(node.Arguments[1]);
+                var item = Compile(node.Arguments[0]);
+                var search = Compile(node.Arguments[1]);
 
                 to.Add($"{item} in {search}");
                 break;
 
             case nameof(JexlExtensions.Length):
-                var array = CompileLocal(node.Arguments[0]);
+                var array = Compile(node.Arguments[0]);
                 to.Add($"{array} | length");
                 break;
 
             case nameof(JexlExtensions.Map):
-                array = CompileLocal(node.Arguments[0]);
+                array = Compile(node.Arguments[0]);
                 var mapExpr = (LambdaExpression)((UnaryExpression)node.Arguments[1]).Operand;
                 var param = mapExpr.Parameters[0].Name;
-                var map = CompileLocal(mapExpr);
+                var map = Compile(mapExpr);
 
                 to.Add($"{array} | map(\"{param}\", {map})");
                 break;
 
             case nameof(JexlExtensions.Join):
-                array = CompileLocal(node.Arguments[0]);
-                var joiner = CompileLocal(node.Arguments[1]);
+                array = Compile(node.Arguments[0]);
+                var joiner = Compile(node.Arguments[1]);
 
                 to.Add($"{array} | join({joiner})");
                 break;
@@ -273,18 +273,33 @@ public class Jexl
 
                 break;
             }
-            else if (expression is ConstantExpression ce && IsJexl(node.Type))
+            else if (expression is ConstantExpression && IsJexl(node.Type))
             {
                 var callCompile = Expression.Call(node, "Compile", null, Expression.Constant(_options));
                 var lambda = Expression.Lambda<Func<string>>(callCompile);
                 var value = lambda.Compile().Invoke();
+
                 to.Add(value);
+                return;
+            }
+            else if (expression is ConstantExpression ce && IsJexlExpression(node.Type))
+            {
+                var lambda = Expression.Lambda<Func<Expression<JexlExpression>>>(node);
+                var value = lambda.Compile().Invoke();
+
+                if (value == Container)
+                {
+                    throw new JexlException($"Unsupported expansion of expression into itself at {node}.");
+                }
+
+                var jexl = new Jexl(value);
+                to.Add(jexl.Compile(_options));
 
                 return;
             }
             else
             {
-                stack.Push(CompileLocal(expression));
+                stack.Push(Compile(expression));
                 break;
             }
         }
@@ -328,7 +343,7 @@ public class Jexl
 
         foreach (var (property, argument) in propertiesWithArgs)
         {
-            to.Add($"{ConvertName(property.Name)}: {CompileLocal(argument)},");
+            to.Add($"{ConvertName(property.Name)}: {Compile(argument)},");
         }
 
         to.Add("}");
@@ -346,7 +361,7 @@ public class Jexl
             throw new JexlException("Unsupported lambda expression with parameter not named 'item'.");
         }
 
-        to.Add($"\"{CompileLocal(node.Body).Replace("\"", "\\\"")}\"");
+        to.Add($"\"{Compile(node.Body).Replace("\"", "\\\"")}\"");
     }
 
     private void CompileIndexer(Expression? @object, IEnumerable<Expression> arguments, List<string> to)
@@ -385,7 +400,7 @@ public class Jexl
                 }
                 else
                 {
-                    stack.Push($"[{CompileLocal(arg)}]");
+                    stack.Push($"[{Compile(arg)}]");
                 }
 
                 if (expression == _context)
@@ -404,7 +419,7 @@ public class Jexl
                     expression = me.Object;
                     arg = me.Arguments[0];
                 }
-                else 
+                else
                 {
                     break;
                 }
@@ -419,8 +434,8 @@ public class Jexl
             return;
         }
 
-        var argument = CompileLocal(arguments.First());
-        var obj = CompileLocal(@object);
+        var argument = Compile(arguments.First());
+        var obj = Compile(@object);
 
         to.Add($"{obj}[{argument}]");
     }
@@ -432,4 +447,7 @@ public class Jexl
 
     private static bool IsJexl(Type type)
         => type == typeof(Jexl);
+
+    private static bool IsJexlExpression(Type type)
+        => type == typeof(Expression<JexlExpression>);
 }

@@ -8,7 +8,7 @@ public record Feature
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public GeoJsonType Type => GeoJsonType.Feature;
 
-    public string? Id { get; init; }
+    public int? Id { get; init; }
 
     public IGeometry? Geometry { get; init; }
 

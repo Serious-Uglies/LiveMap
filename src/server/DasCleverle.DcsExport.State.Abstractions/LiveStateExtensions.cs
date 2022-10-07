@@ -21,7 +21,7 @@ public static class LiveStateExtensions
         };
     }
 
-    public static LiveState UpdateMapFeature(this LiveState state, string source, string id, Func<Feature, Feature> updater)
+    public static LiveState UpdateMapFeature(this LiveState state, string source, int id, Func<Feature, Feature> updater)
     {
         if (!state.MapFeatures.TryGetValue(source, out var collection))
         {
@@ -36,7 +36,7 @@ public static class LiveStateExtensions
         };
     }
 
-    public static LiveState RemoveMapFeature(this LiveState state, string source, string id)
+    public static LiveState RemoveMapFeature(this LiveState state, string source, int id)
     {
         if (!state.MapFeatures.TryGetValue(source, out var collection))
         {

@@ -144,7 +144,7 @@ function mod.getAirbase(airbase)
     local id = tonumber(airbase:getID())
     local desc = airbase:getDesc()
     local airbaseInfo = {
-        id = tostring(desc.category) .. ":" .. tostring(id),
+        id = (desc.category * 2^30) + id,
         category = desc.category,
         name = airbase:getName(),
         coalition = airbase:getCoalition(),

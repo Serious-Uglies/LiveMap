@@ -21,7 +21,7 @@ public class AddObjectReducer : Reducer<ObjectPayload>
         var pilot = !string.IsNullOrEmpty(obj.Player) ? "player" : "ai";
 
         var feature = Feature(
-            obj.Id.ToString(),
+            obj.Id,
             Point(obj.Position.Long, obj.Position.Lat),
             new()
             {

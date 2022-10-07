@@ -23,7 +23,7 @@ public static class GeoJSON
 
     public static MultiPolygon MultiPolygon(params Polygon[] polygons) => new MultiPolygon(polygons);
 
-    public static Feature Feature(string id, IGeometry geometry, Dictionary<string, object?>? properties = null) 
+    public static Feature Feature(int id, IGeometry geometry, Dictionary<string, object?>? properties = null) 
         => new Feature 
         {
             Id = id,

@@ -11,7 +11,7 @@ public class AddAirbaseReducer : Reducer<AirbasePayload>
     {
         var airbase = exportEvent.Payload;
 
-        if (string.IsNullOrEmpty(airbase.Id) || airbase.Position == null)
+        if (airbase.Position == null)
         {
             return state;
         }

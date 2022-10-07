@@ -25,9 +25,9 @@ public record FeatureCollection : IEnumerable<Feature>
 
     public FeatureCollection Remove(Feature feature) => this with { Features = Features.Remove(feature) };
 
-    public FeatureCollection Remove(string id) => this with { Features = Features.RemoveAll(x => x.Id == id) };
+    public FeatureCollection Remove(int id) => this with { Features = Features.RemoveAll(x => x.Id == id) };
 
-    public FeatureCollection Update(string id, Func<Feature, Feature> updater)
+    public FeatureCollection Update(int id, Func<Feature, Feature> updater)
     {
         var feature = Find(id);
 
@@ -42,7 +42,7 @@ public record FeatureCollection : IEnumerable<Feature>
         };
     }
 
-    public Feature? Find(string id) => Features.Find(x => x.Id == id);
+    public Feature? Find(int id) => Features.Find(x => x.Id == id);
 
     public IEnumerator<Feature> GetEnumerator() => Features.GetEnumerator();
 

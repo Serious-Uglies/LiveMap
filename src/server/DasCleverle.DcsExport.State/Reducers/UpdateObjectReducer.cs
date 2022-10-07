@@ -18,7 +18,7 @@ public class UpdateObjectReducer : Reducer<UpdateObjectPayload>
 
         return state.UpdateMapFeature(
             "objects", 
-            payload.Id.ToString(), 
+            payload.Id, 
             feature => feature with
             {
                 Geometry = GeoJSON.Point(payload.Position.Long, payload.Position.Lat)

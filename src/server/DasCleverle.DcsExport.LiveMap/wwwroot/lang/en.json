@@ -18,40 +18,27 @@
         "theatre": "Theatre",
         "time": "Date",
         "timeValue": "{{time, datetime}}"
-      },
-      "airbase": {
-        "title": "Selected Airfield",
-        "name": "Name",
-
-        "frequency": "Tower",
-        "frequencyList": "{{frequencies, join(frequency)}}",
-        "frequencyListNone": "No frequencies published",
-
-        "runways": "Runways",
-        "runwayILS": " (ILS: {{ils.frequency, frequency}})",
-
-        "tacan": "TACAN",
-        "tacanList": "{{tacan, join('format.tacan')}}",
-        "tacanListNone": "",
-
-        "vor": "VOR",
-        "vorList": "{{vor, join('format.beacon')}}",
-        "vorListNone": "",
-
-        "ndb": "NDB",
-        "ndbList": "{{ndb, join('format.beacon')}}",
-        "ndbListNone": ""
       }
     },
     "popup": {
       "object": {
         "unit": "{{count}}x {{value.name}}",
         "player": "{{count}}x {{value.name}} ({{value.player}})"
+      },
+      "airbase": {
+        "name": "Name",
+        "frequency": "Tower",
+        "runways": "Runways",
+        "ils": "ILS",
+        "tacan": "TACAN",
+        "vor": "VOR",
+        "ndb": "NDB"
       }
     },
     "format": {
-      "tacan": "{{value.channel}}{{value.mode}} ({{value.callsign}})",
-      "beacon": "{{value.frequency, frequency}} ({{value.callsign}})"
+      "frequency": "{{frequency, frequency}}",
+      "tacan": "{{channel}}{{mode}} ({{callsign}})",
+      "beacon": "{{frequency, frequency}} ({{callsign}})"
     }
   }
 }

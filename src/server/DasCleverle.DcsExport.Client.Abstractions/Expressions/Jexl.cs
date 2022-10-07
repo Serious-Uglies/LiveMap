@@ -88,6 +88,10 @@ public class Jexl
                 CompileLambda(le, to);
                 break;
 
+            case ParameterExpression pe:
+                CompileParameter(pe, to);
+                break;
+
             default:
                 throw new JexlException($"Unsupported expression type {node.NodeType} at {node}.");
         }
@@ -323,17 +327,17 @@ public class Jexl
 
     private void CompileLambda(LambdaExpression node, List<string> to)
     {
-        if (node.Parameters.Count != 1)
-        {
-            throw new JexlException("Unsupported lambda expression with not exactly one parameter.");
-        }
-
-        if (node.Parameters[0].Name != "item")
-        {
-            throw new JexlException("Unsupported lambda expression with parameter not named 'item'.");
-        }
-
         to.Add($"\"{Compile(node.Body).Replace("\"", "\\\"")}\"");
+    }
+
+    private void CompileParameter(ParameterExpression node, List<string> to)
+    {
+        if (node == _context)
+        {
+            throw new JexlException($"Unsupported dangling context at {node}.");
+        }
+
+        to.Add(ConvertName(node.Name!));
     }
 
     private void CompileIndexer(Expression? @object, IEnumerable<Expression> arguments, List<string> to)

@@ -16,15 +16,6 @@
         "name": "Mission",
         "theatre": "Schauplatz",
         "time": "Datum"
-      },
-      "airbase": {
-        "title": "Ausgewähltes Airfield",
-        "name": "Name",
-
-        "frequency": "Tower",
-        "frequencyListNone": "Keine Frequenz bekannt",
-
-        "runways": "Runways"
       }
     }
   }

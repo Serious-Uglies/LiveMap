@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using DasCleverle.DcsExport.Client.Abstractions.Popups;
 
 namespace DasCleverle.DcsExport.LiveMap.Client.Popups;
@@ -23,10 +24,10 @@ internal class PopupRegistry : IPopupRegistry
         return _cache.TryGetValue(layer, out var popup) ? popup : null;
     }
 
-    public IEnumerable<IPopup> GetPopups()
+    public IDictionary<string, IPopup> GetPopups()
     {
         Initialize();
-        return _cache.Values;
+        return new ReadOnlyDictionary<string, IPopup>(_cache);
     }
 
     private void Initialize() 

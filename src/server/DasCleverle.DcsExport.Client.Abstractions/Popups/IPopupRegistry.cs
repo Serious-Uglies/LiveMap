@@ -4,5 +4,5 @@ public interface IPopupRegistry
 {
     IPopup? GetPopup(string layer);
 
-    IEnumerable<IPopup> GetPopups();
+    IDictionary<string, IPopup> GetPopups();
 }

@@ -11,6 +11,7 @@ public class AirbasePopupProvider : IPopupProvider
     {
         var builder = new PropertyListPopup.Builder();
 
+        builder.Priority = 1;
         builder.AddRange(
             (
                 "name",

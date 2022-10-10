@@ -9,19 +9,26 @@ public class PropertyListPopup : IPopup
 
     public bool AllowClustering => false;
 
+    public int Priority { get; }
+
     public IEnumerable<PropertListItem> Properties { get; }
 
-    private PropertyListPopup(IEnumerable<PropertListItem> properties)
+    private PropertyListPopup(IEnumerable<PropertListItem> properties, int priority)
     {
         Properties = properties;
+        Priority = priority;
     }
 
     public class Builder : IPopupBuilder
     {
+
+        public int Priority { get; set; }
+
         public List<PropertListItem.Builder> Properties { get; } = new();
 
         public IPopup Build() => new PropertyListPopup(
-            Properties.Select(x => x.Build()).ToArray()
+            Properties.Select(x => x.Build()).ToArray(),
+            Priority
         );
 
         public void Add(string id, Expression<JexlExpression> label, Expression<JexlExpression> value)

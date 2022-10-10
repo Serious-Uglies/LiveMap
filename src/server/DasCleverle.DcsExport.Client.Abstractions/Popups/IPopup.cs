@@ -7,5 +7,7 @@ public interface IPopup
 {
     string Type { get; }
 
+    int Priority { get; }
+
     bool AllowClustering { get; }
 }

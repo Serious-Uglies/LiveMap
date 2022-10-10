@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DasCleverle.DcsExport.Client.Abstractions.Popups;
 using DasCleverle.DcsExport.Extensibility;
 using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.Listener.Json;
+using DasCleverle.DcsExport.LiveMap.Client.Popups;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
 using DasCleverle.DcsExport.LiveMap.Localization;
@@ -46,6 +48,10 @@ public class Startup
         services.AddLiveState();
 
         services.AddHostedService<LiveStateHubService>();
+
+        services.AddSingleton<IPopupRegistry, PopupRegistry>();
+        services.AddTransient<IPopupProvider, ObjectPopupProvider>();
+        services.AddTransient<IPopupProvider, AirbasePopupProvider>();
 
         services.AddSingleton<ILocalizationProvider, JsonFileLocalizationProvider>();
         services.Configure<JsonFileLocalizationProviderOptions>(options =>

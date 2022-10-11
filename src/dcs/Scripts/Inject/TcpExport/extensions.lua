@@ -9,15 +9,13 @@ local waitFors = {}
 local function loadModules()
     for i = 1, #config.extensions do
         local name = config.extensions[i]
+        local module = require("extensions." .. name)
 
-        logger.info("Loading extension %s", name)
-        local ext = require("extensions." .. name)
-
-        if type(ext.waitFor) == "function" then
-            table.insert(waitFors, { name = name, waitFor = ext.waitFor })
+        if type(module.waitFor) == "function" then
+            table.insert(waitFors, { name = name, waitFor = module.waitFor })
         end
 
-        modules[name] = ext
+        modules[name] = module
     end
 end
 
@@ -25,11 +23,11 @@ local function init()
     mod.extensions = {}
 
     for name, module in pairs(modules) do
-        logger.info("Initializing extension %s", name)
+        logger.info("Initializing extension %q", name)
         local loaded, error = pcall(module.init)
 
         if not loaded then
-            logger.error("Failed to load extension %s", name)
+            logger.error("Failed to load extension %q", name)
             logger.error("%s", error)
         else
             mod.extensions[name] = module
@@ -44,7 +42,7 @@ local function wait(callback, t)
         local r = waitFors[i].waitFor()
 
         if not r then
-            logger.info("Extension %s is not ready", waitFors[i].name)
+            logger.info("Extension %q is not ready", waitFors[i].name)
         end
 
         result = result and r
@@ -60,20 +58,30 @@ local function wait(callback, t)
 end
 
 function mod.init(callback)
+    logger.info("Loading extensions")
+
     loadModules()
 
     if #waitFors == 0 then
         init()
         callback()
     else
+        local waitForNames = {}
         local names = {}
 
         for i = 1, #waitFors do
-            names[i] = waitFors[i].name
+            waitForNames[i] = string.format("%q", waitFors[i].name)
         end
 
-        logger.info("Waiting for extensions %s to get ready", table.concat(names, ", "))
-        timer.scheduleFunction(wait, callback, timer.getTime() + 1)
+        for name, _ in pairs(modules) do
+            table.insert(names, string.format("%q", name))
+        end
+
+        logger.info("Waiting for extensions %s to get ready", table.concat(waitForNames, ", "))
+        timer.scheduleFunction(wait, function()
+            logger.info("All extensions are ready. Loaded extensions: %s", table.concat(names, ", "))
+            callback()
+        end, timer.getTime() + 1)
     end
 end
 

@@ -2,7 +2,7 @@ local config = require("config")
 local logger = require("logger")
 
 if not config.enabled then
-    logger.info("TCP export is disabled. No data will be exported.")
+    logger.info("TCP export is disabled. No data will be exported")
     return
 end
 
@@ -15,8 +15,6 @@ local airbases = require("infoAirbase")
 local updates = require("updates")
 
 local function init()
-    logger.info("Connecting to export TCP endpoint.")
-
     events.init()
 
     connection.open()

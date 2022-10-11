@@ -9,6 +9,7 @@ local logger = require("logger")
 local util = require("util")
 
 local config = require("config")
+local endpoint = string.format("%s:%s", config.address, config.port)
 
 local sock = nil
 
@@ -44,12 +45,12 @@ local function flush(force)
 
     if err then
         if err == "closed" then
-            logger.warning("Connection to %s:%s to was closed. Trying to reconnect ...", config.address, config.port)
+            logger.warning("Connection to %q to was closed. Trying to reconnect ...", endpoint)
             sock = nil
             return
         end
 
-        local message = string.format("Failed to send export data to %s:%s: %s", config.address, config.port, err)
+        local message = string.format("Failed to send export data to %q: %s", endpoint, err)
 
         errors = errors + 1
 
@@ -69,14 +70,14 @@ local function connect()
     local s, err = socket.connect(config.address, config.port)
 
     if s == nil then
-        logger.error("Could not connect to tcp endpoint %s:%s: %s", config.address, config.port, err)
+        logger.error("Could not connect to TCP endpoint %q: %s", endpoint, err)
         return false
     end
 
     sock = s
     sock:setoption("tcp-nodelay", true)
 
-    logger.info("Successfully connected to tcp endpoint %s:%s", config.address, config.port)
+    logger.info("Successfully connected to TCP endpoint %q", endpoint)
 
     return true
 end

@@ -4,7 +4,7 @@ local connection = require("connection")
 local config = require("config")
 local info = require("info")
 local objects = require("infoObject")
-local extension = require("extension")
+local extensions = require("extensions")
 
 local lastPositions = {}
 
@@ -44,7 +44,7 @@ local function update(_, t)
         end
     end
 
-    extension.call("update", nil, units, statics)
+    extensions.call("update", nil, units, statics)
 
     connection.send("Time", info.getTime())
 

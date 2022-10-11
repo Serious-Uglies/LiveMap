@@ -3,7 +3,7 @@ local mod = {}
 local connection = require("connection")
 local objects = require("infoObject")
 local logger = require("logger")
-local extension = require("extension")
+local extensions = require("extensions")
 
 local function addObjectHandler(event)
     if event == nil or event.initiator == nil then
@@ -38,7 +38,7 @@ function mod.init()
         [world.event.S_EVENT_MISSION_END] = { missionEndHandler },
     }
 
-    extension.registerEvents(eventHandlers)
+    extensions.registerEvents(eventHandlers)
 
     function eventHandlers:onEvent(event)
         if not eventHandlers[event.id]  then

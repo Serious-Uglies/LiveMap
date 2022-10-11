@@ -1,6 +1,6 @@
 local mod = {}
 
-local extension = require("extension")
+local extensions = require("extensions")
 local config = require("config")
 local json   = require("json")
 
@@ -21,7 +21,7 @@ function mod.filter(objType, object)
 
     local endResult = true
 
-    extension.call(
+    extensions.call(
         "filter",
         function(result)
             if result == nil then
@@ -36,17 +36,17 @@ function mod.filter(objType, object)
 end
 
 function mod.extend(info, objType, object)
-    local extensions = {}
-    json.setType(extensions, "object")
+    local extensionData = {}
+    json.setType(extensionData, "object")
 
-    extension.call(
+    extensions.call(
         "extend",
         function (result, name)
-            extensions[name] = result
+            extensionData[name] = result
         end,
         objType, object, info)
 
-    info["extensions"] = extensions
+    info["extensions"] = extensionData
     return info
 end
 

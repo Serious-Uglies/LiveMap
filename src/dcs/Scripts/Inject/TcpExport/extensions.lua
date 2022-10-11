@@ -3,7 +3,7 @@ local mod = {}
 local logger = require("logger")
 local config = require("config")
 
-local extensions = {}
+local modules = {}
 local waitFors = {}
 
 local function loadModules()
@@ -17,22 +17,22 @@ local function loadModules()
             table.insert(waitFors, { name = name, waitFor = ext.waitFor })
         end
 
-        extensions[name] = ext
+        modules[name] = ext
     end
 end
 
 local function init()
     mod.extensions = {}
 
-    for name, ext in pairs(extensions) do
+    for name, module in pairs(modules) do
         logger.info("Initializing extension %s", name)
-        local loaded, error = pcall(ext.init)
+        local loaded, error = pcall(module.init)
 
         if not loaded then
             logger.error("Failed to load extension %s", name)
             logger.error("%s", error)
         else
-            mod.extensions[name] = ext
+            mod.extensions[name] = module
         end
     end
 end
@@ -78,7 +78,7 @@ function mod.init(callback)
 end
 
 function mod.registerEvents(eventHandlers)
-    for _, ext in pairs(extensions) do
+    for _, ext in pairs(modules) do
         if ext.registerEvents then
             local handlers = ext.registerEvents()
 

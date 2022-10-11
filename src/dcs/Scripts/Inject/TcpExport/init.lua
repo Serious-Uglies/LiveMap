@@ -7,7 +7,7 @@ if not config.enabled then
 end
 
 local connection = require("connection")
-local extension = require("extension")
+local extensions = require("extensions")
 local events = require("events")
 local info = require("info")
 local objects = require("infoObject")
@@ -29,4 +29,4 @@ local function init()
 end
 
 logger.info("Initializing TCP export")
-extension.init(init)
+extensions.init(init)

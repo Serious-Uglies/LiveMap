@@ -6,7 +6,7 @@ if not config.enabled then
     return
 end
 
-local tcp = require("tcp")
+local connection = require("connection")
 local extension = require("extension")
 local events = require("events")
 local info = require("info")
@@ -19,11 +19,11 @@ local function init()
 
     events.init()
 
-    tcp.connect()
-    tcp.send("Init", info.getInit())
-    tcp.send("AddObject", objects.getAllObjects("unit"))
-    tcp.send("AddObject", objects.getAllObjects("static"))
-    tcp.send("AddAirbase", airbases.getAllAirbases())
+    connection.open()
+    connection.send("Init", info.getInit())
+    connection.send("AddObject", objects.getAllObjects("unit"))
+    connection.send("AddObject", objects.getAllObjects("static"))
+    connection.send("AddAirbase", airbases.getAllAirbases())
 
     updates.init()
 end

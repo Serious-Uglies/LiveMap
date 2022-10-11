@@ -1,6 +1,6 @@
 local mod = {}
 
-local tcp = require("tcp")
+local connection = require("connection")
 local objects = require("infoObject")
 local logger = require("logger")
 local extension = require("extension")
@@ -10,7 +10,7 @@ local function addObjectHandler(event)
         return
     end
 
-    tcp.send("AddObject", objects.getObject(event.initiator))
+    connection.send("AddObject", objects.getObject(event.initiator))
 end
 
 local function removeObjectHandler(event)
@@ -19,14 +19,14 @@ local function removeObjectHandler(event)
     end
 
     local unit = event.target or event.initiator;
-    tcp.send("RemoveObject", { id = unit:getID() })
+    connection.send("RemoveObject", { id = unit:getID() })
 end
 
 local function missionEndHandler(event)
     logger.info("Received mission end event. Cleaning up and closing export connection")
 
-    tcp.send("MissionEnd", { time = event.time })
-    tcp.close()
+    connection.send("MissionEnd", { time = event.time })
+    connection.close()
 end
 
 function mod.init()

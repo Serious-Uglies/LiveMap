@@ -65,7 +65,7 @@ local function flush(force)
     end
 end
 
-local function doConnect()
+local function connect()
     local s, err = socket.connect(config.address, config.port)
 
     if s == nil then
@@ -82,7 +82,7 @@ local function doConnect()
 end
 
 local function reconnect()
-    if not doConnect() then
+    if not connect() then
         errors = errors + 1
         nextFlush = math.min(util.power(2, errors), 120)
 
@@ -116,8 +116,8 @@ local function appendBuffer(event, payload)
     sendBuffer = sendBuffer .. encoded
 end
 
-function mod.connect()
-    doConnect()
+function mod.open()
+    connect()
     scheduleId = timer.scheduleFunction(flushSchedule, nil, timer.getTime() + nextFlush)
 end
 

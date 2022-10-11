@@ -1,6 +1,6 @@
 local mod = {}
 
-local tcp = require("tcp")
+local connection = require("connection")
 local config = require("config")
 local info = require("info")
 local objects = require("infoObject")
@@ -28,7 +28,7 @@ local function update(_, t)
         for i = 1, #units do
             local unit = units[i]
             if hasMoved(unit) then
-                tcp.send("UpdateObject", unit)
+                connection.send("UpdateObject", unit)
                 lastPositions[unit.id] = unit.position
             end
         end
@@ -38,7 +38,7 @@ local function update(_, t)
         for i = 1, #statics do
             local static = statics[i]
             if hasMoved(static) then
-                tcp.send("UpdateObject", static)
+                connection.send("UpdateObject", static)
                 lastPositions[static.id] = static.position
             end
         end
@@ -46,7 +46,7 @@ local function update(_, t)
 
     extension.call("update", nil, units, statics)
 
-    tcp.send("Time", info.getTime())
+    connection.send("Time", info.getTime())
 
     return t + config.interval
 end

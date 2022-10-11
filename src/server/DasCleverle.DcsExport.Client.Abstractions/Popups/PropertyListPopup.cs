@@ -70,13 +70,13 @@ public class PropertyListPopup : IPopup
                 throw new KeyNotFoundException($"Could not find property with id {id}.");
             }
 
-            if (index == Properties.Count)
+            if (index + 1 == Properties.Count)
             {
                 Properties.Add(new PropertListItem.Builder(id, label, value));
             }
             else
             {
-                Properties.Insert(index, new PropertListItem.Builder(id, label, value));
+                Properties.Insert(index + 1, new PropertListItem.Builder(id, label, value));
             }
         }
 

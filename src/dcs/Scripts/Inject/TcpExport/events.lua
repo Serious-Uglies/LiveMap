@@ -10,7 +10,7 @@ local function addObjectHandler(event)
         return
     end
 
-    connection.send("AddObject", objects.getObject(event.initiator))
+    connection.send("object:add", objects.getObject(event.initiator))
 end
 
 local function removeObjectHandler(event)
@@ -19,13 +19,13 @@ local function removeObjectHandler(event)
     end
 
     local unit = event.target or event.initiator;
-    connection.send("RemoveObject", { id = unit:getID() })
+    connection.send("object:remove", { id = unit:getID() })
 end
 
 local function missionEndHandler(event)
     logger.info("Received mission end event. Cleaning up and closing export connection")
 
-    connection.send("MissionEnd", { time = event.time })
+    connection.send("end", { time = event.time })
     connection.close()
 end
 

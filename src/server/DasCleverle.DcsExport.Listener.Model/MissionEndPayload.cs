@@ -2,5 +2,5 @@ using DasCleverle.DcsExport.Listener.Abstractions;
 
 namespace DasCleverle.DcsExport.Listener.Model;
 
-[EventPayload("MissionEnd")]
+[EventPayload("end")]
 public record MissionEndPayload : EventPayload { }

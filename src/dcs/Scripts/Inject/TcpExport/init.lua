@@ -18,10 +18,10 @@ local function init()
     events.init()
 
     connection.open()
-    connection.send("Init", info.getInit())
-    connection.send("AddObject", objects.getAllObjects("unit"))
-    connection.send("AddObject", objects.getAllObjects("static"))
-    connection.send("AddAirbase", airbases.getAllAirbases())
+    connection.send("init", info.getInit())
+    connection.send("object:add", objects.getAllObjects("unit"))
+    connection.send("object:add", objects.getAllObjects("static"))
+    connection.send("airbase", airbases.getAllAirbases())
 
     updates.init()
 end

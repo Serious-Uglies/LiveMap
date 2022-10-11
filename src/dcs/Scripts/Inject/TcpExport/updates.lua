@@ -28,7 +28,7 @@ local function update(_, t)
         for i = 1, #units do
             local unit = units[i]
             if hasMoved(unit) then
-                connection.send("UpdateObject", unit)
+                connection.send("object:update", unit)
                 lastPositions[unit.id] = unit.position
             end
         end
@@ -38,15 +38,14 @@ local function update(_, t)
         for i = 1, #statics do
             local static = statics[i]
             if hasMoved(static) then
-                connection.send("UpdateObject", static)
+                connection.send("object:update", static)
                 lastPositions[static.id] = static.position
             end
         end
     end
 
     extensions.call("update", nil, units, statics)
-
-    connection.send("Time", info.getTime())
+    connection.send("time", info.getTime())
 
     return t + config.interval
 end

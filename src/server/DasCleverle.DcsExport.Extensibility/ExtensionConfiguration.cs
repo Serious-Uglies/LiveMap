@@ -1,6 +1,6 @@
 namespace DasCleverle.DcsExport.Extensibility;
 
-internal class ExtensionConfiguration
+internal record ExtensionConfiguration
 {
     public string FriendlyName { get; init; } = "";
 
@@ -11,4 +11,6 @@ internal class ExtensionConfiguration
     public string EntryAssembly { get; init; } = "";
 
     public string[] Dependencies { get; init; } = Array.Empty<string>();
+
+    public string[] Assets { get; init; } = Array.Empty<string>();
 }

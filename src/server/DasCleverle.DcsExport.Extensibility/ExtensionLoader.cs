@@ -10,7 +10,7 @@ public static class ExtensionLoader
     {
         var baseDirectory = new DirectoryInfo(basePath);
 
-        if (!baseDirectory.Exists) 
+        if (!baseDirectory.Exists)
         {
             return;
         }
@@ -36,6 +36,7 @@ public static class ExtensionLoader
             var info = new ExtensionLoaderInfo
             {
                 Id = directory.Name,
+                Directory = directory,
                 Assemblies = assemblies,
                 ConfigFile = configFile
             };
@@ -68,8 +69,10 @@ public static class ExtensionLoader
             dependcies.Add(LoadAssembly(info, file));
         }
 
-        var entryAssembly = Assembly.LoadFrom(entryAssemblyFile.FullName);
+        var entryAssembly = LoadAssembly(info, entryAssemblyFile);
+
         BootstrapExtension(info, entryAssembly, services);
+        ExtensionManager.Register(CreateExtensionInfo(info, configuration, entryAssembly));
     }
 
     private static void BootstrapExtension(ExtensionLoaderInfo info, Assembly entryAssembly, IServiceCollection services)
@@ -132,5 +135,16 @@ public static class ExtensionLoader
         }
 
         return config;
+    }
+
+    private static Extension CreateExtensionInfo(ExtensionLoaderInfo info, ExtensionConfiguration config, Assembly entryAssembly)
+    {
+        var assemblyName = entryAssembly.GetName();
+        var assets = config.Assets
+            .Select(x => new FileInfo(Path.Combine(info.Directory.FullName, "assets", x)))
+            .Where(x => x.Exists)
+            .ToArray();
+
+        return new Extension(info.Id, config, assemblyName.Version ?? new Version(1, 0, 0), assets);
     }
 }

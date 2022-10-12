@@ -41,7 +41,8 @@ public class ResourceCollection : IEnumerable<Resource>
 
             merged[me.Key] = me.Value with
             {
-                Children = me.Value.Children.Merge(they.Children)
+                Children = me.Value.Children.Merge(they.Children),
+                Value = they.Value ?? me.Value.Value
             };
         }
 

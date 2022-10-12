@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Text.Json;
+using DasCleverle.DcsExport.Extensibility;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
@@ -51,65 +52,89 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
             _isLoaded = true;
         }
 
-        var files = _fileProvider.GetDirectoryContents(_options.Value.BasePath)
-            .Where(f => Path.GetExtension(f.Name) == ".json" && !f.Name.Contains(".overrides."));
+        var extensionFiles = GetExtensionResources();
+        var jsonFiles = _fileProvider.GetDirectoryContents(_options.Value.BasePath)
+            .Where(f => Path.GetExtension(f.Name) == ".json");
 
-        var overrides = _fileProvider.GetDirectoryContents(_options.Value.BasePath)
-            .Where(f => Path.GetExtension(f.Name) == ".json" && f.Name.Contains(".overrides."))
-            .ToDictionary(f => f.Name.Substring(0, f.Name.IndexOf('.')));
+        var files = jsonFiles.Where(x => !x.Name.Contains(".overrides."));
+        var overrides = jsonFiles.Except(files);
 
         foreach (var file in files)
         {
-            using var stream = file.CreateReadStream();
-            var rawFile = await JsonSerializer.DeserializeAsync<RawResourceFile>(stream, JsonSerializerOptions);
-
-            if (rawFile?.Resources == null)
-            {
-                throw new InvalidOperationException($"Could not find required JSON property 'resources' in resource file '{file.PhysicalPath}'.");
-            }
-
             var id = Path.GetFileNameWithoutExtension(file.Name);
-            var label = rawFile.Label;
-            var flag = rawFile.Flag;
-            var resources = rawFile.Resources;
+            var overrideName = $"{Path.GetFileNameWithoutExtension(file.Name)}.overrides.json";
+            var @override = overrides.FirstOrDefault(x => x.Name == overrideName);
 
-            if (overrides.TryGetValue(id, out var @override))
+            var rawFile = await ReadResourceFileAsync(file.PhysicalPath);
+
+            if (rawFile == null)
             {
-                using var overrideStream = @override.CreateReadStream();
-                var rawOverride = await JsonSerializer.DeserializeAsync<RawResourceFile>(overrideStream, JsonSerializerOptions);
-
-                if (rawOverride != null)
-                {
-                    if (!string.IsNullOrEmpty(rawOverride.Label))
-                    {
-                        label = rawOverride.Label;
-                    }
-
-                    if (!string.IsNullOrEmpty(rawOverride.Flag))
-                    {
-                        flag = rawOverride.Flag;
-                    }
-
-                    if (rawOverride.Resources != null)
-                    {
-                        resources = rawFile.Resources.Merge(rawOverride.Resources);
-                    }
-                }
+                continue;
             }
 
-            var locale = new Locale
+            foreach (var extensionFile in extensionFiles)
+            {
+                if (!string.Equals(file.Name, extensionFile.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var rawExtensionFile = await ReadResourceFileAsync(extensionFile.FullName);
+
+                if (rawExtensionFile == null)
+                {
+                    continue;
+                }
+
+                rawFile = rawFile.Merge(rawExtensionFile);
+            }
+
+            var overrideFile = await ReadResourceFileAsync(@override?.PhysicalPath);
+
+            if (overrideFile != null)
+            {
+                rawFile = rawFile.Merge(overrideFile);
+            }
+
+            var locale = new Locale 
             {
                 Id = id,
-                Flag = flag,
-                Label = label,
+                Label = rawFile.Label,
+                Flag = rawFile.Flag
             };
 
             _cache[id] = new ResourceFile
             {
                 Locale = locale,
-                Resources = resources
+                Resources = rawFile.Resources ?? ResourceCollection.Empty
             };
         }
+    }
+
+    private static async Task<RawResourceFile?> ReadResourceFileAsync(string? path)
+    {
+        if (path == null)
+        {
+            return null;
+        }
+
+        using var stream = File.Open(path, FileMode.Open, FileAccess.Read);
+        var rawFile = await JsonSerializer.DeserializeAsync<RawResourceFile>(stream, JsonSerializerOptions);
+
+        if (rawFile == null)
+        {
+            return null;
+        }
+
+        return rawFile;
+    }
+
+    private static FileInfo[] GetExtensionResources()
+    {
+        return ExtensionManager.GetAllExtensions()
+            .SelectMany(x => x.Assets)
+            .Where(x => x.FullName.Contains(Path.Join("assets", "lang")))
+            .ToArray();
     }
 
     private static JsonSerializerOptions ConfigureJsonSerializer()
@@ -130,6 +155,7 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
         public Locale Locale { get; init; } = Locale.Empty;
 
         public ResourceCollection Resources { get; init; } = ResourceCollection.Empty;
+
     }
 
     private class RawResourceFile
@@ -139,5 +165,23 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
         public string? Flag { get; init; }
 
         public ResourceCollection? Resources { get; init; }
+
+        public RawResourceFile Merge(RawResourceFile other)
+        {
+            var resources = (Resources, other.Resources) switch
+            {
+                (null, null) => ResourceCollection.Empty,
+                (null, var o) => o,
+                (var me, null) => me,
+                (var me, var o) => me.Merge(o)
+            };
+
+            return new RawResourceFile
+            {
+                Label = other.Label ?? Label,
+                Flag = other.Flag ?? Flag,
+                Resources = resources
+            };
+        }
     }
 }

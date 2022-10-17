@@ -6,7 +6,7 @@ namespace DasCleverle.DcsExport.State.Reducers;
 
 public class MissionEndReducer : Reducer
 {
-    public override IEnumerable<string> EventTypes { get; } = new[] { "MissionEnd" };
+    public override IEnumerable<string> EventTypes { get; } = new[] { "end" };
 
     protected override LiveState Reduce(LiveState state, IExportEvent exportEvent)
     {

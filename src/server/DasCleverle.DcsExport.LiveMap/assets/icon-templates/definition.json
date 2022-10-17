@@ -1,0 +1,241 @@
+{
+  "colors": {
+    "blue-ai": "#91cce3",
+    "blue-player": "#268cb8",
+    "red-ai": "#e9817d",
+    "red-player": "#d92e23",
+    "neutral-ai": "#abd7a2",
+    "yellow": "#ffcf00",
+    "yellow-stroke": "#ab4a00",
+    "yellow-font": "#5e2800",
+    "black": "#000000"
+  },
+  "templates": [
+    {
+      "id": "airdrome",
+      "name": "{coalition}-airdrome",
+      "sources": ["circle-small.svg", "runway.svg"],
+      "variations": [
+        {
+          "style": [
+            {
+              "id": "circle",
+              "fill": "{coalition}-ai"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "airborne",
+      "name": "{coalition}-{type}-{controller}",
+      "sources": [
+        "{base}.svg",
+        { "name": "wings.svg", "transform": "{transform}" },
+        { "name": "{type-letter}.svg", "transform": "{transform}" }
+      ],
+      "variations": [
+        {
+          "parameters": {
+            "controller": "ai"
+          },
+          "style": [
+            {
+              "id": "{base}",
+              "fill": "{coalition}-ai"
+            }
+          ]
+        },
+        {
+          "parameters": {
+            "controller": "player"
+          },
+          "style": [
+            {
+              "id": "{base}",
+              "fill": "{coalition}-player"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "generic-sided-marker",
+      "name": "{coalition}-{type}-{controller}",
+      "sources": ["{base}.svg"],
+      "variations": [
+        {
+          "parameters": {
+            "controller": "ai"
+          },
+          "style": [
+            {
+              "id": "{base}",
+              "fill": "{coalition}-ai"
+            }
+          ]
+        },
+        {
+          "parameters": {
+            "controller": "player"
+          },
+          "style": [
+            {
+              "id": "{base}",
+              "fill": "{coalition}-player"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "water",
+      "name": "{coalition}-water-ai",
+      "sources": [
+        "{base}.svg",
+        { "name": "cc.svg", "transform": "{transform}" }
+      ],
+      "variations": [
+        {
+          "style": [
+            {
+              "id": "{base}",
+              "fill": "{coalition}-ai"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crash",
+      "name": "{coalition}-crash-{controller}",
+      "sources": ["crash.svg"],
+      "variations": [
+        {
+          "parameters": {
+            "controller": "ai"
+          },
+          "style": [
+            {
+              "id": "plane",
+              "fill": "{coalition}-ai"
+            }
+          ]
+        },
+        {
+          "parameters": {
+            "controller": "player"
+          },
+          "style": [
+            {
+              "id": "plane",
+              "fill": "{coalition}-player"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "marker",
+      "name": "{prefix}-{type}",
+      "sources": ["circle.svg", "{letter}.svg"],
+      "variations": [
+        {
+          "style": [
+            {
+              "id": "circle",
+              "stroke": "{circle-stroke}",
+              "fill": "{circle-fill}"
+            },
+            {
+              "id": "{letter}",
+              "fill": "{font-fill}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "declarations": [
+    {
+      "template": "airdrome",
+      "parameters": [
+        { "coalition": "blue" },
+        { "coalition": "red" },
+        { "coalition": "neutral" }
+      ]
+    },
+    {
+      "template": "airborne",
+      "parameters": [
+        [
+          { "type": "fixed", "type-letter": "f" },
+          { "type": "awacs", "type-letter": "w" },
+          { "type": "rotary", "type-letter": "h" },
+          { "type": "tanker", "type-letter": "k" }
+        ],
+        [
+          { "coalition": "blue", "base": "arc", "transform": "" },
+          { "coalition": "red", "base": "house", "transform": "translate(0,4)" }
+        ]
+      ]
+    },
+    {
+      "template": "generic-sided-marker",
+      "parameters": [
+        { "coalition": "blue", "type": "ground", "base": "rectangle" },
+        { "coalition": "blue", "type": "sub", "base": "inverted-arc" },
+        { "coalition": "red", "type": "ground", "base": "diamond" },
+        { "coalition": "red", "type": "sub", "base": "inverted-house" }
+      ]
+    },
+    {
+      "template": "water",
+      "parameters": [
+        { "coalition": "blue", "base": "circle", "transform": "" },
+        { "coalition": "red", "base": "diamond", "transform": "scale(0.85) translate(1.5, 1)" }
+      ]
+    },
+    {
+      "template": "crash",
+      "parameters": [{ "coalition": "blue" }, { "coalition": "red" }]
+    },
+    {
+      "template": "marker",
+      "parameters": [
+        {
+          "prefix": "marker",
+          "type": "recon",
+          "letter": "r",
+          "circle-stroke": "yellow-stroke",
+          "circle-fill": "yellow",
+          "font-fill": "yellow-font"
+        },
+        {
+          "prefix": "marker",
+          "type": "tactical",
+          "letter": "t",
+          "circle-stroke": "yellow-stroke",
+          "circle-fill": "yellow",
+          "font-fill": "yellow-font"
+        },
+        {
+          "prefix": "red",
+          "type": "farp",
+          "letter": "t",
+          "circle-stroke": "black",
+          "circle-fill": "red-ai",
+          "font-fill": "black"
+        },
+        {
+          "prefix": "blue",
+          "type": "farp",
+          "letter": "t",
+          "circle-stroke": "black",
+          "circle-fill": "blue-ai",
+          "font-fill": "black"
+        }
+      ]
+    }
+  ]
+}

@@ -5,6 +5,7 @@
 
 *.overrides.json
 src/server/DasCleverle.DcsExport.LiveMap/extensions/
+src/server/DasCleverle.DcsExport.LiveMap/wwwroot/icons/
 
 # User-specific files
 *.rsuser

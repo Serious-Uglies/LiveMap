@@ -58,4 +58,8 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
+
+  <Target Name="Generate-Icons" AfterTargets="Build">
+    <Exec Command="powershell.exe ./Generate-Icons.ps1" />
+  </Target>
 </Project>

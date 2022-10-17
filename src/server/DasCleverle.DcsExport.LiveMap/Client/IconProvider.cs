@@ -1,3 +1,5 @@
+using DasCleverle.DcsExport.Extensibility;
+
 namespace DasCleverle.DcsExport.LiveMap.Client;
 
 public class IconProvider : IIconProvider
@@ -37,8 +39,9 @@ public class IconProvider : IIconProvider
             _cache = icons
                 .Select(x => new IconInfo(
                     Id: Path.GetFileNameWithoutExtension(x.Name),
-                    Url: $"/api/client/icons/{x.Name}"
+                    Url: GetUrl(x.Name)
                 ))
+                .Concat(GetExtensionIcons())
                 .ToDictionary(x => x.Id, x => x);
             _initialized = true;
 
@@ -52,9 +55,32 @@ public class IconProvider : IIconProvider
 
         if (!file.Exists)
         {
-            return null;
+            return GetExtensionIconFile(fileName);
         }
 
         return file.CreateReadStream();
     }
+
+    private IEnumerable<IconInfo> GetExtensionIcons() 
+    {
+        return ExtensionManager.GetAllExtensions()
+            .SelectMany(x => x.Assets)
+            .Where(x => Path.GetFileName(x.DirectoryName) == "icons")
+            .Select(x => new IconInfo(
+                Path.GetFileNameWithoutExtension(x.Name),
+                GetUrl(x.Name)
+            ));
+    }
+
+    private Stream? GetExtensionIconFile(string fileName)
+    {
+        var icon = ExtensionManager.GetAllExtensions()
+            .SelectMany(x => x.Assets)
+            .Where(x => Path.GetFileName(x.DirectoryName) == "icons")
+            .FirstOrDefault(x => x.Name == fileName);
+
+        return icon?.OpenRead();
+    }
+
+    private string GetUrl(string fileName) => $"/api/client/icons/{fileName}";
 }

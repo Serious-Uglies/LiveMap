@@ -34,21 +34,27 @@ export interface PropertyListItem {
   value: Expression;
 }
 
-let cache: { [layer: string]: PopupConfig } | null = null;
+export interface IconInfo {
+  id: string;
+  url: string;
+}
+
+let popupCache: { [layer: string]: PopupConfig } | null = null;
+let iconCache: IconInfo[] | null = null;
 
 export async function getPopups(): Promise<{ [layer: string]: PopupConfig }> {
   try {
-    if (cache) {
-      return cache;
+    if (popupCache) {
+      return popupCache;
     }
 
     const response = await fetch('/api/client/popup').then((res) => res.json());
 
     for (var [layer, item] of Object.entries(response)) {
-      map(layer, item);
+      mapPopups(layer, item);
     }
 
-    return cache!;
+    return popupCache!;
   } catch {
     return {};
   }
@@ -56,23 +62,38 @@ export async function getPopups(): Promise<{ [layer: string]: PopupConfig }> {
 
 export async function getPopup(layer: string): Promise<PopupConfig | null> {
   try {
-    if (cache && cache[layer]) {
-      return cache[layer];
+    if (popupCache && popupCache[layer]) {
+      return popupCache[layer];
     }
 
     const response = await fetch(`/api/client/popup/${layer}`).then((res) =>
       res.json()
     );
 
-    return map(layer, response);
+    return mapPopups(layer, response);
   } catch {
     return null;
   }
 }
 
-function map(layer: string, popup: any): PopupConfig | null {
-  if (cache && cache[layer]) {
-    return cache[layer];
+export async function getIcons(): Promise<IconInfo[]> {
+  try {
+    if (iconCache) {
+      return iconCache;
+    }
+
+    const response = await fetch(`/api/client/icons`).then((res) => res.json());
+    iconCache = response;
+
+    return response;
+  } catch {
+    return [];
+  }
+}
+
+function mapPopups(layer: string, popup: any): PopupConfig | null {
+  if (popupCache && popupCache[layer]) {
+    return popupCache[layer];
   }
 
   switch (popup.type) {
@@ -99,11 +120,11 @@ function map(layer: string, popup: any): PopupConfig | null {
   }
 
   if (popup) {
-    if (!cache) {
-      cache = {};
+    if (!popupCache) {
+      popupCache = {};
     }
 
-    cache[layer] = popup;
+    popupCache[layer] = popup;
   }
 
   return popup;

@@ -5,6 +5,7 @@ using DasCleverle.DcsExport.Client.Abstractions.Popups;
 using DasCleverle.DcsExport.Extensibility;
 using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.Listener.Json;
+using DasCleverle.DcsExport.LiveMap.Client;
 using DasCleverle.DcsExport.LiveMap.Client.Popups;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
@@ -49,6 +50,7 @@ public class Startup
 
         services.AddHostedService<LiveStateHubService>();
 
+        services.AddSingleton<IIconProvider, IconProvider>();
         services.AddSingleton<IPopupRegistry, PopupRegistry>();
         services.AddTransient<IPopupProvider, ObjectPopupProvider>();
         services.AddTransient<IPopupProvider, AirbasePopupProvider>();

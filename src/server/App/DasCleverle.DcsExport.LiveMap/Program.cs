@@ -22,7 +22,7 @@ var extensionLoader = new ExtensionLoader(extensionManager);
 
 extensionLoader.LoadExtensions(builder.Environment.ContentRootPath + "/extensions", builder.Services);
 
-builder.Services.AddSingleton<IExtensionManager>(extensionManager);
+builder.Services.AddExtensibility(extensionManager);
 
 builder.Services.AddControllers()
     .AddJsonOptions(json => ConfigureJsonSerializer(json.JsonSerializerOptions));

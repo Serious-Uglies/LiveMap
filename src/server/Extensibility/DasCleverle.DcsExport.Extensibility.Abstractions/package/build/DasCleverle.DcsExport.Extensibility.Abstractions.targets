@@ -3,6 +3,9 @@
   <Target Name="_SetExtensionPublishProperties">
     <PropertyGroup>
       <ExtensionId Condition="'$(ExtensionId)' == ''">$(ProjectName)</ExtensionId>
+      <PowerShellExe Condition="'$(OS)' == 'Windows_NT'">powershell.exe</PowerShellExe>
+      <PowerShellExe Condition="'$(OS)' != 'Windows_NT'">pwsh</PowerShellExe>
+      <PublishCommand>$(PowerShellExe) ./publish.ps1 -Configuration '$(MSBuildProjectDirectory)/extension.toml' -BinSourcePath '$(OutputPath)'</PublishCommand>
     </PropertyGroup>
   </Target>
 
@@ -19,7 +22,7 @@
     <Message Condition="'$(HostAppBasePath)' != ''" Importance="High" Text="Publishing extension files to '$(ExtensionOutputPath)'" />
     <Exec 
       Condition="'$(HostAppBasePath)' != ''"
-      Command="powershell.exe .\publish.ps1 -Configuration '$(MSBuildProjectDirectory)\extension.toml' -BinSourcePath '$(OutputPath)' -OutputPath '$(ExtensionOutputPath)'" 
+      Command="$(PublishCommand) -OutputPath '$(ExtensionOutputPath)'" 
       WorkingDirectory="$(MSBuildThisFileDirectory)\..\tools"
     />
   </Target>
@@ -32,7 +35,7 @@
 
   <Target Name="PublishExtensionFiles" AfterTargets="Publish" DependsOnTargets="_SetExtensionPublishProperties">
     <Exec 
-      Command="powershell.exe .\publish.ps1 -Configuration '$(MSBuildProjectDirectory)\extension.toml' -BinSourcePath '$(OutputPath)' -OutputPath '$(MSBuildProjectDirectory)\$(PublishDir)$(ExtensionId)'" 
+      Command="$(PublishCommand) -OutputPath '$(MSBuildProjectDirectory)/$(PublishDir)$(ExtensionId)'" 
       WorkingDirectory="$(MSBuildThisFileDirectory)\..\tools"
     />
   </Target>

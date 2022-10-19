@@ -16,8 +16,14 @@ internal class TcpExportListenerService : BackgroundService
     private readonly ILogger<TcpExportListenerService> _logger;
     private readonly IMessageParser _messageParser;
     private readonly IEnumerable<IExportEventHandler> _eventHandlers;
+    private bool _started;
 
-    public TcpExportListenerService(ILogger<TcpExportListenerService> logger, IMessageParser messageHandler, IEnumerable<IExportEventHandler> eventHandlers, IOptions<TcpListenerOptions> options)
+    public TcpExportListenerService(
+        IHostApplicationLifetime lifetime,
+        ILogger<TcpExportListenerService> logger,
+        IMessageParser messageHandler,
+        IEnumerable<IExportEventHandler> eventHandlers,
+        IOptions<TcpListenerOptions> options)
     {
         var ipAddress = IPAddress.Parse(options.Value.Address);
 
@@ -25,28 +31,42 @@ internal class TcpExportListenerService : BackgroundService
         _logger = logger;
         _messageParser = messageHandler;
         _eventHandlers = eventHandlers;
+
+        lifetime.ApplicationStarted.Register(OnApplicationStarted);
     }
 
-    public override async Task StartAsync(CancellationToken cancellationToken)
+    private void OnApplicationStarted()
     {
         _listener.Start();
+        _started = true;
         _logger.LogInformation("Listening for connections on {Endpoint}", _listener.LocalEndpoint);
-
-        await base.StartAsync(cancellationToken);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        try
         {
-            var client = await _listener.AcceptTcpClientAsync();
-            _ = SendReceiveLoopAsync(client, stoppingToken);
+            while (!_started)
+            {
+                await Task.Delay(100, stoppingToken);
+            }
+
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                var client = await _listener.AcceptTcpClientAsync(stoppingToken);
+                _ = SendReceiveLoopAsync(client, stoppingToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // ignored
         }
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
         _listener.Stop();
+        _started = false;
         _logger.LogInformation("Stopped listening for connections");
 
         await base.StopAsync(cancellationToken);

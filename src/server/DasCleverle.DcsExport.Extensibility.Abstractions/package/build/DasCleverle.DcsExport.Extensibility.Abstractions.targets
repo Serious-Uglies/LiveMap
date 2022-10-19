@@ -1,0 +1,40 @@
+<Project>
+
+  <Target Name="_SetExtensionPublishProperties">
+    <PropertyGroup>
+      <ExtensionId Condition="'$(ExtensionId)' == ''">$(ProjectName)</ExtensionId>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="CheckPrerequisites" BeforeTargets="Build">
+    <Error Condition="!Exists('extension.toml')" Text="Could not find the extension configuration file 'extension.toml'." />
+  </Target>
+
+  <Target Condition="'$(Configuration)' == 'Debug'" Name="DebugPublishExtensionFiles" AfterTargets="Build" DependsOnTargets="_SetExtensionPublishProperties">
+    <PropertyGroup>
+      <ExtensionOutputPath>$([System.IO.Path]::GetFullPath($(MSBuildProjectDirectory)\$(HostAppBasePath)\extensions\$(ExtensionId)))</ExtensionOutputPath>
+    </PropertyGroup>
+
+    <Message Condition="'$(HostAppBasePath)' == ''" Importance="High" Text="The property 'HostAppBasePath' is not set. Extension files will not be published automatically for debugging." />
+    <Message Condition="'$(HostAppBasePath)' != ''" Importance="High" Text="Publishing extension files to '$(ExtensionOutputPath)'" />
+    <Exec 
+      Condition="'$(HostAppBasePath)' != ''"
+      Command="powershell.exe .\publish.ps1 -Configuration '$(MSBuildProjectDirectory)\extension.toml' -BinSourcePath '$(OutputPath)' -OutputPath '$(ExtensionOutputPath)'" 
+      WorkingDirectory="$(MSBuildThisFileDirectory)\..\tools"
+    />
+  </Target>
+
+  <Target Name="ClearResolvedFilesToPublish" AfterTargets="ComputeResolvedFilesToPublishList">
+    <ItemGroup>
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="PublishExtensionFiles" AfterTargets="Publish" DependsOnTargets="_SetExtensionPublishProperties">
+    <Exec 
+      Command="powershell.exe .\publish.ps1 -Configuration '$(MSBuildProjectDirectory)\extension.toml' -BinSourcePath '$(OutputPath)' -OutputPath '$(MSBuildProjectDirectory)\$(PublishDir)$(ExtensionId)'" 
+      WorkingDirectory="$(MSBuildThisFileDirectory)\..\tools"
+    />
+  </Target>
+
+</Project>

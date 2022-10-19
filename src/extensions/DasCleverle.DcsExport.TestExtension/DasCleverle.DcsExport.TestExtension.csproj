@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\server\State\DasCleverle.DcsExport.State.Abstractions\DasCleverle.DcsExport.State.Abstractions.csproj" />
+    <ProjectReference Include="..\..\server\Listener\DasCleverle.DcsExport.Listener.Abstractions\DasCleverle.DcsExport.Listener.Abstractions.csproj" />
+    <ProjectReference Include="..\..\server\Client\DasCleverle.DcsExport.Client.Abstractions\DasCleverle.DcsExport.Client.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DasCleverle.DcsExport.Extensibility.Abstractions" Version="1.0.0-alpha.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ExtensionId>TestExtension</ExtensionId>
+    <HostAppBasePath>..\..\server\App\DasCleverle.DcsExport.LiveMap\</HostAppBasePath>
+  </PropertyGroup>
+</Project>

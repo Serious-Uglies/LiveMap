@@ -9,9 +9,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build.map",
-      "program": "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap/bin/Debug/net6.0/DasCleverle.DcsExport.LiveMap.dll",
+      "program": "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap/bin/Debug/net6.0/DasCleverle.DcsExport.LiveMap.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap",
+      "cwd": "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -27,9 +27,9 @@
       "preLaunchTask": "build.iconbuilder",
       "program": "${workspaceFolder}/tools/IconBuilder/bin/Debug/net6.0/IconBuilder.dll",
       "args": [
-        "-d", "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap/assets/icon-templates/definition.json",
-        "-t", "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap/assets/icon-templates",
-        "-o", "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap/wwwroot/icons",
+        "-d", "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap/assets/icon-templates/definition.json",
+        "-t", "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap/assets/icon-templates",
+        "-o", "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap/wwwroot/icons",
       ],
       "cwd": "${workspaceFolder}/tools/IconBuilder",
       "console": "integratedTerminal",

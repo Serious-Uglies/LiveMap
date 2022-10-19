@@ -1,0 +1,6 @@
+friendly_name = "DasCleverle's Test Extension"
+entry_assembly = "DasCleverle.DcsExport.TestExtension"
+assets = [
+    "lang/en.json",
+    "icons/extension-test.png"
+]

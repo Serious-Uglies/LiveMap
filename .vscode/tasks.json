@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap/DasCleverle.DcsExport.LiveMap.csproj",
+                "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap/DasCleverle.DcsExport.LiveMap.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

@@ -4,8 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 *.overrides.json
-src/server/DasCleverle.DcsExport.LiveMap/extensions/
-src/server/DasCleverle.DcsExport.LiveMap/wwwroot/icons/
+src/server/App/DasCleverle.DcsExport.LiveMap/extensions/
+src/server/App/DasCleverle.DcsExport.LiveMap/wwwroot/icons/
 
 # User-specific files
 *.rsuser

@@ -1,12 +1,19 @@
 namespace DasCleverle.DcsExport.Extensibility;
 
-public static class ExtensionManager
+public interface IExtensionManager
 {
-    internal static Dictionary<string, Extension> Configurations { get; set; } = new();
+    IEnumerable<Extension> GetAllExtensions();
 
-    public static IEnumerable<Extension> GetAllExtensions() => Configurations.Values;
+    Extension? GetExtension(string id);
+}
 
-    public static Extension? GetExtension(string id) => Configurations.TryGetValue(id, out var extension) ? extension : null;
+public class ExtensionManager : IExtensionManager
+{
+    private readonly Dictionary<string, Extension> _extensions = new();
 
-    internal static void Register(Extension extension) => Configurations[extension.Id] = extension;
+    public IEnumerable<Extension> GetAllExtensions() => _extensions.Values;
+
+    public Extension? GetExtension(string id) => _extensions.TryGetValue(id, out var extension) ? extension : null;
+
+    internal void Register(Extension extension) => _extensions[extension.Id] = extension;
 }

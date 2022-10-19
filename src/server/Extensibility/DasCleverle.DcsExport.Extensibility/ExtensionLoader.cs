@@ -4,9 +4,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DasCleverle.DcsExport.Extensibility;
 
-public static class ExtensionLoader
+public class ExtensionLoader
 {
-    public static void LoadExtensions(string basePath, IServiceCollection services)
+    private readonly ExtensionManager _extensionManager;
+
+    public ExtensionLoader(ExtensionManager extensionManager)
+    {
+        _extensionManager = extensionManager;
+    }
+
+    public void LoadExtensions(string basePath, IServiceCollection services)
     {
         var baseDirectory = new DirectoryInfo(basePath);
 
@@ -45,7 +52,7 @@ public static class ExtensionLoader
         }
     }
 
-    private static void LoadExtension(ExtensionLoaderInfo info, IServiceCollection services)
+    private void LoadExtension(ExtensionLoaderInfo info, IServiceCollection services)
     {
         var configuration = ReadConfiguration(info);
         var entryAssemblyFile = info.Assemblies.FirstOrDefault(x => Path.GetFileNameWithoutExtension(x.Name) == configuration.EntryAssembly);
@@ -72,7 +79,7 @@ public static class ExtensionLoader
         var entryAssembly = LoadAssembly(info, entryAssemblyFile);
 
         BootstrapExtension(info, entryAssembly, services);
-        ExtensionManager.Register(CreateExtensionInfo(info, configuration, entryAssembly));
+        _extensionManager.Register(CreateExtensionInfo(info, configuration, entryAssembly));
     }
 
     private static void BootstrapExtension(ExtensionLoaderInfo info, Assembly entryAssembly, IServiceCollection services)

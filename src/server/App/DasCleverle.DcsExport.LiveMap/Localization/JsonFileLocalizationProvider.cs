@@ -12,14 +12,16 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
 
     private readonly IFileProvider _fileProvider;
     private readonly IOptions<JsonFileLocalizationProviderOptions> _options;
+    private readonly IExtensionManager _extensionManager;
 
     private readonly ConcurrentDictionary<string, ResourceFile> _cache = new();
     private bool _isLoaded;
 
-    public JsonFileLocalizationProvider(IWebHostEnvironment webHost, IOptions<JsonFileLocalizationProviderOptions> options)
+    public JsonFileLocalizationProvider(IWebHostEnvironment webHost, IOptions<JsonFileLocalizationProviderOptions> options, IExtensionManager extensionManager)
     {
         _fileProvider = webHost.WebRootFileProvider;
         _options = options;
+        _extensionManager = extensionManager;
     }
 
     public async Task<IEnumerable<Locale>> GetLocalesAsync()
@@ -129,9 +131,9 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
         return rawFile;
     }
 
-    private static FileInfo[] GetExtensionResources()
+    private FileInfo[] GetExtensionResources()
     {
-        return ExtensionManager.GetAllExtensions()
+        return _extensionManager.GetAllExtensions()
             .SelectMany(x => x.Assets)
             .Where(x => x.FullName.Contains(Path.Join("assets", "lang")))
             .ToArray();

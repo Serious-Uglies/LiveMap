@@ -9,10 +9,12 @@ public class IconProvider : IIconProvider
     private readonly object _syncRoot = new();
 
     private readonly IWebHostEnvironment _environment;
+    private readonly IExtensionManager _extensionManager;
 
-    public IconProvider(IWebHostEnvironment environment)
+    public IconProvider(IWebHostEnvironment environment, IExtensionManager extensionManager)
     {
         _environment = environment;
+        _extensionManager = extensionManager;
     }
 
     public IEnumerable<IconInfo> GetIcons()
@@ -63,7 +65,7 @@ public class IconProvider : IIconProvider
 
     private IEnumerable<IconInfo> GetExtensionIcons() 
     {
-        return ExtensionManager.GetAllExtensions()
+        return _extensionManager.GetAllExtensions()
             .SelectMany(x => x.Assets)
             .Where(x => Path.GetFileName(x.DirectoryName) == "icons")
             .Select(x => new IconInfo(
@@ -74,7 +76,7 @@ public class IconProvider : IIconProvider
 
     private Stream? GetExtensionIconFile(string fileName)
     {
-        var icon = ExtensionManager.GetAllExtensions()
+        var icon = _extensionManager.GetAllExtensions()
             .SelectMany(x => x.Assets)
             .Where(x => Path.GetFileName(x.DirectoryName) == "icons")
             .FirstOrDefault(x => x.Name == fileName);

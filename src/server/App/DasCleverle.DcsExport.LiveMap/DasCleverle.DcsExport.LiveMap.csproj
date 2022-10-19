@@ -8,7 +8,7 @@
     <ProjectReference Include="..\..\State\DasCleverle.DcsExport.State.Abstractions\DasCleverle.DcsExport.State.Abstractions.csproj" />
     <ProjectReference Include="..\..\State\DasCleverle.DcsExport.State\DasCleverle.DcsExport.State.csproj" />
     <ProjectReference Include="..\..\Client\DasCleverle.DcsExport.Client.Abstractions\DasCleverle.DcsExport.Client.Abstractions.csproj" />
-    <ProjectReference Include="..\..\..\lib\DasCleverle.DcsExport.Mapbox\DasCleverle.DcsExport.Mapbox.csproj" />
+    <ProjectReference Include="..\..\..\lib\DasCleverle.Mapbox\DasCleverle.Mapbox.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +25,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="extensions/**/*" />
+    <Content Remove="assets/**/*" />
+  </ItemGroup>
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
@@ -62,4 +67,5 @@
   <Target Name="Generate-Icons" AfterTargets="Build">
     <Exec Command="powershell.exe ./Generate-Icons.ps1" />
   </Target>
+
 </Project>

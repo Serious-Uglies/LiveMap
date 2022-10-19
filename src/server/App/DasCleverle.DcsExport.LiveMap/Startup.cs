@@ -10,7 +10,7 @@ using DasCleverle.DcsExport.LiveMap.Client.Popups;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
 using DasCleverle.DcsExport.LiveMap.Localization;
-using DasCleverle.DcsExport.Mapbox.Json;
+using DasCleverle.Mapbox.Json;
 using DasCleverle.DcsExport.State;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 

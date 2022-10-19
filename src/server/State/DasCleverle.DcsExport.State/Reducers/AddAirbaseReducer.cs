@@ -1,7 +1,7 @@
 using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.State.Abstractions;
-using static DasCleverle.DcsExport.GeoJson.GeoJSON;
+using static DasCleverle.GeoJson.GeoJSON;
 
 namespace DasCleverle.DcsExport.State.Reducers;
 

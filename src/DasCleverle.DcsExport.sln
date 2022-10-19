@@ -23,9 +23,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.Exten
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.TestExtension", "extensions\DasCleverle.DcsExport.TestExtension\DasCleverle.DcsExport.TestExtension.csproj", "{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.Mapbox", "lib\DasCleverle.DcsExport.Mapbox\DasCleverle.DcsExport.Mapbox.csproj", "{F1FC74DC-1E4A-4B9C-B4D1-5C093FBA0AA4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.Mapbox", "lib\DasCleverle.Mapbox\DasCleverle.Mapbox.csproj", "{F1FC74DC-1E4A-4B9C-B4D1-5C093FBA0AA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.GeoJson", "lib\DasCleverle.DcsExport.GeoJson\DasCleverle.DcsExport.GeoJson.csproj", "{5325D193-BB58-44F3-BAA9-9C89A25B286E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.GeoJson", "lib\DasCleverle.GeoJson\DasCleverle.GeoJson.csproj", "{5325D193-BB58-44F3-BAA9-9C89A25B286E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.Client.Abstractions", "server\Client\DasCleverle.DcsExport.Client.Abstractions\DasCleverle.DcsExport.Client.Abstractions.csproj", "{82CE0EDE-9BAC-4DA8-ABC7-921D3A6B29FE}"
 EndProject

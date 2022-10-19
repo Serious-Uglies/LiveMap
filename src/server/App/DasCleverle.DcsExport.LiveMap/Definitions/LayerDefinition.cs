@@ -1,5 +1,5 @@
-using DasCleverle.DcsExport.Mapbox.Expressions;
-using DasCleverle.DcsExport.Mapbox.Layers;
+using DasCleverle.Mapbox.Expressions;
+using DasCleverle.Mapbox.Layers;
 
 namespace DasCleverle.DcsExport.LiveMap.Definitions;
 

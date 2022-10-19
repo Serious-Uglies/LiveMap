@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using DasCleverle.DcsExport.GeoJson;
+using DasCleverle.GeoJson;
 
 namespace DasCleverle.DcsExport.State.Abstractions;
 

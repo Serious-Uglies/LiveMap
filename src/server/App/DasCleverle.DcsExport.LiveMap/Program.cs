@@ -36,6 +36,7 @@ builder.Services.AddSpaStaticFiles(spa =>
 });
 
 builder.Services.Configure<MapboxOptions>(builder.Configuration);
+builder.Services.Configure<ExtensionOptions>(builder.Configuration.GetSection("Extensions"));
 
 builder.Services.AddTcpExportListener(builder.Configuration.GetSection("ExportListener"));
 builder.Services.AddJsonMessageParser();

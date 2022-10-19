@@ -8,6 +8,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IExtensionManager>(extensionManager);
         services.AddHostedService<ExtensionStartupMessage>();
+        services.AddHostedService<ExtensionScriptInstaller>();
 
         return services;
     }  

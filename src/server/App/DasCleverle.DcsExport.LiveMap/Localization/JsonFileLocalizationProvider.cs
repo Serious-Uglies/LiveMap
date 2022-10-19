@@ -14,7 +14,8 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
     private readonly IOptions<JsonFileLocalizationProviderOptions> _options;
     private readonly IExtensionManager _extensionManager;
 
-    private readonly ConcurrentDictionary<string, ResourceFile> _cache = new();
+    private readonly Dictionary<string, ResourceFile> _cache = new();
+    private readonly SemaphoreSlim _lock = new(1);
     private bool _isLoaded;
 
     public JsonFileLocalizationProvider(IWebHostEnvironment webHost, IOptions<JsonFileLocalizationProviderOptions> options, IExtensionManager extensionManager)
@@ -44,72 +45,83 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
 
     private async Task LoadResourcesAsync()
     {
-        if (!_options.Value.DisableCache)
+        if (!_options.Value.DisableCache && _isLoaded)
         {
-            if (_isLoaded)
+            return;
+        }
+
+        await _lock.WaitAsync();
+
+        try
+        {
+            if (!_options.Value.DisableCache && _isLoaded)
             {
                 return;
             }
 
+            var extensionFiles = GetExtensionResources();
+            var jsonFiles = _fileProvider.GetDirectoryContents(_options.Value.BasePath)
+                .Where(f => Path.GetExtension(f.Name) == ".json");
+
+            var files = jsonFiles.Where(x => !x.Name.Contains(".overrides."));
+            var overrides = jsonFiles.Except(files);
+
+            foreach (var file in files)
+            {
+                var id = Path.GetFileNameWithoutExtension(file.Name);
+                var overrideName = $"{Path.GetFileNameWithoutExtension(file.Name)}.overrides.json";
+                var @override = overrides.FirstOrDefault(x => x.Name == overrideName);
+
+                var rawFile = await ReadResourceFileAsync(file.PhysicalPath);
+
+                if (rawFile == null)
+                {
+                    continue;
+                }
+
+                foreach (var extensionFile in extensionFiles)
+                {
+                    if (!string.Equals(file.Name, extensionFile.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    var rawExtensionFile = await ReadResourceFileAsync(extensionFile.FullName);
+
+                    if (rawExtensionFile == null)
+                    {
+                        continue;
+                    }
+
+                    rawFile = rawFile.Merge(rawExtensionFile);
+                }
+
+                var overrideFile = await ReadResourceFileAsync(@override?.PhysicalPath);
+
+                if (overrideFile != null)
+                {
+                    rawFile = rawFile.Merge(overrideFile);
+                }
+
+                var locale = new Locale
+                {
+                    Id = id,
+                    Label = rawFile.Label,
+                    Flag = rawFile.Flag
+                };
+
+                _cache[id] = new ResourceFile
+                {
+                    Locale = locale,
+                    Resources = rawFile.Resources ?? ResourceCollection.Empty
+                };
+            }
+
             _isLoaded = true;
         }
-
-        var extensionFiles = GetExtensionResources();
-        var jsonFiles = _fileProvider.GetDirectoryContents(_options.Value.BasePath)
-            .Where(f => Path.GetExtension(f.Name) == ".json");
-
-        var files = jsonFiles.Where(x => !x.Name.Contains(".overrides."));
-        var overrides = jsonFiles.Except(files);
-
-        foreach (var file in files)
+        finally
         {
-            var id = Path.GetFileNameWithoutExtension(file.Name);
-            var overrideName = $"{Path.GetFileNameWithoutExtension(file.Name)}.overrides.json";
-            var @override = overrides.FirstOrDefault(x => x.Name == overrideName);
-
-            var rawFile = await ReadResourceFileAsync(file.PhysicalPath);
-
-            if (rawFile == null)
-            {
-                continue;
-            }
-
-            foreach (var extensionFile in extensionFiles)
-            {
-                if (!string.Equals(file.Name, extensionFile.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                var rawExtensionFile = await ReadResourceFileAsync(extensionFile.FullName);
-
-                if (rawExtensionFile == null)
-                {
-                    continue;
-                }
-
-                rawFile = rawFile.Merge(rawExtensionFile);
-            }
-
-            var overrideFile = await ReadResourceFileAsync(@override?.PhysicalPath);
-
-            if (overrideFile != null)
-            {
-                rawFile = rawFile.Merge(overrideFile);
-            }
-
-            var locale = new Locale 
-            {
-                Id = id,
-                Label = rawFile.Label,
-                Flag = rawFile.Flag
-            };
-
-            _cache[id] = new ResourceFile
-            {
-                Locale = locale,
-                Resources = rawFile.Resources ?? ResourceCollection.Empty
-            };
+            _lock.Release();
         }
     }
 

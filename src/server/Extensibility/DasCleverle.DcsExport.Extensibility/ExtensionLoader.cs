@@ -152,6 +152,11 @@ public class ExtensionLoader
             .Where(x => x.Exists)
             .ToArray();
 
-        return new Extension(info.Id, config, assemblyName.Version ?? new Version(1, 0, 0), assets);
+        var scripts = config.Lua
+            .Select(x => new FileInfo(Path.Combine(info.Directory.FullName, "lua", x)))
+            .Where(x => x.Exists)
+            .ToArray();
+
+        return new Extension(info.Id, config, assemblyName.Version ?? new Version(1, 0, 0), assets, scripts);
     }
 }

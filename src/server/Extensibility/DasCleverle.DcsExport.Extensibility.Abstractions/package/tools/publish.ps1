@@ -4,25 +4,12 @@ param (
   [string] $OutputPath
 )
 
-Add-Type -Path "Tomlyn.dll"
-
-$file = Get-Item $Configuration
-$binSource = Join-Path $file.Directory $BinSourcePath
-$assetSource = Join-Path $file.Directory "assets"
-
-$assetDest = Join-Path $OutputPath "assets"
-
-$content = Get-Content $file -Raw
-$toml = [Tomlyn.Toml]::ToModel($content)
-
-$entryAssembly = $toml['entry_assembly']
-$dependencies = $toml['dependencies']
-$assets = $toml['assets']
+$configFile = Get-Item $Configuration
 
 function Copy-ExtensionFile {
   param (
     [string] $Path,
-    [string] $BasePath = $file.Directory,
+    [string] $BasePath = $configFile.Directory,
     [string] $Destination = $OutputPath
   )
 
@@ -36,6 +23,16 @@ function Copy-ExtensionFile {
   Write-Host "Published file '$Path'"
 }
 
+Add-Type -Path "Tomlyn.dll"
+
+$content = Get-Content $configFile -Raw
+$toml = [Tomlyn.Toml]::ToModel($content)
+
+$entryAssembly = $toml['entry_assembly']
+$dependencies = $toml['dependencies']
+$assets = $toml['assets']
+$lua = $toml['lua']
+
 if ($null -eq $entryAssembly) {
   Write-Host "Required field 'entry_assembly' is missing from extension configuration"
   exit 1
@@ -45,12 +42,11 @@ if (Test-Path $OutputPath) {
   Remove-Item $OutputPath -Recurse -Force | Out-Null
 }
 
-New-Item $OutputPath -ItemType "Directory" | Out-Null
+$binSource = Join-Path $configFile.Directory $BinSourcePath
 
-Copy-ExtensionFile -Path $file.Name
+Copy-ExtensionFile -Path $configFile.Name
 Copy-ExtensionFile -Path "$entryAssembly.dll" -BasePath $binSource
 Copy-ExtensionFile -Path "$entryAssembly.pdb" -BasePath $binSource
-
 
 if ($null -ne $dependencies) {
   foreach ($dependency in $dependencies) {
@@ -60,11 +56,13 @@ if ($null -ne $dependencies) {
 }
 
 if ($null -ne $assets) {
-  if (-not (Test-Path $assetDest)) {
-    New-Item $assetDest -ItemType "Directory" | Out-Null
-  }
-
   foreach ($asset in $assets) {
     Copy-ExtensionFile -Path (Join-Path "assets" $asset)
+  }
+}
+
+if ($null -ne $lua) {
+  foreach ($script in $lua) {
+    Copy-ExtensionFile -Path (Join-Path "lua" $script)
   }
 }

@@ -13,4 +13,6 @@ internal record ExtensionConfiguration
     public string[] Dependencies { get; init; } = Array.Empty<string>();
 
     public string[] Assets { get; init; } = Array.Empty<string>();
+
+    public string[] Lua { get; init; } = Array.Empty<string>();
 }

@@ -1,5 +1,9 @@
+using System.Text.Json.Serialization;
+using DasCleverle.GeoJson.Json;
+
 namespace DasCleverle.GeoJson;
 
+[JsonConverter(typeof(JsonGeometryConverter))]
 public record Point : IGeometry<Position>
 {
     public GeoJsonType Type => GeoJsonType.Point;

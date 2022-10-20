@@ -1,9 +1,5 @@
-﻿using System.Text.Json.Serialization;
-using DasCleverle.GeoJson.Json;
+﻿namespace DasCleverle.GeoJson;
 
-namespace DasCleverle.GeoJson;
-
-[JsonConverter(typeof(JsonGeometryConverter))]
 public interface IGeometry 
 {
     GeoJsonType Type { get; }

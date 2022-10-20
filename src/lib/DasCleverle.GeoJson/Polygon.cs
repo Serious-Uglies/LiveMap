@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Immutable;
+using System.Text.Json.Serialization;
+using DasCleverle.GeoJson.Json;
 
 namespace DasCleverle.GeoJson;
 
+[JsonConverter(typeof(JsonGeometryConverter))]
 public record Polygon : IGeometry<ImmutableList<LinearRing>>, IEnumerable<LinearRing>
 {
     public GeoJsonType Type => GeoJsonType.Polygon;

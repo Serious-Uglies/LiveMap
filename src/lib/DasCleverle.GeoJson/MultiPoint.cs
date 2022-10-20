@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Immutable;
+using System.Text.Json.Serialization;
+using DasCleverle.GeoJson.Json;
 
 namespace DasCleverle.GeoJson;
 
+[JsonConverter(typeof(JsonGeometryConverter))]
 public record MultiPoint : IGeometry<ImmutableList<Point>>, IEnumerable<Point>
 {
     public GeoJsonType Type => GeoJsonType.MultiPoint;

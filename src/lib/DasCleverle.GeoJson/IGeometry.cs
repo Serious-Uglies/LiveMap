@@ -1,10 +1,12 @@
 ﻿using System.Text.Json.Serialization;
+using DasCleverle.GeoJson.Json;
 
 namespace DasCleverle.GeoJson;
 
 /// <summary>   
 /// Represents a <see href="https://www.rfc-editor.org/rfc/rfc7946#section-3.1">GeoJSON Geometry object</see>.
 /// </summary>
+[JsonConverter(typeof(JsonGeometryConverter))]
 public interface IGeometry 
 {
     /// <summary>   

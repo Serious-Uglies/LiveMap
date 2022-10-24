@@ -38,7 +38,7 @@ internal class JsonGeometryConverter : JsonConverter<IGeometry>
 
         if (reader.TokenType == JsonTokenType.Null)
         {
-            throw new JsonException("The 'coorinates' property of a GeoJSON geometry cannot be null.");
+            throw new JsonException("The 'coordinates' property of a GeoJSON geometry cannot be null.");
         }
 
         var geometry = type switch

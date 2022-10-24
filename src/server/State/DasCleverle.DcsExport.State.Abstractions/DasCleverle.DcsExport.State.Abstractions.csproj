@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Listener\DasCleverle.DcsExport.Listener.Model\DasCleverle.DcsExport.Listener.Model.csproj" />
     <ProjectReference Include="..\..\Listener\DasCleverle.DcsExport.Listener.Abstractions\DasCleverle.DcsExport.Listener.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\lib\DasCleverle.GeoJson\DasCleverle.GeoJson.csproj" />
   </ItemGroup>
@@ -11,5 +10,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <Import Project="..\..\NuGet.Props" />
 
 </Project>

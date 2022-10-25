@@ -82,6 +82,9 @@ public record LinePaint
     [JsonPropertyName("line-translate-transition")]
     public Transition? LineTranslateTransition { get; init; }
 
+    [JsonPropertyName("line-trim-offset")]
+    public Expression<IEnumerable<double>>? LineTrimOffset { get; init; }
+
     [JsonPropertyName("line-width")]
     public Expression<double>? LineWidth { get; init; }
 

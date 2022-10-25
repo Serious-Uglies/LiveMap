@@ -1,6 +1,7 @@
 import jexl from 'jexl';
 import Expression from 'jexl/Expression';
 import { t } from 'i18next';
+import { AnyLayer } from 'mapbox-gl';
 
 jexl.addFunction('translate', t);
 jexl.addTransform('length', (array: any[]) => array.length);
@@ -39,8 +40,26 @@ export interface IconInfo {
   url: string;
 }
 
+let layerCache: AnyLayer[] | null = null;
 let popupCache: { [layer: string]: PopupConfig } | null = null;
 let iconCache: IconInfo[] | null = null;
+
+export async function getLayers(): Promise<AnyLayer[]> {
+  try {
+    if (layerCache) {
+      return layerCache;
+    }
+
+    const response = await fetch('/api/client/layers').then((res) =>
+      res.json()
+    );
+    layerCache = response;
+
+    return response!;
+  } catch {
+    return [];
+  }
+}
 
 export async function getPopups(): Promise<{ [layer: string]: PopupConfig }> {
   try {

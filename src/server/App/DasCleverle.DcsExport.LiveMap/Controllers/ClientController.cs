@@ -1,6 +1,8 @@
 using System.Net;
+using DasCleverle.DcsExport.Client.Abstractions.Layers;
 using DasCleverle.DcsExport.Client.Abstractions.Popups;
 using DasCleverle.DcsExport.LiveMap.Client;
+using DasCleverle.Mapbox.Layers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -11,6 +13,9 @@ namespace DasCleverle.DcsExport.LiveMap.Controllers;
 public class ClientController : Controller
 {
     private static readonly IContentTypeProvider ContentTypeProvider = new FileExtensionContentTypeProvider();
+
+    [HttpGet("layers")]
+    public IEnumerable<ILayer> GetLayers([FromServices] ILayerRegistry registry) => registry.GetLayers();
 
     [HttpGet("popup/{layer}")]
     public ActionResult GetPopup([FromServices] IPopupRegistry registry, string layer)

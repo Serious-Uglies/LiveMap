@@ -4,7 +4,7 @@ import Alert from 'react-bootstrap/Alert';
 import Spinner from 'react-bootstrap/Spinner';
 import { useTranslation } from 'react-i18next';
 import { MapLayerMouseEvent } from 'react-map-gl';
-import { getLayers } from '../../api/config';
+import { getLayers } from '../../api/client';
 import { connect } from '../../api/liveState';
 import { useAppDispatch, useAppSelector } from '../../store';
 import Backdrop from './Backdrop';

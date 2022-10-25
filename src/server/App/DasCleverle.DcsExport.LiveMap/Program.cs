@@ -1,12 +1,14 @@
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DasCleverle.DcsExport.Client.Abstractions.Layers;
 using DasCleverle.DcsExport.Client.Abstractions.Popups;
 using DasCleverle.DcsExport.Extensibility;
 using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.Listener.Json;
 using DasCleverle.DcsExport.LiveMap;
 using DasCleverle.DcsExport.LiveMap.Client;
+using DasCleverle.DcsExport.LiveMap.Client.Layers;
 using DasCleverle.DcsExport.LiveMap.Client.Popups;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
@@ -45,6 +47,8 @@ builder.Services.AddLiveState();
 builder.Services.AddHostedService<LiveStateHubService>();
 
 builder.Services.AddSingleton<IIconProvider, IconProvider>();
+builder.Services.AddSingleton<ILayerRegistry, LayerRegistry>();
+builder.Services.AddSingleton<ILayerProvider, DefaultLayerProvider>();
 builder.Services.AddSingleton<IPopupRegistry, PopupRegistry>();
 builder.Services.AddTransient<IPopupProvider, ObjectPopupProvider>();
 builder.Services.AddTransient<IPopupProvider, AirbasePopupProvider>();

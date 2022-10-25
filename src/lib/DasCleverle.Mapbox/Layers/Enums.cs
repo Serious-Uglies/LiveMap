@@ -1,8 +1,5 @@
-using DasCleverle.Mapbox.Json;
-
 namespace DasCleverle.Mapbox.Layers;
 
-[JsonKebabCaseStringEnumConverter]
 public enum LayerType
 {
     Background,
@@ -17,7 +14,6 @@ public enum LayerType
     Sky
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum Anchor
 {
     Center,
@@ -31,14 +27,12 @@ public enum Anchor
     BottomRight,
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum ReferencePlane
 {
     Viewport,
     Map
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum AutoReferencePlane
 {
     Map,
@@ -46,7 +40,6 @@ public enum AutoReferencePlane
     Auto,
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum IconTextFit
 {
     None,
@@ -55,7 +48,6 @@ public enum IconTextFit
     Height
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum LineCap
 {
     Round,
@@ -63,7 +55,6 @@ public enum LineCap
     Square
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum LineJoin
 {
     Round,
@@ -71,21 +62,18 @@ public enum LineJoin
     Miter
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum RasterResampling
 {
     Linear,
     Nearest
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum SkyType
 {
     Gradient,
     Atmosphere
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum SymbolPlacement
 {
     Point,
@@ -93,14 +81,12 @@ public enum SymbolPlacement
     LineCenter
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum SymbolZOrder
 {
     ViewportY,
     Source
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum TextJustify
 {
     Auto,
@@ -109,7 +95,6 @@ public enum TextJustify
     Right
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum TextTransform
 {
     None,
@@ -117,14 +102,12 @@ public enum TextTransform
     Lowercase
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum TextWritingMode
 {
     Horizontal,
     Vertical
 }
 
-[JsonKebabCaseStringEnumConverter]
 public enum Visibility
 {
     Visible,

@@ -8,7 +8,7 @@ using Expression = System.Linq.Expressions.Expression;
 
 namespace DasCleverle.Mapbox.Json;
 
-public class JsonExpressionConverter : JsonConverter<MapboxExpression>
+internal class JsonExpressionConverter : JsonConverter<MapboxExpression>
 {
     private static readonly ConcurrentDictionary<Type, Func<MapboxExpression, object>> ConstantExpressionValueExtractorMap = new();
     private static readonly ConcurrentDictionary<Type, Func<string, MapboxExpression[], MapboxExpression>> FunctionExpressionFactories = new();
@@ -137,9 +137,24 @@ public class JsonExpressionConverter : JsonConverter<MapboxExpression>
         {
             var valueProperty = type.GetProperty("Value")!;
             var inputParameter = Expression.Parameter(typeof(MapboxExpression), "input");
-            var accessExpression = Expression.Property(Expression.Convert(inputParameter, type), valueProperty);
+            var accessExpression = Expression.Property(Expression.Convert(inputParameter, type), "Value");
 
-            var lambda = Expression.Lambda<Func<MapboxExpression, object>>(Expression.Convert(accessExpression, typeof(object)), inputParameter);
+            Expression expression; 
+
+            if (valueProperty.PropertyType.IsEnum)
+            {
+                expression = Expression.Convert(
+                    Expression.Call(Expression.Constant(JsonKebabCaseNamingPolicy.Instance), "ConvertName", null, 
+                        Expression.Call(accessExpression, "ToString", null)),
+                    typeof(object)
+                );
+            }
+            else
+            {
+                expression = Expression.Convert(accessExpression, typeof(object));
+            }
+
+            var lambda = Expression.Lambda<Func<MapboxExpression, object>>(expression, inputParameter);
             var func = lambda.Compile();
 
             return func;
@@ -174,5 +189,4 @@ public class JsonExpressionConverter : JsonConverter<MapboxExpression>
         Function,
         Constant
     }
-
 }

@@ -3,38 +3,50 @@ using System.Text.Json;
 
 namespace DasCleverle.Mapbox.Json;
 
-public class JsonKebabCaseNamingPolicy : JsonNamingPolicy
+internal class JsonKebabCaseNamingPolicy : JsonNamingPolicy
 {
     public static readonly JsonKebabCaseNamingPolicy Instance = new();
 
     public override string ConvertName(string name)
     {
-        var builder = new StringBuilder();
+        var length = 0;
 
         for (int i = 0; i < name.Length; i++)
         {
-            var c = name[i];
+            length++;
 
-            if (i == 0 && char.IsUpper(c))
+            if (i != 0 && char.IsUpper(name[i]))
             {
-                builder.Append(char.ToLower(c));
-            }
-            else if (char.IsUpper(c))
-            {
-                builder.Append('-').Append(char.ToLower(c));
-            }
-            else
-            {
-                builder.Append(c);
+                length++;
             }
         }
 
-        return builder.ToString();
+        return string.Create(length, name, (chars, name) =>
+        {
+            int ci = 0;
+            for (int i = 0; i < name.Length; i++)
+            {
+                var c = name[i];
+
+                if (i == 0 && char.IsUpper(c))
+                {
+                    chars[ci] = char.ToLower(c);
+                    ci++;
+                }
+                else if (char.IsUpper(c))
+                {
+                    chars[ci] = '-';
+                    ci++;
+                    
+                    chars[ci] = char.ToLower(c);
+                    ci++;
+                }
+                else 
+                {
+                    chars[ci] = c;
+                    ci++;
+                }
+            }
+        });
     }
-}
-
-
-public class JsonKebabCaseStringEnumConverterAttribute : JsonStringEnumWithNamingPolicyConverterAttribute
-{
-    public JsonKebabCaseStringEnumConverterAttribute() : base(JsonKebabCaseNamingPolicy.Instance) { }
 }

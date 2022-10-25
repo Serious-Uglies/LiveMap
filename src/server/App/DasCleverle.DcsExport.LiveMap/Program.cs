@@ -105,7 +105,6 @@ void ConfigureJsonSerializer(JsonSerializerOptions options)
 {
     options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 
-    options.Converters.Add(new JsonStringEnumWithNamingPolicyConverter(JsonKebabCaseNamingPolicy.Instance));
-    options.Converters.Add(new JsonExportEventConverter());
+    options.Converters.Add(new JsonStringEnumConverter());
     options.Converters.Add(new JsonResourceCollectionConverter());
 }

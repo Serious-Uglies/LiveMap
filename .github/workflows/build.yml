@@ -31,6 +31,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgdiplus
 
+      - name: List directories
+        run: ls -R
+
       - name: Restore LiveMap server dependencies
         run: dotnet restore
         working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap

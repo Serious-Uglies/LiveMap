@@ -1,0 +1,48 @@
+name: build
+
+on:
+  push:
+    branches: 
+      - 'master'
+      - 'feature/**'
+  pull_request:
+    branches:
+      - 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with: 
+          node-version: 18.x
+
+      - name: Install native dependencies
+        run: |
+          sudo add-apt-repository ppa:quamotion/ppa
+          sudo apt-get update
+          sudo apt-get install -y libgdiplus
+
+      - name: Restore LiveMap server dependencies
+        run: dotnet restore
+        working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap
+
+      - name: Build LiveMap server
+        run: dotnet build --no-restore
+        working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap
+
+      - name: Restore LiveMap client dependencies
+        run: npm ci
+        working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap/ClientApp
+
+      - name: Build LiveMap client
+        run: npm run build
+        working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap/ClientApp

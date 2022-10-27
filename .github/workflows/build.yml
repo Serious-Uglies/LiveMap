@@ -36,7 +36,7 @@ jobs:
         working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap
 
       - name: Build LiveMap server
-        run: dotnet build --no-restore
+        run: dotnet build --no-restore -c Release
         working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap
 
       - name: Restore LiveMap client dependencies

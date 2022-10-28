@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <Version>1.0.0-alpha.1</Version>
     <Authors>DasCleverle</Authors>
     <Description>Implementation of the GeoJSON specification (https://geojson.org/) for .NET 5 and higher using immutable records and System.Text.Json.</Description>
     <PackageIcon>package-icon.png</PackageIcon>

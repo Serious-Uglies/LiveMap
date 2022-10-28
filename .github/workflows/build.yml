@@ -25,12 +25,6 @@ jobs:
         with: 
           node-version: 18.x
 
-      - name: Install native dependencies
-        run: |
-          sudo add-apt-repository ppa:quamotion/ppa
-          sudo apt-get update
-          sudo apt-get install -y libgdiplus
-
       - name: Restore LiveMap server dependencies
         run: dotnet restore
         working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap

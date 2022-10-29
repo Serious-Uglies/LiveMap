@@ -1,4 +1,6 @@
+using DasCleverle.DcsExport.Client.Abstractions.Expressions;
 using DasCleverle.DcsExport.Client.Abstractions.Popups;
+using DasCleverle.DcsExport.LiveMap.Abstractions;
 using static DasCleverle.DcsExport.Client.Abstractions.Expressions.JexlExtensions;
 
 namespace DasCleverle.DcsExport.LiveMap.Client.Popups;
@@ -12,31 +14,31 @@ public class AirbasePopupProvider : IPopupProvider
         var builder = new PropertyListPopup.Builder();
 
         builder.Priority = 1;
-        builder.AddRange(
+        builder.AddRange<AirbaseProperties>(
             (
                 "name",
                 o => Translate("popup.airbase.name"),
-                o => o["Name"]
+                o => o.Name
             ),
             (
                 "frequency",
                 o => Translate("popup.airbase.frequency"),
-                o => o["Frequencies"].Map(freq => Translate("format.frequency", new { Frequency = freq })).Join(", ")
+                o => o.Frequencies.Map(freq => Translate("format.frequency", new { Frequency = freq })).Join(", ")
             ),
             (
                 "runways",
                 o => Translate("popup.airbase.runways"),
-                o => o["Runways"].Map(item => item["Edge1"] + "-" + item["Edge2"]).Join(", ")
+                o => o.Runways.Map(item => item.Name).Join(", ")
             ),
             (
                 "ils",
                 o => Translate("popup.airbase.ils"),
-                o => o["Beacons"]["ILS"].Map(ils => ils["Runway"] + ": " + Translate("format.beacon", ils)).Join(", ")
+                o => o.Beacons.ILS.Map(ils => ils.Runway + ": " + Translate("format.beacon", ils)).Join(", ")
             ),
             (
                 "tacan",
                 o => Translate("popup.airbase.tacan"),
-                o => o["Beacons"]["Tacan"].Map(tcn => Translate("format.tacan", tcn)).Join(", ")
+                o => o.Beacons.Tacan.Map(tacan => Translate("format.tacan", tacan)).Join(", ")
             )
         );
 

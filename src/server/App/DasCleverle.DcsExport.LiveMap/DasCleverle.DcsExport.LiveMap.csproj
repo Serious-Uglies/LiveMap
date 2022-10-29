@@ -9,6 +9,7 @@
     <ProjectReference Include="..\..\State\DasCleverle.DcsExport.State\DasCleverle.DcsExport.State.csproj" />
     <ProjectReference Include="..\..\Client\DasCleverle.DcsExport.Client.Abstractions\DasCleverle.DcsExport.Client.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\lib\DasCleverle.Mapbox\DasCleverle.Mapbox.csproj" />
+    <ProjectReference Include="..\DasCleverle.DcsExport.LiveMap.Abstractions\DasCleverle.DcsExport.LiveMap.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

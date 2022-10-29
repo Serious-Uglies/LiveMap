@@ -75,6 +75,7 @@ internal class ExtensionScriptInstaller : IHostedService
                 if (!targetFile.Exists) 
                 {
                     Copy();
+                    continue;
                 }
 
                 if (script.Length == targetFile.Length && script.LastWriteTimeUtc == targetFile.LastWriteTimeUtc)

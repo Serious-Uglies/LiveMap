@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 using DasCleverle.Mapbox.Expressions;
+using DasCleverle.Mapbox.Json;
 
 namespace DasCleverle.Mapbox.Layers;
 
@@ -17,6 +18,7 @@ public interface ILayer
     /// <summary>
     /// Rendering type of this layer.
     /// </summary>
+    [JsonStringStringEnumKebabCaseConverter]
     LayerType Type { get; }
 
     /// <summary>
@@ -88,6 +90,7 @@ public interface ILayer<TLayout, TPaint> : ILayer where TLayout : Layout
 public abstract record Layer<TLayout, TPaint> : ILayer<TLayout, TPaint> where TLayout : Layout
 {
     /// <inheritdoc />
+    [JsonStringStringEnumKebabCaseConverter]
     public abstract LayerType Type { get; }
 
     /// <inheritdoc />

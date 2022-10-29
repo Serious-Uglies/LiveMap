@@ -50,3 +50,8 @@ internal class JsonKebabCaseNamingPolicy : JsonNamingPolicy
         });
     }
 }
+
+internal class JsonStringStringEnumKebabCaseConverterAttribute : JsonStringEnumNamingPolicyConverterAttribute
+{
+    public JsonStringStringEnumKebabCaseConverterAttribute() : base(JsonKebabCaseNamingPolicy.Instance) { }
+}

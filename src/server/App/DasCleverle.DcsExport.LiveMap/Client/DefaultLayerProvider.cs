@@ -1,8 +1,9 @@
 using DasCleverle.DcsExport.Client.Abstractions.Layers;
+using DasCleverle.DcsExport.LiveMap.Abstractions;
 using DasCleverle.Mapbox.Expressions;
 using DasCleverle.Mapbox.Layers;
 
-namespace DasCleverle.DcsExport.LiveMap.Client.Layers;
+namespace DasCleverle.DcsExport.LiveMap.Client;
 
 public class DefaultLayerProvider : ILayerProvider
 {
@@ -12,7 +13,7 @@ public class DefaultLayerProvider : ILayerProvider
         {
             new SymbolLayer
             {
-                Id = "objects",
+                Id = Layers.Objects,
                 Layout = new()
                 {
                     IconImage = "{icon}",
@@ -23,7 +24,7 @@ public class DefaultLayerProvider : ILayerProvider
             },
             new SymbolLayer
             {
-                Id = "airbases",
+                Id = Layers.Airbases,
                 Layout = new()
                 {
                     IconImage = "{icon}",

@@ -8,13 +8,10 @@ using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.Listener.Json;
 using DasCleverle.DcsExport.LiveMap;
 using DasCleverle.DcsExport.LiveMap.Client;
-using DasCleverle.DcsExport.LiveMap.Client.Layers;
-using DasCleverle.DcsExport.LiveMap.Client.Popups;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
 using DasCleverle.DcsExport.LiveMap.Localization;
 using DasCleverle.DcsExport.State;
-using DasCleverle.Mapbox.Json;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -2,11 +2,11 @@ using DasCleverle.DcsExport.Client.Abstractions.Popups;
 using DasCleverle.DcsExport.LiveMap.Abstractions;
 using static DasCleverle.DcsExport.Client.Abstractions.Expressions.JexlExtensions;
 
-namespace DasCleverle.DcsExport.LiveMap.Client.Popups;
+namespace DasCleverle.DcsExport.LiveMap.Client;
 
 public class ObjectPopupProvider : IPopupProvider
 {
-    public string Layer => "objects";
+    public string Layer => Layers.Objects;
 
     public IPopupBuilder GetPopup()
     {

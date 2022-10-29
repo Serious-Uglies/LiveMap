@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using DasCleverle.DcsExport.Client.Abstractions.Popups;
 
-namespace DasCleverle.DcsExport.LiveMap.Client.Popups;
+namespace DasCleverle.DcsExport.LiveMap.Client;
 
 internal class PopupRegistry : IPopupRegistry
 {

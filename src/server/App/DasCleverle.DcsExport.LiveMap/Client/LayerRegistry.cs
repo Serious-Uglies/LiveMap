@@ -1,7 +1,7 @@
 using DasCleverle.DcsExport.Client.Abstractions.Layers;
 using DasCleverle.Mapbox.Layers;
 
-namespace DasCleverle.DcsExport.LiveMap.Client.Layers;
+namespace DasCleverle.DcsExport.LiveMap.Client;
 
 internal class LayerRegistry : ILayerRegistry
 {

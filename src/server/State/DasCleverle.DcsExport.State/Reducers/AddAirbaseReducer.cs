@@ -35,6 +35,6 @@ public class AddAirbaseReducer : Reducer<AirbasePayload>
             }
         );
 
-        return state.AddMapFeature("airbases", feature);
+        return state.AddMapFeature(Layers.Airbases, feature);
     }
 }

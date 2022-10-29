@@ -33,7 +33,7 @@ public class AddObjectReducer : Reducer<ObjectPayload>
             }
         );
 
-        return state.AddMapFeature("objects", feature);
+        return state.AddMapFeature(Layers.Objects, feature);
     }
 
     private static string GetIconType(ObjectPayload payload)

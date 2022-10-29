@@ -1,7 +1,8 @@
-using DasCleverle.GeoJson;
 using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Model;
+using DasCleverle.DcsExport.LiveMap.Abstractions;
 using DasCleverle.DcsExport.State.Abstractions;
+using DasCleverle.GeoJson;
 
 namespace DasCleverle.DcsExport.State.Reducers;
 
@@ -17,8 +18,8 @@ public class UpdateObjectReducer : Reducer<UpdateObjectPayload>
         }
 
         return state.UpdateMapFeature(
-            "objects", 
-            payload.Id, 
+            Layers.Objects,
+            payload.Id,
             feature => feature with
             {
                 Geometry = GeoJSON.Point(payload.Position.Long, payload.Position.Lat)

@@ -1,4 +1,4 @@
-name: build
+name: LiveMap CI
 
 on:
   push:
@@ -10,7 +10,8 @@ on:
       - 'master'
 
 jobs:
-  build:
+  server:
+    name: server
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,23 +21,29 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap
+
+      - name: Build
+        run: dotnet build --no-restore -c Release
+        working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap
+
+  client:
+    name: client
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with: 
           node-version: 18.x
 
-      - name: Restore LiveMap server dependencies
-        run: dotnet restore
-        working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap
-
-      - name: Build LiveMap server
-        run: dotnet build --no-restore -c Release
-        working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap
-
-      - name: Restore LiveMap client dependencies
+      - name: Restore dependencies
         run: npm ci
         working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap/ClientApp
 
-      - name: Build LiveMap client
+      - name: Build
         run: npm run build
         working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap/ClientApp

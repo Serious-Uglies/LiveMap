@@ -34,6 +34,12 @@ public static class JexlExtensions
     public static JexlContext Map<TResult>(this JexlContext source, Expression<Func<JexlContext, TResult>> map)
         => throw new NotImplementedException();
 
+    public static JexlContext Map<TSource, TResult>(this IEnumerable<TSource> source, Expression<Func<TSource, TResult>> map)
+        => throw new NotImplementedException();
+
     public static string Join(this JexlContext source, string joiner)
+        => throw new NotImplementedException();
+
+    public static string Join<T>(this IEnumerable<T> source, string joiner)
         => throw new NotImplementedException();
 }

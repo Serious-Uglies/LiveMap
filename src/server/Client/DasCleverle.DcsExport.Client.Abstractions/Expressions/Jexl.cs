@@ -9,15 +9,16 @@ namespace DasCleverle.DcsExport.Client.Abstractions.Expressions;
 public class Jexl
 {
     public static Jexl Create(Expression<JexlExpression> expression) => new Jexl(expression);
+    public static Jexl Create<T>(Expression<JexlExpression<T>> expression) => new Jexl(expression);
 
-    public Expression<JexlExpression> Container { get; protected init; }
+    public LambdaExpression Container { get; protected init; }
 
     private readonly ParameterExpression _context;
 
     private JsonSerializerOptions? _options;
     private string? _compiled;
 
-    public Jexl(Expression<JexlExpression> expression)
+    private Jexl(LambdaExpression expression)
     {
         Container = expression;
         _context = expression.Parameters[0];
@@ -260,7 +261,7 @@ public class Jexl
             }
             else if (expression is ConstantExpression ce && IsJexlExpression(node.Type))
             {
-                var lambda = Expression.Lambda<Func<Expression<JexlExpression>>>(node);
+                var lambda = Expression.Lambda<Func<LambdaExpression>>(Expression.Convert(node, typeof(LambdaExpression)));
                 var value = lambda.Compile().Invoke();
 
                 if (value == Container)
@@ -416,7 +417,8 @@ public class Jexl
         to.Add($"{obj}[{argument}]");
     }
 
-    private static bool IsIndexer(MethodCallExpression expression) => expression.Method.Name == "get_Item";
+    private static bool IsIndexer(MethodCallExpression expression)
+        => expression.Method.Name == "get_Item";
 
     private string ConvertName(string name)
         => _options?.PropertyNamingPolicy?.ConvertName(name) ?? name;
@@ -425,10 +427,35 @@ public class Jexl
         => type == typeof(Jexl);
 
     private static bool IsJexlExpression(Type type)
-        => type == typeof(Expression<JexlExpression>);
+    {
+        if (!type.IsGenericType)
+        {
+            return false;
+        }
+
+        if (type.GetGenericTypeDefinition() != typeof(Expression<>))
+        {
+            return false;
+        }
+
+        var argument = type.GetGenericArguments()[0];
+
+        if (argument == typeof(JexlExpression))
+        {
+            return true;
+        }
+
+        if (argument.IsGenericType && argument.GetGenericTypeDefinition() == typeof(JexlExpression<>))
+        {
+            return true;
+        }
+
+        return false;
+    }
 }
 
 public delegate object? JexlExpression(JexlContext value);
+public delegate object? JexlExpression<T>(T value);
 
 public class JexlContext
 {

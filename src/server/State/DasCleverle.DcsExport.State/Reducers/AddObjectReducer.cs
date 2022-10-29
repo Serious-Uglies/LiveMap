@@ -1,5 +1,6 @@
 using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Model;
+using DasCleverle.DcsExport.LiveMap.Abstractions;
 using DasCleverle.DcsExport.State.Abstractions;
 using static DasCleverle.GeoJson.GeoJSON;
 
@@ -23,12 +24,12 @@ public class AddObjectReducer : Reducer<ObjectPayload>
         var feature = Feature(
             obj.Id,
             Point(obj.Position.Long, obj.Position.Lat),
-            new()
+            new ObjectProperties()
             {
-                ["icon"] = $"{coalition}-{iconType}-{pilot}",
-                ["sortKey"] = GetSortKey(obj),
-                ["player"] = obj.Player,
-                ["name"] = GetName(obj)
+                Icon = $"{coalition}-{iconType}-{pilot}",
+                SortKey = GetSortKey(obj),
+                Player = obj.Player,
+                Name = GetName(obj)
             }
         );
 
@@ -62,7 +63,7 @@ public class AddObjectReducer : Reducer<ObjectPayload>
         return "fixed";
     }
 
-    private static double GetSortKey(ObjectPayload payload)
+    private static int GetSortKey(ObjectPayload payload)
     {
         return payload.Type == ObjectType.Unit
             && (payload.Attributes.Contains(ObjectAttribute.Fixed) || payload.Attributes.Contains(ObjectAttribute.Rotary))

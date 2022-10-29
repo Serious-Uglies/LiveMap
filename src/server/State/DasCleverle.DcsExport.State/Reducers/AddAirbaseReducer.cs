@@ -1,5 +1,6 @@
 using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Model;
+using DasCleverle.DcsExport.LiveMap.Abstractions;
 using DasCleverle.DcsExport.State.Abstractions;
 using static DasCleverle.GeoJson.GeoJSON;
 
@@ -23,14 +24,14 @@ public class AddAirbaseReducer : Reducer<AirbasePayload>
         var feature = Feature(
             airbase.Id,
             Point(airbase.Position.Long, airbase.Position.Lat),
-            new() 
+            new AirbaseProperties() 
             {
-                ["name"] = airbase.Name,
-                ["icon"] = $"{coalition}-{category}",
-                ["rotation"] = rotation ?? 0,
-                ["runways"] = airbase.Runways,
-                ["frequencies"] = airbase.Frequencies,
-                ["beacons"] = airbase.Beacons
+                Name = airbase.Name,
+                Icon = $"{coalition}-{category}",
+                Rotation = rotation ?? 0,
+                Runways = airbase.Runways,
+                Frequencies = airbase.Frequencies,
+                Beacons = airbase.Beacons
             }
         );
 

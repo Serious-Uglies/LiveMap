@@ -29,11 +29,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.GeoJson", "lib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.Client.Abstractions", "server\Client\DasCleverle.DcsExport.Client.Abstractions\DasCleverle.DcsExport.Client.Abstractions.csproj", "{82CE0EDE-9BAC-4DA8-ABC7-921D3A6B29FE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "server", "server", "{7876F920-F337-4891-BD4C-5FCF91CA0617}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{A8301908-6E4F-4985-AAC4-B0C9727D01D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.LiveMap.Abstractions", "server\App\DasCleverle.DcsExport.LiveMap.Abstractions\DasCleverle.DcsExport.LiveMap.Abstractions.csproj", "{C2B6498D-F47C-49FA-93EB-482585353819}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{A8301908-6E4F-4985-AAC4-B0C9727D01D6} = {7876F920-F337-4891-BD4C-5FCF91CA0617}
+		{C2B6498D-F47C-49FA-93EB-482585353819} = {A8301908-6E4F-4985-AAC4-B0C9727D01D6}
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -200,5 +208,17 @@ Global
 		{82CE0EDE-9BAC-4DA8-ABC7-921D3A6B29FE}.Release|x64.Build.0 = Release|Any CPU
 		{82CE0EDE-9BAC-4DA8-ABC7-921D3A6B29FE}.Release|x86.ActiveCfg = Release|Any CPU
 		{82CE0EDE-9BAC-4DA8-ABC7-921D3A6B29FE}.Release|x86.Build.0 = Release|Any CPU
+		{C2B6498D-F47C-49FA-93EB-482585353819}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2B6498D-F47C-49FA-93EB-482585353819}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2B6498D-F47C-49FA-93EB-482585353819}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C2B6498D-F47C-49FA-93EB-482585353819}.Debug|x64.Build.0 = Debug|Any CPU
+		{C2B6498D-F47C-49FA-93EB-482585353819}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C2B6498D-F47C-49FA-93EB-482585353819}.Debug|x86.Build.0 = Debug|Any CPU
+		{C2B6498D-F47C-49FA-93EB-482585353819}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2B6498D-F47C-49FA-93EB-482585353819}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2B6498D-F47C-49FA-93EB-482585353819}.Release|x64.ActiveCfg = Release|Any CPU
+		{C2B6498D-F47C-49FA-93EB-482585353819}.Release|x64.Build.0 = Release|Any CPU
+		{C2B6498D-F47C-49FA-93EB-482585353819}.Release|x86.ActiveCfg = Release|Any CPU
+		{C2B6498D-F47C-49FA-93EB-482585353819}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -21,7 +21,6 @@ public class PropertyListPopup : IPopup
 
     public class Builder : IPopupBuilder
     {
-
         public int Priority { get; set; }
 
         public List<PropertListItem.Builder> Properties { get; } = new();
@@ -31,8 +30,14 @@ public class PropertyListPopup : IPopup
             Priority
         );
 
-        public void Add(string id, Expression<JexlExpression> label, Expression<JexlExpression> value)
+        public void Add(string id, Jexl label, Jexl value)
             => Properties.Add(new PropertListItem.Builder(id, label, value));
+
+        public void Add(string id, Expression<JexlExpression> label, Expression<JexlExpression> value)
+            => Properties.Add(new PropertListItem.Builder(id, Jexl.Create(label), Jexl.Create(label)));
+
+        public void Add<T>(string id, Expression<JexlExpression<T>> label, Expression<JexlExpression<T>> value)
+            => Properties.Add(new PropertListItem.Builder(id, Jexl.Create(label), Jexl.Create(label)));
 
         public void AddRange(IEnumerable<PropertListItem.Builder> properties)
             => Properties.AddRange(properties);
@@ -40,16 +45,34 @@ public class PropertyListPopup : IPopup
         public void AddRange(params PropertListItem.Builder[] properties)
             => Properties.AddRange(properties);
 
-        public void AddRange(IEnumerable<(string Id, Expression<JexlExpression> Label, Expression<JexlExpression> Value)> properties)
+        public void AddRange(IEnumerable<(string Id, Jexl Label, Jexl Value)> properties)
             => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, x.Label, x.Value)));
+
+        public void AddRange(params (string Id, Jexl Label, Jexl Value)[] properties)
+            => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, x.Label, x.Value)));
+
+        public void AddRange(IEnumerable<(string Id, Expression<JexlExpression> Label, Expression<JexlExpression> Value)> properties)
+            => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, Jexl.Create(x.Label), Jexl.Create(x.Value))));
 
         public void AddRange(params (string Id, Expression<JexlExpression> Label, Expression<JexlExpression> Value)[] properties)
-            => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, x.Label, x.Value)));
+            => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, Jexl.Create(x.Label), Jexl.Create(x.Value))));
 
-        public void Insert(int index, string id, Expression<JexlExpression> label, Expression<JexlExpression> value)
+        public void AddRange<T>(IEnumerable<(string Id, Expression<JexlExpression<T>> Label, Expression<JexlExpression<T>> Value)> properties)
+            => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, Jexl.Create(x.Label), Jexl.Create(x.Value))));
+
+        public void AddRange<T>(params (string Id, Expression<JexlExpression<T>> Label, Expression<JexlExpression<T>> Value)[] properties)
+            => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, Jexl.Create(x.Label), Jexl.Create(x.Value))));
+
+        public void Insert(int index, string id, Jexl label, Jexl value)
             => Properties.Insert(index, new PropertListItem.Builder(id, label, value));
 
-        public void InsertBefore(string beforeId, string id, Expression<JexlExpression> label, Expression<JexlExpression> value)
+        public void Insert(int index, string id, Expression<JexlExpression> label, Expression<JexlExpression> value)
+            => Properties.Insert(index, new PropertListItem.Builder(id, Jexl.Create(label), Jexl.Create(label)));
+
+        public void Insert<T>(int index, string id, Expression<JexlExpression<T>> label, Expression<JexlExpression<T>> value)
+            => Properties.Insert(index, new PropertListItem.Builder(id, Jexl.Create(label), Jexl.Create(label)));
+
+        public void InsertBefore(string beforeId, string id, Jexl label, Jexl value)
         {
             var index = Properties.FindIndex(x => x.Id == beforeId);
 
@@ -61,7 +84,13 @@ public class PropertyListPopup : IPopup
             Properties.Insert(index, new PropertListItem.Builder(id, label, value));
         }
 
-        public void InsertAfter(string afterId, string id, Expression<JexlExpression> label, Expression<JexlExpression> value)
+        public void InsertBefore(string beforeId, string id, Expression<JexlExpression> label, Expression<JexlExpression> value)
+            => InsertBefore(beforeId, id, Jexl.Create(label), Jexl.Create(value));
+
+        public void InsertBefore<T>(string beforeId, string id, Expression<JexlExpression<T>> label, Expression<JexlExpression<T>> value)
+            => InsertBefore(beforeId, id, Jexl.Create(label), Jexl.Create(value));
+
+        public void InsertAfter(string afterId, string id, Jexl label, Jexl value)
         {
             var index = Properties.FindIndex(x => x.Id == afterId);
 
@@ -80,57 +109,16 @@ public class PropertyListPopup : IPopup
             }
         }
 
+        public void InsertAfter(string afterId, string id, Expression<JexlExpression> label, Expression<JexlExpression> value)
+            => InsertAfter(afterId, id, Jexl.Create(label), Jexl.Create(value));
+
+        public void InsertAfter<T>(string afterId, string id, Expression<JexlExpression<T>> label, Expression<JexlExpression<T>> value)
+            => InsertAfter(afterId, id, Jexl.Create(label), Jexl.Create(value));
+
         public PropertListItem.Builder Find(string id)
             => Properties.Find(x => x.Id == id) ?? throw new KeyNotFoundException($"Could not find property with id {id}.");
 
         public void Remove(string id)
             => Properties.RemoveAll(x => x.Id == id);
-    }
-}
-
-public class PropertListItem
-{
-    public string Id { get; }
-
-    public Jexl Label { get; }
-
-    public Jexl Value { get; }
-
-    public PropertListItem(string id, Jexl label, Jexl value)
-    {
-        Id = id;
-        Label = label;
-        Value = value;
-    }
-
-    public class Builder
-    {
-        public string Id { get; }
-
-        public Expression<JexlExpression>? Label { get; set; }
-
-        public Expression<JexlExpression>? Value { get; set; }
-
-        public Builder(string id, Expression<JexlExpression>? label = null, Expression<JexlExpression>? value = null)
-        {
-            Id = id;
-            Label = label;
-            Value = value;
-        }
-
-        public PropertListItem Build()
-        {
-            if (Label == null)
-            {
-                throw new ArgumentNullException(nameof(Label));
-            }
-
-            if (Value == null)
-            {
-                throw new ArgumentNullException(nameof(Value));
-            }
-
-            return new PropertListItem(Id, Jexl.Create(Label), Jexl.Create(Value));
-        }
     }
 }

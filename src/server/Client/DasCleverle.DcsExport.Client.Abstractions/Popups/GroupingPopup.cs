@@ -17,25 +17,81 @@ public record GroupingPopup : IPopup
 
     public Jexl? OrderBy { get; }
 
-    private GroupingPopup(Expression<JexlExpression> groupBy, Expression<JexlExpression> render, Expression<JexlExpression>? orderBy, int priority)
+    private GroupingPopup(Jexl groupBy, Jexl render, Jexl? orderBy, int priority)
     {
-        GroupBy = Jexl.Create(groupBy);
-        Render = Jexl.Create(render);
-        OrderBy = orderBy != null ? Jexl.Create(orderBy) : null;
+        GroupBy = groupBy;
+        Render = render;
+        OrderBy = orderBy;
         Priority = priority;
+    }
+
+    public interface IGroup<T>
+    {
+        public object Key { get; }
+
+        public T[] Value { get; }
+    }
+
+    public interface IGroup
+    {
+        public object Key { get; }
+
+        public JexlContext Value { get; }
     }
 
     public class Builder : IPopupBuilder
     {
-        public Builder() {}
+        public Builder() { }
 
-        public int Priority { get; set; }
+        public int Priority { get; private set; }
 
-        public Expression<JexlExpression>? GroupBy { get; set; }
+        public Jexl? GroupBy { get; protected set; }
 
-        public Expression<JexlExpression>? Render { get; set; }
+        public Jexl? Render { get; protected set;}
 
-        public Expression<JexlExpression>? OrderBy { get; set; }
+        public Jexl? OrderBy { get; protected set; }
+
+        public Builder WithPriority(int priority)
+        {
+            Priority = priority;
+            return this;
+        }
+
+        public Builder WithGroupBy(Expression<JexlExpression> groupBy)
+        {
+            GroupBy = Jexl.Create(groupBy);
+            return this;
+        }
+
+        public Builder WithRender(Expression<JexlExpression<IGroup>> render)
+        {
+            Render = Jexl.Create(render);
+            return this;
+        }
+
+        public Builder WithOrderBy(Expression<JexlExpression<IGroup>> orderBy)
+        {
+            OrderBy = Jexl.Create(orderBy);
+            return this;
+        }
+
+        public Builder WithGroupBy<T>(Expression<JexlExpression<T>> groupBy)
+        {
+            GroupBy = Jexl.Create(groupBy);
+            return this;
+        }
+
+        public Builder WithRender<T>(Expression<JexlExpression<IGroup<T>>> render)
+        {
+            Render = Jexl.Create(render);
+            return this;
+        }
+
+        public Builder WithOrderBy<T>(Expression<JexlExpression<IGroup<T>>> orderBy)
+        {
+            OrderBy = Jexl.Create(orderBy);
+            return this;
+        }
 
         public IPopup Build()
         {
@@ -50,6 +106,27 @@ public record GroupingPopup : IPopup
             }
 
             return new GroupingPopup(GroupBy, Render, OrderBy, Priority);
+        }
+    }
+
+    public class Builder<T> : Builder
+    {
+        public Builder<T> WithGroupBy(Expression<JexlExpression<T>> groupBy)
+        {
+            GroupBy = Jexl.Create(groupBy);
+            return this;
+        }
+
+        public Builder<T> WithRender(Expression<JexlExpression<IGroup<T>>> render)
+        {
+            Render = Jexl.Create(render);
+            return this;
+        }
+
+        public Builder<T> WithOrderBy(Expression<JexlExpression<IGroup<T>>> orderBy)
+        {
+            OrderBy = Jexl.Create(orderBy);
+            return this;
         }
     }
 }

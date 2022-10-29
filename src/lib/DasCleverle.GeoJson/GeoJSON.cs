@@ -119,12 +119,38 @@ public static class GeoJSON
     /// <param name="id">The unique identifier used to retrieve the Feature from a <see cref="GeoJson.FeatureCollection" />, for expample</param>
     /// <param name="geometry">The GeoJSON geometry defining the feature spatially</param>
     /// <param name="properties">An optional collection of arbitrary values to include with the feature</param>
+    public static Feature Feature(int id, IGeometry geometry, object? properties = null) 
+        => new Feature 
+        {
+            Id = id,
+            Geometry = geometry,
+            Properties = properties == null ? null : FeatureProperties.From(properties)
+        };
+
+    /// <summary>   
+    /// Creates a new GeoJSON Feature with the specified <paramref name="geometry" /> and optional <paramref name="properties" />.
+    /// </summary>
+    /// <param name="geometry">The GeoJSON geometry defining the feature spatially</param>
+    /// <param name="properties">An optional collection of arbitrary values to include with the feature</param>
+    public static Feature Feature(IGeometry geometry, object? properties = null) 
+        => new Feature 
+        {
+            Geometry = geometry,
+            Properties = properties == null ? null : FeatureProperties.From(properties)
+        };
+
+    /// <summary>   
+    /// Creates a new GeoJSON Feature with the specified <paramref name="id" />, <paramref name="geometry" /> and optional <paramref name="properties" />.
+    /// </summary>
+    /// <param name="id">The unique identifier used to retrieve the Feature from a <see cref="GeoJson.FeatureCollection" />, for expample</param>
+    /// <param name="geometry">The GeoJSON geometry defining the feature spatially</param>
+    /// <param name="properties">An optional collection of arbitrary values to include with the feature</param>
     public static Feature Feature(int id, IGeometry geometry, Dictionary<string, object?>? properties = null) 
         => new Feature 
         {
             Id = id,
             Geometry = geometry,
-            Properties = properties == null ? ImmutableDictionary<string, object?>.Empty : ImmutableDictionary.CreateRange(properties)
+            Properties = properties == null ? null : FeatureProperties.From(properties)
         };
 
     /// <summary>   
@@ -136,7 +162,7 @@ public static class GeoJSON
         => new Feature 
         {
             Geometry = geometry,
-            Properties = properties == null ? ImmutableDictionary<string, object?>.Empty : ImmutableDictionary.CreateRange(properties)
+            Properties = properties == null ? null : FeatureProperties.From(properties)
         };
 
     /// <summary>   

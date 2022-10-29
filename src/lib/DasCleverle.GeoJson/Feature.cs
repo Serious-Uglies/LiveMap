@@ -27,11 +27,5 @@ public record Feature
     /// <summary>   
     /// Gets a collection of arbitrary values to include with the feature.
     /// </summary>
-    public ImmutableDictionary<string, object?> Properties { get; init; } = ImmutableDictionary<string, object?>.Empty;
-
-    /// <summary>   
-    /// Gets the property with the specified <paramref name="name" /> from the <see cref="Properties" /> collection.
-    /// </summary>
-    /// <param name="name">The name of the property to retrieve</param>
-    public T? GetProperty<T>(string name) => Properties.TryGetValue(name, out var value) ? (T?)value : default;
+    public FeatureProperties? Properties { get; init; }
 }

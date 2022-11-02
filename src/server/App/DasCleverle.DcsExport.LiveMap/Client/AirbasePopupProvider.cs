@@ -9,39 +9,37 @@ public class AirbasePopupProvider : IPopupProvider
 {
     public string Layer => Layers.Airbases;
 
-    public IPopupBuilder GetPopup()
+    public IPopup GetPopup()
     {
-        var builder = new PropertyListPopup.Builder();
-
-        builder.Priority = 1;
-        builder.AddRange<AirbaseProperties>(
-            (
+        return new PropertyListPopup<AirbaseProperties>()
+            .WithPriority(1)
+            .AddScalar(
                 "name",
                 o => Translate("popup.airbase.name"),
                 o => o.Name
-            ),
-            (
-                "frequency",
+            )
+            .AddList(
+                "frequencies",
                 o => Translate("popup.airbase.frequency"),
-                o => o.Frequencies.Map(freq => Translate("format.frequency", new { Frequency = freq })).Join(", ")
-            ),
-            (
-                "runways",
-                o => Translate("popup.airbase.runways"),
-                o => o.Runways.Map(item => item.Name).Join(", ")
-            ),
-            (
-                "ils",
-                o => Translate("popup.airbase.ils"),
-                o => o.Beacons.ILS.Map(ils => ils.Runway + ": " + Translate("format.beacon", ils)).Join(", ")
-            ),
-            (
+                o => o.Frequencies,
+                i => Translate("format.frequency", new { Frequency = i.Item })
+            )
+            .AddScalar(
                 "tacan",
                 o => Translate("popup.airbase.tacan"),
                 o => o.Beacons.Tacan.Map(tacan => Translate("format.tacan", tacan)).Join(", ")
             )
-        );
-
-        return builder;
+            .AddList(
+                "runways",
+                o => Translate("popup.airbase.runways"),
+                o => o.Runways,
+                o => o.Item.Name
+            )
+            .AddList(
+                "ils",
+                o => Translate("popup.airbase.ils"),
+                o => o.Beacons.ILS,
+                o => o.Item.Runway + ": " + Translate("format.beacon", o.Item)
+            );
     }
 }

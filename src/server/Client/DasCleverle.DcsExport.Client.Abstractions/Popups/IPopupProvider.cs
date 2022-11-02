@@ -4,5 +4,5 @@ public interface IPopupProvider
 {
     string Layer { get; }
 
-    IPopupBuilder GetPopup();
+    IPopup GetPopup();
 }

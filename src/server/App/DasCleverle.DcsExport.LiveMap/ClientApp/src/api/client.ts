@@ -27,11 +27,25 @@ export interface GroupingPopupConfig extends Config {
 
 export interface PropertyListPopupConfig extends Config {
   type: 'property-list';
-  properties: PropertyListItem[];
+  properties: PropertyListPopupItem[];
 }
 
-export interface PropertyListItem {
+export interface PropertyListPopupItem {
+  id: string;
   label: Expression;
+  display: PropertyDisplay;
+}
+
+export type PropertyDisplay = ScalarPropertyDisplay | ListPropertyDisplay;
+
+export interface ScalarPropertyDisplay {
+  type: 'scalar';
+  value: Expression;
+}
+
+export interface ListPropertyDisplay {
+  type: 'list';
+  selector: Expression;
   value: Expression;
 }
 
@@ -131,8 +145,9 @@ function mapPopups(layer: string, popup: any): PopupConfig | null {
         ...popup,
         type: 'property-list',
         properties: popup.properties.map((p: any) => ({
+          id: p.id,
           label: jexl.compile(p.label),
-          value: jexl.compile(p.value),
+          display: getPropertyDisplay(p.display),
         })),
       } as PropertyListPopupConfig;
       break;
@@ -147,4 +162,21 @@ function mapPopups(layer: string, popup: any): PopupConfig | null {
   }
 
   return popup;
+}
+
+function getPropertyDisplay(display: any) {
+  switch (display.type) {
+    case 'scalar':
+      return {
+        type: 'scalar',
+        value: jexl.compile(display.value),
+      } as ScalarPropertyDisplay;
+
+    case 'list':
+      return {
+        type: 'list',
+        selector: jexl.compile(display.selector),
+        value: jexl.compile(display.value),
+      } as ListPropertyDisplay;
+  }
 }

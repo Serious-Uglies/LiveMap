@@ -4,20 +4,20 @@ public interface IPopupExtender
 {
     string Layer { get; }
 
-    void Extend(IPopupBuilder popup);
+    IPopup Extend(IPopup popup);
 }
 
-public interface IPopupExtender<T> : IPopupExtender where T : IPopupBuilder
+public interface IPopupExtender<T> : IPopupExtender where T : IPopup
 {
-    void IPopupExtender.Extend(IPopupBuilder popup)
+    IPopup IPopupExtender.Extend(IPopup popup)
     {
         if (popup is not T typed)
         {
-            return;
+            return popup;
         }
 
-        Extend(typed);
+        return Extend(typed);
     }
 
-    void Extend(T popup);
+    IPopup Extend(T popup);
 }

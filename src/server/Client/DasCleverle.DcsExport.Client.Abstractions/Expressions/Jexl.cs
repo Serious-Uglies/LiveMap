@@ -10,6 +10,9 @@ public class Jexl
 {
     public static Jexl Create(Expression<JexlExpression> expression) => new Jexl(expression);
     public static Jexl Create<T>(Expression<JexlExpression<T>> expression) => new Jexl(expression);
+    public static Jexl Create<TValue, TResult>(Expression<JexlExpression<TValue, TResult>> expression) => new Jexl(expression);
+
+    public static readonly Jexl Noop = Jexl.Create(o => null);
 
     public LambdaExpression Container { get; protected init; }
 
@@ -456,6 +459,7 @@ public class Jexl
 
 public delegate object? JexlExpression(JexlContext value);
 public delegate object? JexlExpression<T>(T value);
+public delegate TResult? JexlExpression<TValue, TResult>(TValue value);
 
 public class JexlContext
 {

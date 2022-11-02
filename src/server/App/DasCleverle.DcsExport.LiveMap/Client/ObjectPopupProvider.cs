@@ -8,9 +8,9 @@ public class ObjectPopupProvider : IPopupProvider
 {
     public string Layer => Layers.Objects;
 
-    public IPopupBuilder GetPopup()
+    public IPopup GetPopup()
     {
-        return new GroupingPopup.Builder<ObjectProperties>()
+        return new GroupingPopup<ObjectProperties>()
             .WithGroupBy(o => o.Player != null ? o.Name + "-" + o.Player : o.Name)
             .WithRender(o => Translate(o.Value[0].Player != null ? "popup.object.player" : "popup.object.unit", new { Value = o.Value[0], Count = o.Value.Length }))
             .WithOrderBy(o => o.Value[0].Name);

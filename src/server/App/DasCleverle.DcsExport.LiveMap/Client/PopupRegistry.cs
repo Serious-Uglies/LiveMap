@@ -56,14 +56,14 @@ internal class PopupRegistry : IPopupRegistry
                 var provider = providers.First();
                 var extenders = _extenders.Where(x => x.Layer == provider.Layer);
 
-                var builder = provider.GetPopup();
+                var popup = provider.GetPopup();
 
                 foreach (var extender in extenders)
                 {
-                    extender.Extend(builder);
+                    popup = extender.Extend(popup);
                 }
 
-                _cache[provider.Layer] = builder.Build();
+                _cache[provider.Layer] = popup;
             }
 
             _isInitialized = true;

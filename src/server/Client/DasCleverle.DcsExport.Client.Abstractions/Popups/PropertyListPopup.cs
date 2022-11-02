@@ -1,124 +1,124 @@
+using System.Collections.Immutable;
 using System.Linq.Expressions;
 using DasCleverle.DcsExport.Client.Abstractions.Expressions;
 
 namespace DasCleverle.DcsExport.Client.Abstractions.Popups;
 
-public class PropertyListPopup : IPopup
+public record PropertyListPopup : IPopup
 {
     public string Type => "property-list";
 
     public bool AllowClustering => false;
 
-    public int Priority { get; }
+    public int Priority { get; init; }
 
-    public IEnumerable<PropertListItem> Properties { get; }
+    public ImmutableList<PropertyListPopupItem> Properties { get; init; } = ImmutableList<PropertyListPopupItem>.Empty;
 
-    private PropertyListPopup(IEnumerable<PropertListItem> properties, int priority)
+    public PropertyListPopup WithPriority(int priority)
+        => this with { Priority = priority };
+
+    public PropertyListPopup WithProperties(IEnumerable<PropertyListPopupItem> properties)
+        => this with { Properties = ImmutableList.CreateRange(properties) };
+
+    public PropertyListPopup Add(PropertyListPopupItem property)
+        => this with { Properties = Properties.Add(property) };
+
+    public PropertyListPopup Insert(int index, PropertyListPopupItem property)
+        => this with { Properties = Properties.Insert(index, property) };
+
+    public PropertyListPopup InsertBefore(string id, PropertyListPopupItem property)
     {
-        Properties = properties;
-        Priority = priority;
-    }
+        var index = Properties.FindIndex(x => x.Id == id);
 
-    public class Builder : IPopupBuilder
-    {
-        public int Priority { get; set; }
-
-        public List<PropertListItem.Builder> Properties { get; } = new();
-
-        public IPopup Build() => new PropertyListPopup(
-            Properties.Select(x => x.Build()).ToArray(),
-            Priority
-        );
-
-        public void Add(string id, Jexl label, Jexl value)
-            => Properties.Add(new PropertListItem.Builder(id, label, value));
-
-        public void Add(string id, Expression<JexlExpression> label, Expression<JexlExpression> value)
-            => Properties.Add(new PropertListItem.Builder(id, Jexl.Create(label), Jexl.Create(label)));
-
-        public void Add<T>(string id, Expression<JexlExpression<T>> label, Expression<JexlExpression<T>> value)
-            => Properties.Add(new PropertListItem.Builder(id, Jexl.Create(label), Jexl.Create(label)));
-
-        public void AddRange(IEnumerable<PropertListItem.Builder> properties)
-            => Properties.AddRange(properties);
-
-        public void AddRange(params PropertListItem.Builder[] properties)
-            => Properties.AddRange(properties);
-
-        public void AddRange(IEnumerable<(string Id, Jexl Label, Jexl Value)> properties)
-            => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, x.Label, x.Value)));
-
-        public void AddRange(params (string Id, Jexl Label, Jexl Value)[] properties)
-            => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, x.Label, x.Value)));
-
-        public void AddRange(IEnumerable<(string Id, Expression<JexlExpression> Label, Expression<JexlExpression> Value)> properties)
-            => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, Jexl.Create(x.Label), Jexl.Create(x.Value))));
-
-        public void AddRange(params (string Id, Expression<JexlExpression> Label, Expression<JexlExpression> Value)[] properties)
-            => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, Jexl.Create(x.Label), Jexl.Create(x.Value))));
-
-        public void AddRange<T>(IEnumerable<(string Id, Expression<JexlExpression<T>> Label, Expression<JexlExpression<T>> Value)> properties)
-            => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, Jexl.Create(x.Label), Jexl.Create(x.Value))));
-
-        public void AddRange<T>(params (string Id, Expression<JexlExpression<T>> Label, Expression<JexlExpression<T>> Value)[] properties)
-            => Properties.AddRange(properties.Select(x => new PropertListItem.Builder(x.Id, Jexl.Create(x.Label), Jexl.Create(x.Value))));
-
-        public void Insert(int index, string id, Jexl label, Jexl value)
-            => Properties.Insert(index, new PropertListItem.Builder(id, label, value));
-
-        public void Insert(int index, string id, Expression<JexlExpression> label, Expression<JexlExpression> value)
-            => Properties.Insert(index, new PropertListItem.Builder(id, Jexl.Create(label), Jexl.Create(label)));
-
-        public void Insert<T>(int index, string id, Expression<JexlExpression<T>> label, Expression<JexlExpression<T>> value)
-            => Properties.Insert(index, new PropertListItem.Builder(id, Jexl.Create(label), Jexl.Create(label)));
-
-        public void InsertBefore(string beforeId, string id, Jexl label, Jexl value)
+        if (index == -1)
         {
-            var index = Properties.FindIndex(x => x.Id == beforeId);
-
-            if (index == -1)
-            {
-                throw new KeyNotFoundException($"Could not find property with id {id}.");
-            }
-
-            Properties.Insert(index, new PropertListItem.Builder(id, label, value));
+            throw new KeyNotFoundException($"Could not find property with id {id}.");
         }
 
-        public void InsertBefore(string beforeId, string id, Expression<JexlExpression> label, Expression<JexlExpression> value)
-            => InsertBefore(beforeId, id, Jexl.Create(label), Jexl.Create(value));
+        return this with { Properties = Properties.Insert(index, property) };
+    }
 
-        public void InsertBefore<T>(string beforeId, string id, Expression<JexlExpression<T>> label, Expression<JexlExpression<T>> value)
-            => InsertBefore(beforeId, id, Jexl.Create(label), Jexl.Create(value));
+    public PropertyListPopup InsertAfter(string id, PropertyListPopupItem property)
+    {
+        var index = Properties.FindIndex(x => x.Id == id);
 
-        public void InsertAfter(string afterId, string id, Jexl label, Jexl value)
+        if (index == -1)
         {
-            var index = Properties.FindIndex(x => x.Id == afterId);
-
-            if (index == -1)
-            {
-                throw new KeyNotFoundException($"Could not find property with id {id}.");
-            }
-
-            if (index + 1 == Properties.Count)
-            {
-                Properties.Add(new PropertListItem.Builder(id, label, value));
-            }
-            else
-            {
-                Properties.Insert(index + 1, new PropertListItem.Builder(id, label, value));
-            }
+            throw new KeyNotFoundException($"Could not find property with id {id}.");
         }
 
-        public void InsertAfter(string afterId, string id, Expression<JexlExpression> label, Expression<JexlExpression> value)
-            => InsertAfter(afterId, id, Jexl.Create(label), Jexl.Create(value));
-
-        public void InsertAfter<T>(string afterId, string id, Expression<JexlExpression<T>> label, Expression<JexlExpression<T>> value)
-            => InsertAfter(afterId, id, Jexl.Create(label), Jexl.Create(value));
-
-        public PropertListItem.Builder Find(string id)
-            => Properties.Find(x => x.Id == id) ?? throw new KeyNotFoundException($"Could not find property with id {id}.");
-
-        public void Remove(string id)
-            => Properties.RemoveAll(x => x.Id == id);
+        if (index + 1 == Properties.Count)
+        {
+            return this with { Properties = Properties.Add(property) };
+        }
+        else
+        {
+            return this with { Properties = Properties.Insert(index + 1, property) };
+        }
     }
+
+    public PropertyListPopup Replace(string id, Func<PropertyListPopupItem, PropertyListPopupItem> replacer)
+    {
+        var original = Properties.Find(x => x.Id == id);
+
+        if (original == null)
+        {
+            throw new KeyNotFoundException($"Could not find property with id {id}.");
+        }
+
+        var replacement = replacer(original);
+
+        return this with { Properties = Properties.Replace(original, replacement) };
+    }
+
+    public PropertyListPopup Remove(string id)
+        => this with { Properties = Properties.RemoveAll(x => x.Id == id) };
+}
+
+public record PropertyListPopup<T> : PropertyListPopup
+{
+    public new PropertyListPopup<T> WithPriority(int priority)
+        => (PropertyListPopup<T>)base.WithPriority(priority);
+
+    public PropertyListPopup<T> WithProperties(IEnumerable<PropertyListPopupItem<T>> properties)
+        => (PropertyListPopup<T>)base.WithProperties(properties);
+
+    public PropertyListPopup<T> Add(PropertyListPopupItem<T> property)
+        => (PropertyListPopup<T>)base.Add(property);
+
+    public PropertyListPopup<T> AddScalar(string id, Expression<JexlExpression<T>> label, Expression<JexlExpression<T>> value)
+        => (PropertyListPopup<T>)base.Add(PropertyListPopupItem.Scalar<T>(id, label, value));
+
+    public PropertyListPopup<T> AddList<TItem>(
+        string id,
+        Expression<JexlExpression<T>> label,
+        Expression<JexlExpression<T, IEnumerable<TItem>>> selector,
+        Expression<JexlExpression<PropertyListPopupItem.IItemContext<TItem>>> value)
+        => (PropertyListPopup<T>)base.Add(PropertyListPopupItem.List<T, TItem>(id, label, selector, value));
+
+    public PropertyListPopup<T> Insert(int index, PropertyListPopupItem<T> property)
+        => (PropertyListPopup<T>)base.Insert(index, property);
+
+    public PropertyListPopup<T> InsertBefore(string id, PropertyListPopupItem<T> property)
+        => (PropertyListPopup<T>)base.InsertBefore(id, property);
+
+    public PropertyListPopup<T> InsertAfter(string id, PropertyListPopupItem<T> property)
+        => (PropertyListPopup<T>)base.InsertAfter(id, property);
+
+    public PropertyListPopup<T> Replace(string id, Func<PropertyListPopupItem<T>, PropertyListPopupItem<T>> replacer)
+    {
+        var original = Properties.Find(x => x.Id == id);
+
+        if (original == null || original is not PropertyListPopupItem<T> typed)
+        {
+            throw new KeyNotFoundException($"Could not find property with id {id}.");
+        }
+
+        var replacement = replacer(typed);
+        return this with { Properties = Properties.Replace(original, replacement) };
+    }
+
+
+    public new PropertyListPopup<T> Remove(string id)
+        => (PropertyListPopup<T>)base.Remove(id);
 }

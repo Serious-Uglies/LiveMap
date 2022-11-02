@@ -9,21 +9,34 @@ public record GroupingPopup : IPopup
 
     public bool AllowClustering => true;
 
-    public int Priority { get; }
+    public int Priority { get; init; }
 
-    public Jexl GroupBy { get; }
+    public Jexl GroupBy { get; init; } = Jexl.Noop;
 
-    public Jexl Render { get; }
+    public Jexl Render { get; init; } = Jexl.Noop;
 
-    public Jexl? OrderBy { get; }
+    public Jexl? OrderBy { get; init; }
 
-    private GroupingPopup(Jexl groupBy, Jexl render, Jexl? orderBy, int priority)
-    {
-        GroupBy = groupBy;
-        Render = render;
-        OrderBy = orderBy;
-        Priority = priority;
-    }
+    public GroupingPopup WithPriority(int priority)
+        => this with { Priority = priority };
+
+    public GroupingPopup WithGroupBy(Expression<JexlExpression> groupBy)
+        => this with { GroupBy = Jexl.Create(groupBy) };
+
+    public GroupingPopup WithGroupBy<T>(Expression<JexlExpression<T>> groupBy)
+        => this with { GroupBy = Jexl.Create(groupBy) };
+
+    public GroupingPopup WithRender(Expression<JexlExpression<IGroup>> render)
+        => this with { Render = Jexl.Create(render) };
+
+    public GroupingPopup WithRender<T>(Expression<JexlExpression<IGroup<T>>> render)
+        => this with { Render = Jexl.Create(render) };
+
+    public GroupingPopup WithOrderBy(Expression<JexlExpression<IGroup>> orderBy)
+        => this with { OrderBy = Jexl.Create(orderBy) };
+
+    public GroupingPopup WithOrderBy<T>(Expression<JexlExpression<IGroup<T>>> orderBy)
+        => this with { OrderBy = Jexl.Create(orderBy) };
 
     public interface IGroup<T>
     {
@@ -38,95 +51,19 @@ public record GroupingPopup : IPopup
 
         public JexlContext Value { get; }
     }
+}
 
-    public class Builder : IPopupBuilder
-    {
-        public Builder() { }
+public record GroupingPopup<T> : GroupingPopup
+{
+    public new GroupingPopup<T> WithPriority(int priority)
+        => (GroupingPopup<T>)base.WithPriority(priority);
 
-        public int Priority { get; private set; }
+    public GroupingPopup<T> WithGroupBy(Expression<JexlExpression<T>> groupBy)
+        => this with { GroupBy = Jexl.Create(groupBy) };
 
-        public Jexl? GroupBy { get; protected set; }
+    public GroupingPopup<T> WithRender(Expression<JexlExpression<IGroup<T>>> render)
+        => this with { Render = Jexl.Create(render) };
 
-        public Jexl? Render { get; protected set;}
-
-        public Jexl? OrderBy { get; protected set; }
-
-        public Builder WithPriority(int priority)
-        {
-            Priority = priority;
-            return this;
-        }
-
-        public Builder WithGroupBy(Expression<JexlExpression> groupBy)
-        {
-            GroupBy = Jexl.Create(groupBy);
-            return this;
-        }
-
-        public Builder WithRender(Expression<JexlExpression<IGroup>> render)
-        {
-            Render = Jexl.Create(render);
-            return this;
-        }
-
-        public Builder WithOrderBy(Expression<JexlExpression<IGroup>> orderBy)
-        {
-            OrderBy = Jexl.Create(orderBy);
-            return this;
-        }
-
-        public Builder WithGroupBy<T>(Expression<JexlExpression<T>> groupBy)
-        {
-            GroupBy = Jexl.Create(groupBy);
-            return this;
-        }
-
-        public Builder WithRender<T>(Expression<JexlExpression<IGroup<T>>> render)
-        {
-            Render = Jexl.Create(render);
-            return this;
-        }
-
-        public Builder WithOrderBy<T>(Expression<JexlExpression<IGroup<T>>> orderBy)
-        {
-            OrderBy = Jexl.Create(orderBy);
-            return this;
-        }
-
-        public IPopup Build()
-        {
-            if (GroupBy == null)
-            {
-                throw new ArgumentNullException(nameof(GroupBy));
-            }
-
-            if (Render == null)
-            {
-                throw new ArgumentNullException(nameof(Render));
-            }
-
-            return new GroupingPopup(GroupBy, Render, OrderBy, Priority);
-        }
-    }
-
-    public class Builder<T> : Builder
-    {
-        public Builder<T> WithGroupBy(Expression<JexlExpression<T>> groupBy)
-        {
-            GroupBy = Jexl.Create(groupBy);
-            return this;
-        }
-
-        public Builder<T> WithRender(Expression<JexlExpression<IGroup<T>>> render)
-        {
-            Render = Jexl.Create(render);
-            return this;
-        }
-
-        public Builder<T> WithOrderBy(Expression<JexlExpression<IGroup<T>>> orderBy)
-        {
-            OrderBy = Jexl.Create(orderBy);
-            return this;
-        }
-    }
+    public GroupingPopup<T> WithOrderBy(Expression<JexlExpression<IGroup<T>>> orderBy)
+        => this with { OrderBy = Jexl.Create(orderBy) };
 }

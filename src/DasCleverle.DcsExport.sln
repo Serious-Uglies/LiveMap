@@ -35,6 +35,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{A8301908-6E4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.LiveMap.Abstractions", "server\App\DasCleverle.DcsExport.LiveMap.Abstractions\DasCleverle.DcsExport.LiveMap.Abstractions.csproj", "{C2B6498D-F47C-49FA-93EB-482585353819}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensibility", "Extensibility", "{FD07796F-E1FC-4F2A-9E71-D0A1A9C1FBD7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.Extensibility.Sdk", "server\Extensibility\DasCleverle.DcsExport.Extensibility.Sdk\DasCleverle.DcsExport.Extensibility.Sdk.csproj", "{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,6 +46,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A8301908-6E4F-4985-AAC4-B0C9727D01D6} = {7876F920-F337-4891-BD4C-5FCF91CA0617}
 		{C2B6498D-F47C-49FA-93EB-482585353819} = {A8301908-6E4F-4985-AAC4-B0C9727D01D6}
+		{FD07796F-E1FC-4F2A-9E71-D0A1A9C1FBD7} = {7876F920-F337-4891-BD4C-5FCF91CA0617}
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93} = {FD07796F-E1FC-4F2A-9E71-D0A1A9C1FBD7}
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -220,5 +226,17 @@ Global
 		{C2B6498D-F47C-49FA-93EB-482585353819}.Release|x64.Build.0 = Release|Any CPU
 		{C2B6498D-F47C-49FA-93EB-482585353819}.Release|x86.ActiveCfg = Release|Any CPU
 		{C2B6498D-F47C-49FA-93EB-482585353819}.Release|x86.Build.0 = Release|Any CPU
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Debug|x64.Build.0 = Debug|Any CPU
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Debug|x86.Build.0 = Debug|Any CPU
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Release|x64.ActiveCfg = Release|Any CPU
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Release|x64.Build.0 = Release|Any CPU
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Release|x86.ActiveCfg = Release|Any CPU
+		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

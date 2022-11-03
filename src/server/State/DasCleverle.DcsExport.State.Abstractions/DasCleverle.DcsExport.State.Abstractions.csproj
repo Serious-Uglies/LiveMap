@@ -11,6 +11,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <Import Project="..\..\NuGet.Props" />
-
 </Project>

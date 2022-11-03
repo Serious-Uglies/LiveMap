@@ -23,11 +23,11 @@ internal class JsonFeaturePropertiesConverter : JsonConverter<FeatureProperties>
         SerializeWithNamingPolicy(writer, value.Root, options);
     }
 
-    private void SerializeWithNamingPolicy(Utf8JsonWriter writer, JsonNode? node, JsonSerializerOptions options)
+    private void SerializeWithNamingPolicy(Utf8JsonWriter writer, object? node, JsonSerializerOptions options)
     {
         switch (node)
         {
-            case JsonObject obj:
+            case IEnumerable<KeyValuePair<string, JsonNode?>> obj:
                 writer.WriteStartObject();
 
                 foreach (var (key, value) in obj)

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -10,14 +11,21 @@ namespace DasCleverle.GeoJson;
 /// Represents a collection of properties to be included with a GeoJSON feature.
 /// </summary>
 [JsonConverter(typeof(JsonFeaturePropertiesConverter))]
-public class FeatureProperties
+public record FeatureProperties
 {
-    internal JsonObject Root = new JsonObject();
+    /// <summary>
+    /// Gets the empty property collection.
+    /// </summary>
+    public static readonly FeatureProperties Empty = new();
+
+    internal ImmutableDictionary<string, JsonNode?> Root = ImmutableDictionary<string, JsonNode?>.Empty;
 
     internal FeatureProperties(JsonObject root)
     {
-        Root = root;
+        Root = SerializeToDictionary(root);
     }
+
+    private FeatureProperties() { }
 
     /// <summary>
     /// Creates a new instance of the <see cref="FeatureProperties" /> class using a <see cref="Dictionary{TKey, TValue}" />.
@@ -30,54 +38,36 @@ public class FeatureProperties
     /// </summary>
     /// <param name="properties">The properties to include with the feature</param>
     /// <exception cref="ArgumentException">The value of <paramref name="properties" /> is not serializable to a JSON object.</exception>
-    public static FeatureProperties From(object properties) => new FeatureProperties(ToJson(properties));
+    public static FeatureProperties From(object properties) => new FeatureProperties(SerializeToJsonObject(properties));
 
     /// <summary>
     /// Creates a <see cref="FeatureProperties" /> instance with the given property added.
     /// </summary>
     /// <param name="propertyName">The name of the property to add</param>
     /// <param name="value">The value of the property to add</param>
-    public FeatureProperties Add(string propertyName, object value)
-    {
-        var newRoot = new JsonObject();
-
-        foreach (var (k, v) in Root)
+    public FeatureProperties Add(string propertyName, object value) 
+        => this with
         {
-            newRoot[k] = v;
-        }
-
-        newRoot[propertyName] = JsonSerializer.SerializeToNode(value);
-
-        return new FeatureProperties(newRoot);
-    }
+            Root = Root.SetItem(propertyName, JsonSerializer.SerializeToNode(value))
+        };
 
     /// <summary>
     /// Creates a <see cref="FeatureProperties" /> instance with the given properties added.
     /// </summary>
     /// <param name="properties">The properties to add</param>
-    public FeatureProperties Add(Dictionary<string, object> properties) => Add((object)properties);
+    public FeatureProperties Add(Dictionary<string, object> properties) 
+        => Add((object)properties);
 
     /// <summary>
     /// Creates a <see cref="FeatureProperties" /> instance with the given properties added. Note that this object must be serializable to a JSON object.
     /// </summary>
     /// <param name="properties">The properties to add</param>
     /// <exception cref="ArgumentException">The value of <paramref name="properties" /> is not serializable to a JSON object.</exception>
-    public FeatureProperties Add(object properties)
-    {
-        var newRoot = new JsonObject();
-
-        foreach (var (key, value) in Root)
+    public FeatureProperties Add(object properties) 
+        => this with
         {
-            newRoot[key] = value;
-        }
-
-        foreach (var (key, value) in ToJson(properties))
-        {
-            newRoot[key] = value;
-        }
-
-        return new FeatureProperties(newRoot);
-    }
+            Root = Root.AddRange(SerializeToJsonObject(properties))
+        };
 
     /// <summary>
     /// Creates a <see cref="FeatureProperties" /> instance with the given property removed.
@@ -85,41 +75,30 @@ public class FeatureProperties
     /// <param name="propertyName">The name of the property to remove</param>
     public FeatureProperties Remove(string propertyName)
     {
-        var newRoot = new JsonObject();
-
-        foreach (var (key, value) in Root)
+        return this with
         {
-            if (key == propertyName)
-            {
-                continue;
-            }
-
-            newRoot[key] = value;
-        }
-
-        return new FeatureProperties(newRoot);
+            Root = Root.Remove(propertyName)
+        };
     }
 
     /// <summary>
     /// Gets the property with the given name.
     /// </summary>
     /// <param name="propertyName">The name of the property to retrieve</param>
-    public T? GetProperty<T>(string propertyName) => Root[propertyName].Deserialize<T>();
+    public T? GetProperty<T>(string propertyName) => Root.TryGetValue(propertyName, out var value) ? value.Deserialize<T>() : default;
 
-    /// <summary>
-    /// Converts the whole <see cref="FeatureProperties" /> into an instance of type <typeparamref name="T" />.
-    /// </summary>
-    public T As<T>() => Root.Deserialize<T>()!;
-
-    private static JsonObject ToJson(object obj, [CallerArgumentExpression("obj")] string caller = "")
+    private static JsonObject SerializeToJsonObject(object obj, [CallerArgumentExpression("obj")] string caller = "")
     {
-        var node = JsonSerializer.SerializeToNode(obj, obj.GetType());
+        var element = JsonSerializer.SerializeToNode(obj, obj.GetType());
 
-        if (node is not JsonObject jsonObject)
+        if (element is not JsonObject jsonObject)
         {
             throw new ArgumentException("The given properties must serialize to a JSON object", caller);
         }
 
         return jsonObject;
     }
+
+    private static ImmutableDictionary<string, JsonNode?> SerializeToDictionary(object obj) 
+        => ImmutableDictionary.CreateRange(SerializeToJsonObject(obj));
 }

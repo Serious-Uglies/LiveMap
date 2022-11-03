@@ -124,7 +124,7 @@ public static class GeoJSON
         {
             Id = id,
             Geometry = geometry,
-            Properties = properties == null ? null : FeatureProperties.From(properties)
+            Properties = properties == null ? FeatureProperties.Empty : FeatureProperties.From(properties)
         };
 
     /// <summary>   
@@ -136,7 +136,7 @@ public static class GeoJSON
         => new Feature 
         {
             Geometry = geometry,
-            Properties = properties == null ? null : FeatureProperties.From(properties)
+            Properties = properties == null ? FeatureProperties.Empty : FeatureProperties.From(properties)
         };
 
     /// <summary>   
@@ -150,7 +150,7 @@ public static class GeoJSON
         {
             Id = id,
             Geometry = geometry,
-            Properties = properties == null ? null : FeatureProperties.From(properties)
+            Properties = properties == null ? FeatureProperties.Empty : FeatureProperties.From(properties)
         };
 
     /// <summary>   
@@ -162,7 +162,7 @@ public static class GeoJSON
         => new Feature 
         {
             Geometry = geometry,
-            Properties = properties == null ? null : FeatureProperties.From(properties)
+            Properties = properties == null ? FeatureProperties.Empty : FeatureProperties.From(properties)
         };
 
     /// <summary>   

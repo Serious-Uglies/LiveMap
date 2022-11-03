@@ -27,5 +27,5 @@ public record Feature
     /// <summary>   
     /// Gets a collection of arbitrary values to include with the feature.
     /// </summary>
-    public FeatureProperties? Properties { get; init; }
+    public FeatureProperties Properties { get; init; } = FeatureProperties.Empty;
 }

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>DasCleverle</Authors>
+    <Description>A library modeling part of the Mapbox style specification as immutable C# records.</Description>
+    <PackageIcon>package-icon.jpg</PackageIcon>
+    <Copyright>Copyright © DasCleverle 2022</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Serious-Uglies/LiveMap/tree/master/src/lib/DasCleverle.Mapbox</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Serious-Uglies/LiveMap.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="package-icon.jpg" Pack="true" PackagePath="package-icon.jpg" />
+  </ItemGroup>
+
+</Project>

@@ -1,11 +1,17 @@
+---@diagnostic disable: undefined-field, param-type-mismatch
+
+local mod = {}
+
 local terrain = require("terrain")
 local util = require("util")
 local info = require("info")
-local config = require("config")
+local export = require("export")
 
 local function getBeaconTypes()
     local env = setmetatable({}, { __index = _G })
-    pcall(setfenv(loadfile("./Scripts/World/Radio/BeaconTypes.lua"), env))
+    local beaconTypes = loadfile("./Scripts/World/Radio/BeaconTypes.lua")
+
+    pcall(setfenv(beaconTypes, env))
     setmetatable(env, nil)
 
     return env
@@ -15,8 +21,6 @@ local airdromeData = terrain.GetTerrainConfig("Airdromes")
 local radioData = TcpExportHook.airdromeRadios
 local beaconData = terrain.getBeacons()
 local beaconTypes = getBeaconTypes()
-
-local infoAirbase = {}
 
 local function getRunways(airdrome)
     local runways = {}
@@ -128,19 +132,19 @@ local function getBeacons(airdrome)
     }
 end
 
-function infoAirbase.getAirbase(airbase)
+function mod.getAirbase(airbase)
     if airbase == nil then
         return nil
     end
 
-    if not config.shouldExport("airbase", airbase) then
+    if not export.filter("airbase", airbase) then
         return nil
     end
 
     local id = tonumber(airbase:getID())
     local desc = airbase:getDesc()
     local airbaseInfo = {
-        id = tostring(desc.category) .. ":" .. tostring(id),
+        id = (desc.category * 2^30) + id,
         category = desc.category,
         name = airbase:getName(),
         coalition = airbase:getCoalition(),
@@ -177,15 +181,15 @@ function infoAirbase.getAirbase(airbase)
         return nil
     end
 
-    return config.extend(airbaseInfo, "airbase", airbase)
+    return export.extend(airbaseInfo, "airbase", airbase)
 end
 
-function infoAirbase.getAllAirbases()
+function mod.getAllAirbases()
     local airbases = world.getAirbases()
     local airbaseInfo = {}
 
     for i = 1, #airbases do
-        local airbase = infoAirbase.getAirbase(airbases[i])
+        local airbase = mod.getAirbase(airbases[i])
 
         if airbase ~= nil then
             table.insert(airbaseInfo, airbase)
@@ -195,4 +199,4 @@ function infoAirbase.getAllAirbases()
     return airbaseInfo
 end
 
-return infoAirbase
+return mod

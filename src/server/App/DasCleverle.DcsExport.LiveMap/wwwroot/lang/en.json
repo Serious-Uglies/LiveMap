@@ -1,0 +1,44 @@
+{
+  "label": "English",
+  "flag": "us",
+  "resources": {
+    "phase": {
+      "notRunning": "Currently there is no mission running. Check again later or ask somebody to launch a mission.",
+      "reconnecting": "Connection to the server has been lost. Reconnecting ...",
+      "error": "Could not connect to the server."
+    },
+    "navbar": {
+      "brand": "DCS - Live Map",
+      "home": "Home"
+    },
+    "sidebar": {
+      "mission": {
+        "title": "Current Mission",
+        "name": "Mission",
+        "theatre": "Theatre",
+        "time": "Date",
+        "timeValue": "{{time, datetime}}"
+      }
+    },
+    "popup": {
+      "object": {
+        "unit": "{{count}}x {{value.name}}",
+        "player": "{{count}}x {{value.name}} ({{value.player}})"
+      },
+      "airbase": {
+        "name": "Name",
+        "frequency": "Tower",
+        "runways": "Runways",
+        "ils": "ILS",
+        "tacan": "TACAN",
+        "vor": "VOR",
+        "ndb": "NDB"
+      }
+    },
+    "format": {
+      "frequency": "{{frequency, frequency}}",
+      "tacan": "{{channel}}{{mode}} ({{callsign}})",
+      "beacon": "{{frequency, frequency}} ({{callsign}})"
+    }
+  }
+}

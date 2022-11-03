@@ -1,30 +1,45 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": ".NET Core Launch (web)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap/bin/Debug/net5.0/DasCleverle.DcsExport.LiveMap.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/server/DasCleverle.DcsExport.LiveMap",
-            "stopAtEntry": false,
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            }
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch LiveMap",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build.map",
+      "program": "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap/bin/Debug/net6.0/DasCleverle.DcsExport.LiveMap.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/Views"
+      }
+    },
+    {
+      "name": "Launch IconBuilder",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build.iconbuilder",
+      "program": "${workspaceFolder}/tools/IconBuilder/bin/Debug/net6.0/IconBuilder.dll",
+      "args": [
+        "-d", "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap/assets/icon-templates/definition.json",
+        "-t", "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap/assets/icon-templates",
+        "-o", "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap/wwwroot/icons",
+      ],
+      "cwd": "${workspaceFolder}/tools/IconBuilder",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": ".NET Core Attach",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickProcess}"
+    }
+  ]
 }

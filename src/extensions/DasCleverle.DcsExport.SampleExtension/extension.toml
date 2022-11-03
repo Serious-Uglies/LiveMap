@@ -1,0 +1,27 @@
+# The humand-readable name of the extension to be displayed to end users
+friendly_name = "Sample"
+
+# A short description showing what the extension does
+description = "An example to show a simple setup adding extension data on the DCS side and using it to add information to a popup."
+
+# Who made the extension 
+author = "DasCleverle"
+
+# The name of the assembly that contains an implementation of the IExtensionStartup interface
+# Most of the time you should only have one assembly anyway, so just use the .NET project name
+entry_assembly = "DasCleverle.DcsExport.SampleExtension"
+
+# An array of assets to include with the extension
+# These files must be located in the 'assets' directory
+# At the moment these types of assets are supported:
+#  * "lang/*.json": Custom localization resources
+#  * "icons/*.png": Custom icons for map features
+assets = [
+    "lang/en.json",
+]
+
+# An array of LUA scripts that contain the DCS-side part of the extension
+# The files must be located in the 'lua' directory
+lua = [
+    "sample.lua"
+]

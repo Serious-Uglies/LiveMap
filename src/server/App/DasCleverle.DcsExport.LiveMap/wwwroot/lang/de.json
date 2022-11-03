@@ -1,0 +1,22 @@
+{
+  "label": "Deutsch",
+  "flag": "de",
+  "resources": {
+    "phase": {
+      "notRunning": "Aktuell läuft keine Mission. Schau später noch einmal vorbei, oder bitte jemanden eine Mission zu starten.",
+      "reconnecting": "Die Verbindung zum Server ist abgebrochen. Versuche erneute Verbindung ...",
+      "error": "Die Verbindung konnte nicht hergestellt werden."
+    },
+    "navbar": {
+      "home": "Start"
+    },
+    "sidebar": {
+      "mission": {
+        "title": "Aktuelle Mission",
+        "name": "Mission",
+        "theatre": "Schauplatz",
+        "time": "Datum"
+      }
+    }
+  }
+}

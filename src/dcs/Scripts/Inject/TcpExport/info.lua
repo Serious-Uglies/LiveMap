@@ -1,6 +1,6 @@
-local json = require("json")
+local mod = {}
 
-local info = {}
+local json = require("json")
 
 local function getTime()
     local time = timer.getAbsTime()
@@ -18,35 +18,22 @@ local function getTime()
     )
 end
 
-function info.getTime()
+function mod.getTime()
     return {
         time = getTime()
     }
 end
 
-local function getMapCenter()
-    local point = {
-        x = env.mission.map.centerX,
-        y = env.mission.map.centerY,
-        z = 0
-    }
-    local lat, long = coord.LOtoLL(point)
-    return {
-        lat = lat,
-        long = long
-    }
-end
 
-function info.getInit()
+function mod.getInit()
     return {
         time = getTime(),
         missionName = TcpExportHook.missionName,
         theatre = env.mission.theatre,
-        mapCenter = getMapCenter(),
     }
 end
 
-function info.getPosition(object)
+function mod.getPosition(object)
     local point = object:getPoint()
 
     json.setEncoder(point, function (p)
@@ -69,7 +56,7 @@ local unitCategoryKeys = {
     [Unit.Category.SHIP] = "ship"
 }
 
-function info.getFrequency(object)
+function mod.getFrequency(object)
     local objectCategory = object:getCategory()
 
     if objectCategory ~= Object.Category.UNIT
@@ -142,4 +129,4 @@ function info.getFrequency(object)
     return nil
 end
 
-return info
+return mod

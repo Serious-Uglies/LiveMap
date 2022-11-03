@@ -110,7 +110,20 @@ public class ExtensionLoader
     {
         try
         {
-            return Assembly.LoadFrom(file.FullName);
+            var shadowCopyFile = new FileInfo(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!, "extensions", info.Id, file.Name));
+
+            if (!shadowCopyFile.Directory!.Exists)
+            {
+                shadowCopyFile.Directory.Create();
+            }
+
+            if (shadowCopyFile.Exists) 
+            {
+                shadowCopyFile.Delete();
+            }
+
+            file.CopyTo(shadowCopyFile.FullName);
+            return Assembly.LoadFrom(shadowCopyFile.FullName);
         }
         catch (Exception ex)
         {

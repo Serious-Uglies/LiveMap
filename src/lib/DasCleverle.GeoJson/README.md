@@ -1,10 +1,6 @@
 # GeoJSON
 
-This package attempts to implement the [GeoJSON specification](https://geojson.org/) in C# for .NET 5 and higher.
-The main focus of this package is immutability.
-All GeoJSON objects are [records](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/tutorials/records) and collections
-use the `ImmutableList<T>` type from the [System.Collections.Immutable](https://www.nuget.org/packages/System.Collections.Immutable) package.
-This package also includes converters for the [System.Text.Json](https://www.nuget.org/packages/System.Text.Json) package.
+This package attempts to implement the [GeoJSON specification](https://geojson.org/) in C# for .NET 5 and higher.  The main focus of this package is immutability.  All GeoJSON objects are [records](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/tutorials/records) and collections use the `ImmutableList<T>` type from the [System.Collections.Immutable](https://www.nuget.org/packages/System.Collections.Immutable) package.  This package also includes converters for the [System.Text.Json](https://www.nuget.org/packages/System.Text.Json) package.
 
 ## Usage
 

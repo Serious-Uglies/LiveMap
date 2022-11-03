@@ -13,7 +13,7 @@
     <PackageIcon>package-icon.jpg</PackageIcon>
     <Copyright>Copyright © DasCleverle 2022</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/Serious-Uglies/LiveMap</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Serious-Uglies/LiveMap/tree/master/src/lib/DasCleverle.Mapbox</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Serious-Uglies/LiveMap.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
@@ -21,6 +21,10 @@
   <ItemGroup>
     <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
     <PackageReference Include="System.Text.Json" Version="6.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="package-icon.jpg" Pack="true" PackagePath="package-icon.jpg" />
   </ItemGroup>
 
 </Project>

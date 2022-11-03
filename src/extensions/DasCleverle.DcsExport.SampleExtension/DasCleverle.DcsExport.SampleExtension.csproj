@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="DasCleverle.DcsExport.Extensibility.Sdk" Version="1.0.0-alpha.1" /> 
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
+    <PackageReference Include="DasCleverle.DcsExport.Extensibility.Sdk" Version="1.0.0-alpha.1" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -13,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <ExtensionId>TestExtension</ExtensionId>
+    <ExtensionId>Sample</ExtensionId>
     <HostAppBasePath>..\..\server\App\DasCleverle.DcsExport.LiveMap\</HostAppBasePath>
   </PropertyGroup>
 

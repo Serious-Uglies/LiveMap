@@ -1,0 +1,10 @@
+// We can also declare our custom localization resources.
+{
+  "resources": {
+    "extension": {
+      "sample": {
+        "popupProperty": "Property from Extension"
+      }
+    }
+  }
+}

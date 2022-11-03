@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.State
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.Extensibility.Abstractions", "server\Extensibility\DasCleverle.DcsExport.Extensibility.Abstractions\DasCleverle.DcsExport.Extensibility.Abstractions.csproj", "{3749970D-2E37-4167-A444-382349FEB7D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.TestExtension", "extensions\DasCleverle.DcsExport.TestExtension\DasCleverle.DcsExport.TestExtension.csproj", "{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.Mapbox", "lib\DasCleverle.Mapbox\DasCleverle.Mapbox.csproj", "{F1FC74DC-1E4A-4B9C-B4D1-5C093FBA0AA4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.GeoJson", "lib\DasCleverle.GeoJson\DasCleverle.GeoJson.csproj", "{5325D193-BB58-44F3-BAA9-9C89A25B286E}"
@@ -39,6 +37,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensibility", "Extensibil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.Extensibility.Sdk", "server\Extensibility\DasCleverle.DcsExport.Extensibility.Sdk\DasCleverle.DcsExport.Extensibility.Sdk.csproj", "{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extensions", "extensions", "{749B4035-8A5D-4D1F-AFC5-FC7CD7054342}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DasCleverle.DcsExport.SampleExtension", "extensions\DasCleverle.DcsExport.SampleExtension\DasCleverle.DcsExport.SampleExtension.csproj", "{B0726764-C043-4700-81F5-CE01DA316590}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +50,7 @@ Global
 		{C2B6498D-F47C-49FA-93EB-482585353819} = {A8301908-6E4F-4985-AAC4-B0C9727D01D6}
 		{FD07796F-E1FC-4F2A-9E71-D0A1A9C1FBD7} = {7876F920-F337-4891-BD4C-5FCF91CA0617}
 		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93} = {FD07796F-E1FC-4F2A-9E71-D0A1A9C1FBD7}
+		{B0726764-C043-4700-81F5-CE01DA316590} = {749B4035-8A5D-4D1F-AFC5-FC7CD7054342}
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -166,18 +169,6 @@ Global
 		{3749970D-2E37-4167-A444-382349FEB7D0}.Release|x64.Build.0 = Release|Any CPU
 		{3749970D-2E37-4167-A444-382349FEB7D0}.Release|x86.ActiveCfg = Release|Any CPU
 		{3749970D-2E37-4167-A444-382349FEB7D0}.Release|x86.Build.0 = Release|Any CPU
-		{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}.Debug|x64.Build.0 = Debug|Any CPU
-		{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}.Debug|x86.Build.0 = Debug|Any CPU
-		{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}.Release|x64.ActiveCfg = Release|Any CPU
-		{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}.Release|x64.Build.0 = Release|Any CPU
-		{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}.Release|x86.ActiveCfg = Release|Any CPU
-		{B2B41D6F-C745-45EA-BB46-EF9A3B1D5B54}.Release|x86.Build.0 = Release|Any CPU
 		{F1FC74DC-1E4A-4B9C-B4D1-5C093FBA0AA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F1FC74DC-1E4A-4B9C-B4D1-5C093FBA0AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1FC74DC-1E4A-4B9C-B4D1-5C093FBA0AA4}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -238,5 +229,17 @@ Global
 		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Release|x64.Build.0 = Release|Any CPU
 		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Release|x86.ActiveCfg = Release|Any CPU
 		{FC9F36E8-215F-404F-A8AE-8D07EA4DCE93}.Release|x86.Build.0 = Release|Any CPU
+		{B0726764-C043-4700-81F5-CE01DA316590}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0726764-C043-4700-81F5-CE01DA316590}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0726764-C043-4700-81F5-CE01DA316590}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B0726764-C043-4700-81F5-CE01DA316590}.Debug|x64.Build.0 = Debug|Any CPU
+		{B0726764-C043-4700-81F5-CE01DA316590}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B0726764-C043-4700-81F5-CE01DA316590}.Debug|x86.Build.0 = Debug|Any CPU
+		{B0726764-C043-4700-81F5-CE01DA316590}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0726764-C043-4700-81F5-CE01DA316590}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0726764-C043-4700-81F5-CE01DA316590}.Release|x64.ActiveCfg = Release|Any CPU
+		{B0726764-C043-4700-81F5-CE01DA316590}.Release|x64.Build.0 = Release|Any CPU
+		{B0726764-C043-4700-81F5-CE01DA316590}.Release|x86.ActiveCfg = Release|Any CPU
+		{B0726764-C043-4700-81F5-CE01DA316590}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

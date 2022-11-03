@@ -24,7 +24,13 @@ local function init()
 
     for name, module in pairs(modules) do
         logger.info("Initializing extension %q", name)
-        local loaded, error = pcall(module.init)
+
+        local loaded, error
+        if type(module.init) == "function" then
+            loaded, error = pcall(module.init)
+        else
+            loaded = true
+        end
 
         if not loaded then
             logger.error("Failed to load extension %q", name)

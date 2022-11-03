@@ -66,7 +66,8 @@
   </Target>
 
   <Target Name="Generate-Icons" AfterTargets="Build">
-    <Exec Command="powershell.exe ./Generate-Icons.ps1" />
+    <Exec Condition="'$(OS)' == 'Windows_NT'" Command="powershell.exe ./Generate-Icons.ps1" />
+    <Exec Condition="'$(OS)' != 'Windows_NT'" Command="pwsh ./Generate-Icons.ps1" />
   </Target>
 
 </Project>

@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <Authors>DasCleverle</Authors>
     <Description>DCS TCP Export and Live Map Extension SDK</Description>
     <PackageIcon>package-icon.png</PackageIcon>
@@ -37,13 +36,20 @@
     <SdkProjects Include="..\..\State\DasCleverle.DcsExport.State.Abstractions\DasCleverle.DcsExport.State.Abstractions.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <BeforePack>SdkPack</BeforePack>
+  </PropertyGroup>
+
   <Target Name="SdkRestore" BeforeTargets="Restore">
     <MSBuild Projects="@(SdkProjects)" Targets="Restore" Properties="Configuration=$(Configuration)" />
   </Target>
 
   <Target Name="SdkBuild" BeforeTargets="Build">
     <MSBuild Projects="@(SdkProjects)" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=$(TargetFramework);OutputPath=$(MSBuildThisFileDirectory)\$(OutputPath)" />
+  </Target>
 
+  <Target Name="SdkPack">
     <ItemGroup>
       <None Include="@(SdkProjects->'$(OutputPath)\%(FileName).dll')" Pack="true" PackagePath="lib\$(TargetFramework)\%(FileName).dll" />
     </ItemGroup>

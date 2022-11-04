@@ -50,8 +50,13 @@
   </Target>
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+    <PropertyGroup>
+      <IsCI Condition="'$(IsCI)' == ''">false</IsCI>
+    </PropertyGroup>
+
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    <Exec Condition="'$(IsCI)' == 'false'" WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    <Exec Condition="'$(IsCI)' == 'true'" WorkingDirectory="$(SpaRoot)" Command="npm ci" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
 
     <!-- Include the newly-built files in the publish output -->
@@ -66,7 +71,8 @@
   </Target>
 
   <Target Name="Generate-Icons" AfterTargets="Build">
-    <Exec Command="powershell.exe ./Generate-Icons.ps1" />
+    <Exec Condition="'$(OS)' == 'Windows_NT'" Command="powershell.exe ./Generate-Icons.ps1" />
+    <Exec Condition="'$(OS)' != 'Windows_NT'" Command="pwsh ./Generate-Icons.ps1" />
   </Target>
 
 </Project>

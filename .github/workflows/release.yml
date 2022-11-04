@@ -1,0 +1,67 @@
+name: Release LiveMap
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  setup:
+    uses: ./.github/workflows/get-version.yml
+
+  release:
+    runs-on: ubuntu-latest
+    needs: setup
+    env:
+      version: ${{ needs.setup.outputs.version }}
+      is-prerelease: ${{ needs.setup.outputs.is-prerelease }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap
+
+      - name: Publish LiveMap
+        run: |
+          dotnet publish ./src/server/App/DasCleverle.DcsExport.LiveMap/DasCleverle.DcsExport.LiveMap.csproj \
+            --no-restore \
+            --configuration Release \
+            -p:Version="${{ env.version }}" \
+            -p:IsCI=true \
+            --output ./out/server
+
+      - name: Publish TcpExport
+        run: cp -r -v ./src/dcs/ ./out 
+      
+      - name: Publish additional files
+        run: |
+          cp -v -t ./out ./README.md ./LICENSE
+          cp -v ./docs/release-notes/${{ env.version }}.md ./out/RELEASE-NOTES.md
+
+      - name: Create release archive
+        run: zip "Serious-Uglies-LiveMap-${{ env.version }}.zip" ./* -r
+        working-directory: ./out
+
+      - name: Create release
+        uses: ncipollo/release-action@v1.11.1
+        with:
+          name: ${{ env.version }}
+          prerelease: ${{ env.is-prerelease }}
+          bodyFile: ./docs/release-notes/${{ env.version }}.md
+          artifacts: ./out/*.zip
+          allowUpdates: true
+
+  publish-sdk:
+    needs: setup
+    uses: ./.github/workflows/release-lib.yml
+    with:
+      project-dir: src/server/Extensibility/DasCleverle.DcsExport.Extensibility.Sdk
+      version: ${{ needs.setup.outputs.version }}
+    secrets:
+      nuget-api-key: ${{ secrets.NUGET_API_KEY }}

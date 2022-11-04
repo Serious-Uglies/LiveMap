@@ -4,6 +4,9 @@ on:
       project-dir:
         required: true
         type: string
+      version:
+        required: true
+        type: string
     secrets:
       nuget-api-key:
         required: true
@@ -29,7 +32,7 @@ jobs:
         run: dotnet build --no-restore -c Release
 
       - name: Create package
-        run: dotnet pack --no-build --no-restore -c Release -o ./out
+        run: dotnet pack --no-build --no-restore -c Release -p:Version="${{ inputs.version }}" -o ./out
       
       - name: Upload artifact
         uses: actions/upload-artifact@v3

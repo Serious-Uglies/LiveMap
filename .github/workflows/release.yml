@@ -6,16 +6,17 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  setup:
+    uses: ./.github/workflows/get-version.yml
+
+  release:
     runs-on: ubuntu-latest
+    needs: setup
+    env:
+      version: ${{ needs.setup.outputs.version }}
+      is-prerelease: ${{ needs.setup.outputs.is-prerelease }}
     steps:
       - uses: actions/checkout@v3
-
-      - name: Determine version
-        id: get-version
-        run: |
-          echo "version=$(sed 's/^v//' <<< "${{ github.ref_name }}")" >> $GITHUB_OUTPUT
-          echo "is-prerelease=$([[ "${{ github.ref_name}}" =~ "-" ]] && echo true || echo false)" >> $GITHUB_OUTPUT
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
@@ -27,24 +28,39 @@ jobs:
         working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap
 
       - name: Publish LiveMap
-        run: dotnet publish ./src/server/App/DasCleverle.DcsExport.LiveMap/DasCleverle.DcsExport.LiveMap.csproj --no-restore -c Release -p:Version="${{ steps.get-version.outputs.version }}" -p:IsCI=true -o ./out/server
+        run: |
+          dotnet publish ./src/server/App/DasCleverle.DcsExport.LiveMap/DasCleverle.DcsExport.LiveMap.csproj `
+            --no-restore `
+            --configuration Release `
+            -p:Version="${{ env.version }}" `
+            -p:IsCI=true 
+            --output ./out/server
 
       - name: Publish TcpExport
-        run: cp ./src/dcs/ ./out -r
+        run: cp -r -v ./src/dcs/ ./out 
       
       - name: Publish additional files
         run: |
-          cp -t ./out ./README.md ./LICENSE
-          cp ./docs/release-notes/${{ steps.get-version.outputs.version }}.md ./out/RELEASE-NOTES.md
+          cp -v -t ./out ./README.md ./LICENSE
+          cp -v ./docs/release-notes/${{ env.version }}.md ./out/RELEASE-NOTES.md
 
       - name: Create release archive
-        run: zip "Serious-Uglies-LiveMap-${{ steps.get-version.outputs.version }}.zip" ./* -r
+        run: zip "Serious-Uglies-LiveMap-${{ env.version }}.zip" ./* -r
         working-directory: ./out
 
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          name: ${{ steps.get-version.outputs.version }}
-          prerelease: ${{ steps.get-version.outputs.is-prerelease }}
-          body_path: ./docs/release-notes/${{ steps.get-version.outputs.version }}.md
+          name: ${{ env.version }}
+          prerelease: ${{ env.is-prerelease }}
+          body_path: ./docs/release-notes/${{ env.version }}.md
           files: ./out/*.zip
+
+  publish-sdk:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps: 
+      uses: ./.github/workflows/release-lib.yml
+      with:
+        project-dir: src/server/Extensibility/DasCleverle.DcsExport.Extensibility.Sdk
+        version: ${{ needs.setup.outputs.version }}

@@ -1,0 +1,25 @@
+on:
+  workflow_call:
+    inputs:
+      ref-prefix:
+        required: false
+        default: 'v'
+        type: string
+    outputs:
+      version: 
+        value: ${{ jobs.version.outputs.version }}
+      is-prerelease: 
+        value: ${{ jobs.version.outputs.is-prerelease }}
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs: 
+      version: ${{ steps.version.outputs.version }}
+      is-prerelease: ${{ steps.version.outputs.is-prerelease }}
+    steps:
+      - name: Determine version
+        id: version
+        run: |
+          echo "version=$(sed 's/^${{ inputs.ref-prefix }}//' <<< "${{ github.ref_name }}")" >> $GITHUB_OUTPUT
+          echo "is-prerelease=$([[ "${{ github.ref_name}}" =~ "-" ]] && echo true || echo false)" >> $GITHUB_OUTPUT

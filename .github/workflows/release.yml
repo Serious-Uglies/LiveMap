@@ -42,7 +42,7 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          name: ${{ steps.get-version.output.version }}
-          prerelease: ${{ steps.get-version.output.is-prerelease }}
-          body_path: ./docs/release-notes/${{ steps.get-version.output.version }}.md
+          name: ${{ steps.get-version.outputs.version }}
+          prerelease: ${{ steps.get-version.outputs.is-prerelease }}
+          body_path: ./docs/release-notes/${{ steps.get-version.outputs.version }}.md
           files: ./out/*.zip

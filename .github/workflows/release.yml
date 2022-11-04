@@ -29,11 +29,11 @@ jobs:
 
       - name: Publish LiveMap
         run: |
-          dotnet publish ./src/server/App/DasCleverle.DcsExport.LiveMap/DasCleverle.DcsExport.LiveMap.csproj `
-            --no-restore `
-            --configuration Release `
-            -p:Version="${{ env.version }}" `
-            -p:IsCI=true 
+          dotnet publish ./src/server/App/DasCleverle.DcsExport.LiveMap/DasCleverle.DcsExport.LiveMap.csproj \
+            --no-restore \
+            --configuration Release \
+            -p:Version="${{ env.version }}" \
+            -p:IsCI=true \
             --output ./out/server
 
       - name: Publish TcpExport

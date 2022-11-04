@@ -37,6 +37,10 @@
     <SdkProjects Include="..\..\State\DasCleverle.DcsExport.State.Abstractions\DasCleverle.DcsExport.State.Abstractions.csproj" />
   </ItemGroup>
 
+  <Target Name="SdkRestore" BeforeTargets="Restore">
+    <MSBuild Projects="@(SdkProjects)" Targets="Restore" Properties="Configuration=$(Configuration)" />
+  </Target>
+
   <Target Name="SdkBuild" BeforeTargets="Build">
     <MSBuild Projects="@(SdkProjects)" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=$(TargetFramework);OutputPath=$(MSBuildThisFileDirectory)\$(OutputPath)" />
 

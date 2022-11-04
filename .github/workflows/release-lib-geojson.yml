@@ -1,13 +1,10 @@
 name: Release GeoJSON lib
 
 on: 
-  workflow_dispatch:
   push:
     branches:
       - 'master'
       - 'feature/**'
-    paths: 
-      - './src/lib/DasCleverle.GeoJson/**'
 
 
 jobs:

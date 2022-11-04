@@ -33,7 +33,7 @@ jobs:
         run: cp ./src/dcs/ ./out -r
       
       - name: Publish additional files
-        run: cp -t .out/ ./README.md ./LICENSE
+        run: cp -t ./out ./README.md ./LICENSE
 
       - name: Create release archive
         run: zip "Serious-Uglies-LiveMap-${{ steps.get-version.outputs.version }}.zip" ./*

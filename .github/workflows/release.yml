@@ -49,12 +49,13 @@ jobs:
         working-directory: ./out
 
       - name: Create release
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1.11.1
         with:
           name: ${{ env.version }}
           prerelease: ${{ env.is-prerelease }}
-          body_path: ./docs/release-notes/${{ env.version }}.md
-          files: ./out/*.zip
+          bodyFile: ./docs/release-notes/${{ env.version }}.md
+          artifacts: ./out/*.zip
+          allowUpdates: true
 
   publish-sdk:
     needs: setup

@@ -1,12 +1,21 @@
 name: Release Mapbox lib
 
 on: 
-  workflow_dispatch:
+  push:
+    tags:
+      - 'lib-mapbox-v*'
 
 jobs:
+  setup:
+    uses: ./.github/workflows/get-version.yml
+    with:
+      ref-prefix: 'lib-mapbox-v'
+
   release:
+    needs: setup
     uses: ./.github/workflows/release-lib.yml
     with: 
       project-dir: ./src/lib/DasCleverle.Mapbox
+      version: ${{ needs.setup.outputs.version }}
     secrets:
       nuget-api-key: ${{ secrets.NUGET_API_KEY }}

@@ -1,45 +1,19 @@
 name: Release GeoJSON lib
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - 'master'
+      - 'feature/**'
+    paths: 
+      - './src/lib/DasCleverle.GeoJson/**'
+
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    defaults:
-      working-directory: ./src/lib/DasCleverle.GeoJson
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 6.0.x
-      
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --no-restore -c Release
-
-      - name: Create package
-        run: dotnet pack --no-build --no-restore -c Release -o ./out
-      
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: package
-          path: ./out
-
-  publish:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with: 
-          name: package
-
-      - name: Push package to nuget.org
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: dotnet nuget push *.nupkg -s $NUGET_API_KEY
+  release:
+    uses: ./.github/workflows/release-lib.yml
+    with: 
+      project-dir: ./src/lib/DasCleverle.GeoJson
+    secrets:
+      nuget-api-key: ${{ secrets.NUGET_API_KEY }}

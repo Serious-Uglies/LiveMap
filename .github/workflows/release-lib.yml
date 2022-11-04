@@ -1,0 +1,51 @@
+on:
+  workflow_call:
+    inputs:
+      project-dir:
+        required: true
+        type: string
+    secrets:
+      nuget-api-key:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      working-directory: ${{ inputs.project-dir }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore -c Release
+
+      - name: Create package
+        run: dotnet pack --no-build --no-restore -c Release -o ./out
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: package
+          path: ./out
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with: 
+          name: package
+
+      - name: Push package to nuget.org
+        env:
+          NUGET_API_KEY: ${{ secrets.nuget-api-key }}
+        run: dotnet nuget push *.nupkg -s $NUGET_API_KEY

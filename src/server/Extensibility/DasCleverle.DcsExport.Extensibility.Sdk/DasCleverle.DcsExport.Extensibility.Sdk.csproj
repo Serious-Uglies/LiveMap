@@ -23,8 +23,8 @@
 
   <ItemGroup>
     <None Include="package\package-icon.png" Pack="true" PackagePath="package-icon.png" />
-    <None Include="package\build\**\*" Pack="true" PackagePath="build\%(RecursiveDir)" />
-    <None Include="package\tools\**\*" Pack="true" PackagePath="tools\%(RecursiveDir)" />
+    <None Include="package\build\**\*" Pack="true" PackagePath="build" />
+    <None Include="package\tools\**\*" Pack="true" PackagePath="tools" />
   </ItemGroup>
 
   <ItemGroup>

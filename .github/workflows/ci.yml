@@ -5,9 +5,15 @@ on:
     branches: 
       - 'master'
       - 'feature/**'
+    paths:
+      - './src/server/**'
+      - './src/lib/**'
   pull_request:
     branches:
       - 'master'
+    paths:
+      - './src/server/**'
+      - './src/lib/**'
 
 jobs:
   server:

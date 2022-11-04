@@ -1,0 +1,48 @@
+name: Release LiveMap
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Determine version
+        id: get-version
+        run: |
+          echo "version=$(sed 's/^v//' <<< "${{ github.ref_name }}")" >> $GITHUB_OUTPUT
+          echo "is-prerelease=$([[ "${{ github.ref_name}}" =~ "-" ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: ./src/server/App/DasCleverle.DcsExport.LiveMap
+
+      - name: Publish LiveMap
+        run: dotnet publish ./src/server/App/DasCleverle.DcsExport.LiveMap/DasCleverle.DcsExport.LiveMap.csproj --no-restore -c Release -p:Version="${{ steps.get-version.outputs.version }}" -p:IsCI=true -o ./out/server
+
+      - name: Publish TcpExport
+        run: cp ./src/dcs/ ./out -r
+      
+      - name: Publish additional files
+        run: cp -t .out/ ./README.md ./LICENSE
+
+      - name: Create release archive
+        run: zip "Serious-Uglies-LiveMap-${{ steps.get-version.outputs.version }}.zip" ./*
+        working-directory: ./out
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ steps.get-version.output.version }}
+          prerelease: ${{ steps.get-version.output.is-prerelease }}
+          body_path: ./docs/release-notes/${{ steps.get-version.output.version }}.md
+          files: ./out/*.zip

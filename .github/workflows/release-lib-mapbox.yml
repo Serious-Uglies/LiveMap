@@ -1,0 +1,15 @@
+name: Release Mapbox lib
+
+on: 
+  push:
+    branches:
+      - 'master'
+      - 'feature/**'
+
+jobs:
+  release:
+    uses: ./.github/workflows/release-lib.yml
+    with: 
+      project-dir: ./src/lib/DasCleverle.Mapbox
+    secrets:
+      nuget-api-key: ${{ secrets.NUGET_API_KEY }}

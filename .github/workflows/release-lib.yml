@@ -12,7 +12,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     defaults:
-      working-directory: ${{ inputs.project-dir }}
+      run:
+        working-directory: ${{ inputs.project-dir }}
     steps:
       - uses: actions/checkout@v3
 

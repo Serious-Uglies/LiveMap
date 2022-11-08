@@ -39,7 +39,7 @@ Also included is a Live Map implemented in C# using ASP<span>.NET</span> Core th
 
 As mentioned above, the Live Map is an ASP<span>.NET</span> Core app. Microsoft recommends to use a reverse proxy to host such apps. On Windows the IIS Server is recommended. The following steps outline how to setup hosting the Live Map with IIS.
 
-1. Install the latest .NET 5 ASP<span>.NET</span> Core Hosting Bundle (includes the runtime along with IIS support).
+1. Install the latest .NET 6 ASP<span>.NET</span> Core Hosting Bundle (includes the runtime along with IIS support).
 2. Make sure that the required Windows Features for IIS are activated.
 3. Download and extract the latest release from the releases section.
 4. Create an application in IIS-Manager and point it to the extracted archive.
@@ -222,4 +222,4 @@ For development it is very convenient to setup a symbolic link for the TCP Expor
 
 TIP: It is not required to restart DCS after changes to the lua files because the files are loaded at mission init. Only restart of the mission is required.
 
-To make changes to the Live Map, you need to setup a .NET 5 development environment. This can either be achieved by installing [Visual Studio](https://visualstudio.microsoft.com/) or by installing the latest [.NET 5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0) manually. Since the Frontend is a React app you also need to install [Node.js](https://nodejs.org/en/) (LTS is fine) to be able to launch the development server and create builds. After that, the project can be launched via Visual Studio or over the command line with `dotnet run`.
+To make changes to the Live Map, you need to setup a .NET 6 development environment. This can either be achieved by installing [Visual Studio](https://visualstudio.microsoft.com/) or by installing the latest [.NET 6 SDK](https://dotnet.microsoft.com/download/dotnet/6.0) manually. Since the Frontend is a React app you also need to install [Node.js](https://nodejs.org/en/) (LTS is fine) to be able to launch the development server and create builds. After that, the project can be launched via Visual Studio or over the command line with `dotnet run`.

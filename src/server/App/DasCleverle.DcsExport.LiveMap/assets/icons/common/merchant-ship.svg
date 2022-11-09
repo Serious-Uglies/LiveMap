@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
+  <path 
+    style="fill:none;stroke:#000000;stroke-width:4"
+    d="M 87.576172,63.902344 V 39.900391 H 39.572266 V 63.902344 L 26.669922,64.003906 37.675781,87.900391 H 64.001953 90.326172 L 101.33398,64.003906 Z" 
+    id="merchant-ship" />
+</svg>

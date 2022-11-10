@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
   <path 
+    colorable="true"
     style="fill:#aeaeae;stroke:#000000;stroke-width:4"
     d="M 8.798686,2.818881e-6 V 72.762592 L 63.999991,125.18029 119.20131,72.762591 V 2.818881e-6"
     id="submarine" />

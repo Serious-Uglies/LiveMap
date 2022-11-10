@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
   <path
+    colorable="true"
     style="fill:#aeaeae;stroke:#000000;stroke-width:4"
     d="M 63.995764,2.9478232 125.05642,64.004262 63.98678,125.05259 2.9431682,64.013192 Z m 0,0"
     id="ground" />

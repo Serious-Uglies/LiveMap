@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using DasCleverle.DcsExport.Client.Abstractions.Layers;
 using DasCleverle.DcsExport.Client.Abstractions.Popups;
+using DasCleverle.DcsExport.Client.Icons;
 using DasCleverle.DcsExport.Extensibility;
 using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.Listener.Json;
@@ -43,7 +44,7 @@ builder.Services.AddLiveState();
 
 builder.Services.AddHostedService<LiveStateHubService>();
 
-builder.Services.AddSingleton<IIconProvider, IconProvider>();
+builder.Services.AddSingleton<IIconGenerator, IconGenerator>();
 builder.Services.AddSingleton<ILayerRegistry, LayerRegistry>();
 builder.Services.AddSingleton<ILayerProvider, DefaultLayerProvider>();
 builder.Services.AddSingleton<IPopupRegistry, PopupRegistry>();

@@ -11,7 +11,6 @@ import { getMapboxConfig, MapboxConfiguration } from '../../../api/config';
 import MapboxLayer from './MapboxLayer';
 
 import './Mapbox.css';
-import { getIcons, IconInfo } from '../../../api/client';
 
 type MapboxProps = {
   children: React.ReactNode;
@@ -30,13 +29,11 @@ function Mapbox({
 }: MapboxProps) {
   const mapRef = useRef<MapRef | null>(null);
   const [config, setConfig] = useState<MapboxConfiguration | null>();
-  const [icons, setIcons] = useState<IconInfo[]>([]);
   const [cursor, setCursor] = useState('auto');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     getMapboxConfig().then((config) => setConfig(config));
-    getIcons().then((icons) => setIcons(icons));
   }, []);
 
   const handleMouseEnter = useCallback(
@@ -73,14 +70,14 @@ function Mapbox({
   );
 
   const handleMapLoad = useCallback(() => {
-    if (!mapRef.current) {
+    const map = mapRef.current;
+
+    if (!map) {
       return;
     }
 
-    const map = mapRef.current;
-
-    for (let icon of icons) {
-      map.loadImage(icon.url, (error, image) => {
+    map.on('styleimagemissing', ({ id }: { id: string }) => {
+      map.loadImage('/api/client/icon/' + id, (error, image) => {
         if (error) {
           console.error(error);
           return;
@@ -90,23 +87,16 @@ function Mapbox({
           return;
         }
 
-        map.addImage(icon.id, image);
-
-        const images = map.listImages();
-        let loadedCount = 0;
-
-        for (let { id } of icons) {
-          if (images.includes(id)) {
-            loadedCount++;
-          }
+        if (map.hasImage(id)) {
+          return;
         }
 
-        if (loadedCount === icons.length) {
-          setLoaded(true);
-        }
+        map.addImage(id, image);
       });
-    }
-  }, [icons]);
+    });
+
+    setLoaded(true);
+  }, []);
 
   if (!config) {
     return null;

@@ -56,7 +56,6 @@ export interface IconInfo {
 
 let layerCache: AnyLayer[] | null = null;
 let popupCache: { [layer: string]: PopupConfig } | null = null;
-let iconCache: IconInfo[] | null = null;
 
 export async function getLayers(): Promise<AnyLayer[]> {
   try {
@@ -106,21 +105,6 @@ export async function getPopup(layer: string): Promise<PopupConfig | null> {
     return mapPopups(layer, response);
   } catch {
     return null;
-  }
-}
-
-export async function getIcons(): Promise<IconInfo[]> {
-  try {
-    if (iconCache) {
-      return iconCache;
-    }
-
-    const response = await fetch(`/api/client/icons`).then((res) => res.json());
-    iconCache = response;
-
-    return response;
-  } catch {
-    return [];
   }
 }
 

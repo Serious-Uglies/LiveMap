@@ -20,6 +20,10 @@ end
 local function getAttributes(desc)
     local attributes = {}
 
+    if not desc.attributes then
+        return attributes
+    end
+
     for attribute, _ in pairs(desc.attributes) do
         table.insert(attributes, attribute)
     end

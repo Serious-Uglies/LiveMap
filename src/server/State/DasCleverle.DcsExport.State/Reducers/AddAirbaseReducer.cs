@@ -1,3 +1,4 @@
+using DasCleverle.DcsExport.Client.Icons;
 using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.LiveMap.Abstractions;
@@ -27,7 +28,7 @@ public class AddAirbaseReducer : Reducer<AirbasePayload>
             new AirbaseProperties() 
             {
                 Name = airbase.Name,
-                Icon = $"{coalition}-{category}",
+                Icon = new IconKey(new [] { "airbase" }, airbase.Coalition, false).ToString(),
                 Rotation = rotation ?? 0,
                 Runways = airbase.Runways,
                 Frequencies = airbase.Frequencies,

@@ -4,6 +4,10 @@
     <ProjectReference Include="..\DasCleverle.DcsExport.Listener.Abstractions\DasCleverle.DcsExport.Listener.Abstractions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

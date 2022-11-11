@@ -1,3 +1,4 @@
+using DasCleverle.DcsExport.Client.Icons;
 using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.LiveMap.Abstractions;
@@ -8,6 +9,13 @@ namespace DasCleverle.DcsExport.State.Reducers;
 
 public class AddObjectReducer : Reducer<ObjectPayload>
 {
+    private readonly IIconGenerator _iconGenerator;
+
+    public AddObjectReducer(IIconGenerator iconGenerator)
+    {
+        _iconGenerator = iconGenerator;
+    }
+
     protected override LiveState Reduce(LiveState state, IExportEvent<ObjectPayload> exportEvent)
     {
         var obj = exportEvent.Payload;
@@ -17,58 +25,26 @@ public class AddObjectReducer : Reducer<ObjectPayload>
             return state;
         }
 
-        var iconType = GetIconType(obj);
-        var coalition = obj.Coalition.ToString().ToLowerInvariant();
-        var pilot = !string.IsNullOrEmpty(obj.Player) ? "player" : "ai";
+        var iconKey = _iconGenerator.GetIconKey(obj.Coalition, obj.TypeName, obj.Attributes, !string.IsNullOrEmpty(obj.Player));
 
         var feature = Feature(
             obj.Id,
             Point(obj.Position.Long, obj.Position.Lat),
             new ObjectProperties()
             {
-                Icon = $"{coalition}-{iconType}-{pilot}",
+                Icon = iconKey.ToString(),
                 SortKey = GetSortKey(obj),
                 Player = obj.Player,
-                Name = GetName(obj)
+                Name = GetName(obj),
             }
         );
 
         return state.AddMapFeature(Layers.Objects, feature);
     }
 
-    private static string GetIconType(ObjectPayload payload)
-    {
-        if (payload.Type == ObjectType.Static)
-        {
-            return "ground";
-        }
-
-        if (payload.Attributes.Contains(ObjectAttribute.Water))
-        {
-            return "water";
-        }
-        else if (payload.Attributes.Contains(ObjectAttribute.Ground))
-        {
-            return "ground";
-        }
-        else if (payload.Attributes.Contains(ObjectAttribute.Tanker))
-        {
-            return "tanker";
-        }
-        else if (payload.Attributes.Contains(ObjectAttribute.Awacs))
-        {
-            return "awacs";
-        }
-
-        return "fixed";
-    }
-
     private static int GetSortKey(ObjectPayload payload)
     {
-        return payload.Type == ObjectType.Unit
-            && (payload.Attributes.Contains(ObjectAttribute.Fixed) || payload.Attributes.Contains(ObjectAttribute.Rotary))
-            ? 1
-            : 0;
+        return payload.Type == ObjectType.Unit && payload.Attributes.Contains("Air") ? 1 : 0;
     }
 
     private static string GetName(ObjectPayload payload)

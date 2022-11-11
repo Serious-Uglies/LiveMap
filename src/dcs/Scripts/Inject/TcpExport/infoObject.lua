@@ -17,6 +17,16 @@ local function getType(object)
     return "unknown"
 end
 
+local function getAttributes(desc)
+    local attributes = {}
+
+    for attribute, _ in pairs(desc.attributes) do
+        table.insert(attributes, attribute)
+    end
+
+    return attributes
+end
+
 function mod.getObject(object, reduced)
     if object == nil or not object:isExist() then
         return nil
@@ -49,7 +59,7 @@ function mod.getObject(object, reduced)
         coalition = object:getCoalition(),
         country = country.name[object:getCountry()],
         typeName = object:getTypeName(),
-        attributes = desc.attributes,
+        attributes = getAttributes(desc),
         position = position
     }
 

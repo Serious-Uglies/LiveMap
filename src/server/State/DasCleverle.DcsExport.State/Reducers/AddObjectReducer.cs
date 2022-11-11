@@ -33,6 +33,7 @@ public class AddObjectReducer : Reducer<ObjectPayload>
             new ObjectProperties()
             {
                 Icon = iconKey.ToString(),
+                IconSize = obj.Attributes.Contains("Air") ? 0.2 : 0.25,
                 SortKey = GetSortKey(obj),
                 Player = obj.Player,
                 Name = GetName(obj),

@@ -18,7 +18,6 @@ public class DefaultLayerProvider : ILayerProvider
                 {
                     IconImage = "{icon}",
                     IconAllowOverlap = true,
-                    IconSize = Expression.Function<double>("coalesce", Expression.Function<double>("get", "iconSize"), 0.25),
                     SymbolSortKey = Expression.Function<double>("get", "sortKey"),
                 }
             },
@@ -29,11 +28,10 @@ public class DefaultLayerProvider : ILayerProvider
                 {
                     IconImage = "{icon}",
                     IconAllowOverlap = true,
-                    IconSize = 0.175,
                     IconRotate = Expression.Function<double>("get", "rotation"),
                     TextField = "{name}",
                     TextAnchor = Anchor.Left,
-                    TextOffset = new [] { 0.73, 0 },
+                    TextOffset = new [] { 0.78, 0 },
                     TextFont = new [] { "DIN Pro Regular" },
                     TextSize = Expression.Function<double>(
                         "interpolate",

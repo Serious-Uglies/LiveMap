@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using DasCleverle.DcsExport.Client.Icons;
 using DasCleverle.DcsExport.Listener.Model;
@@ -51,12 +52,32 @@ internal class IconGenerator : IIconGenerator
             }
         }
 
-        using var bitmap = new Bitmap(128, 128);
+        return RenderImage(svg);
+    }
+
+    private Stream RenderImage(SvgDocument svg)
+    {
+        const float scale = 0.1875f;
+        const int width = 128;
+        const int height = 128;
+
+        using var bitmap = new Bitmap(width, height);
         using var renderer = SvgRenderer.FromImage(bitmap);
         svg.RenderElement(renderer);
 
+        var scaledWidth = (int)(width * scale);
+        var scaledHeight = (int)(height * scale);
+
+        using var scaled = new Bitmap(scaledWidth, scaledHeight);
+        using var graphics = Graphics.FromImage(scaled);
+
+        graphics.InterpolationMode = InterpolationMode.High;
+        graphics.CompositingQuality = CompositingQuality.HighQuality;
+        graphics.SmoothingMode = SmoothingMode.AntiAlias;
+        graphics.DrawImage(bitmap, new Rectangle(0, 0, scaledWidth, scaledHeight));
+
         var stream = new MemoryStream();
-        bitmap.Save(stream, ImageFormat.Png);
+        scaled.Save(stream, ImageFormat.Png);
         stream.Position = 0;
 
         return stream;

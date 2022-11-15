@@ -1,0 +1,198 @@
+{
+  "fallback": "ground",
+  "attributes": {
+    "AAA": ["main-gun-system"],
+    "AA_flak": {
+      "templates": ["artillery"],
+      "superseeds": ["radar"]
+    },
+    "AA_missile": {
+      "templates": ["missile"],
+      "superseeds": ["radar", "artillery"]
+    },
+    "APC": ["infantry", "armour"],
+    "ATGM": ["anti-tank"],
+    "AWACS": ["air", "awacs"],
+    "Air Defence": ["air-defence"],
+    "Air": ["air"],
+    "Aircraft Carriers": ["carrier"],
+    "Artillery": ["artillery"],
+    "Bombers": ["bomber"],
+    "Corvettes": ["corvette"],
+    "Cruisers": ["cruiser"],
+    "Destroyers": ["destroyer"],
+    "EWR": ["radar"],
+    "Fighters": ["fighter"],
+    "Frigates": ["frigate"],
+    "Ground Units": ["ground"],
+    "Helicopters": ["rotary"],
+    "IFV": ["main-gun-system", "infantry", "armour"],
+    "Infantry carriers": ["infantry"],
+    "Infantry": ["infantry"],
+    "Light armed ships": ["boat"],
+    "MLRS": ["multiple-rocket-launcher"],
+    "Multirole fighters": ["fighter"],
+    "SAM CC": ["hq"],
+    "SAM SR": ["radar"],
+    "SAM TR": ["radar"],
+    "Ships": ["sea"],
+    "Submarines": ["submarine"],
+    "Tankers": ["tanker"],
+    "Tanks": ["armour"],
+    "UAVs": ["uav"],
+    "Unarmed ships": ["merchant-ship"]
+  },
+  "typeNames": {
+    "2B11 mortar": {
+      "replace": ["ground", "mortar"]
+    },
+    "BTR_D": {
+      "add": ["anti-tank"],
+      "remove": ["infantry"]
+    },
+    "Elefant_SdKfz_184": {
+      "add": ["main-gun-system"]
+    },
+    "Grad-URAL": {
+      "add": ["wheeled"]
+    },
+    "HL_B8M1": {
+      "add": ["wheeled"]
+    },
+    "HL_DSHK": {
+      "add": ["wheeled", "motorized"],
+      "remove": ["armour"]
+    },
+    "HL_KORD": {
+      "add": ["wheeled", "motorized"],
+      "remove": ["armour"]
+    },
+    "HQ-7_LN_EO": {
+      "replace": ["ground", "air-defence", "missile"]
+    },
+    "HarborTug": {
+      "add": ["merchant-ship"]
+    },
+    "hy_launcher": {
+      "add": ["missile", "single-rocket-launcher"],
+      "remove": ["artillery"]
+    },
+    "Jagdpanther_G1": {
+      "add": ["main-gun-system"]
+    },
+    "JagdPz_IV": {
+      "add": ["main-gun-system"]
+    },
+    "JTAC": {
+      "replace": ["ground", "reconnaissance"]
+    },
+    "LHA_Tarawa": {
+      "add": ["lha"],
+      "remove": ["carrier"]
+    },
+    "M-109": {
+      "add": ["armour"]
+    },
+    "M10_GMC": {
+      "add": ["main-gun-system"]
+    },
+    "M1045 HMMWV TOW": {
+      "replace": ["ground", "armour", "anti-tank", "wheeled"]
+    },
+    "M1097 Avenger": {
+      "add": ["motorized"]
+    },
+    "M1128 Stryker MGS": {
+      "remove": ["infantry"]
+    },
+    "M1134 Stryker ATGM": {
+      "replace": ["ground", "armour", "anti-tank", "wheeled"]
+    },
+    "M12_GMC": {
+      "add": ["armour"]
+    },
+    "M48 Chaparral": {
+      "add": ["motorized"]
+    },
+    "M4_Tractor": {
+      "remove": ["main-gun-system"]
+    },
+    "MLRS": {
+      "add": ["armour"]
+    },
+    "PLZ05": {
+      "add": ["armour"]
+    },
+    "SAU 2-C9": {
+      "add": ["armour"]
+    },
+    "SAU Akatsia": {
+      "add": ["armour"]
+    },
+    "SAU Gvozdika": {
+      "add": ["armour"]
+    },
+    "SAU Msta": {
+      "add": ["armour"]
+    },
+    "Scud_B": {
+      "add": ["missile", "single-rocket-launcher"],
+      "remove": ["artillery"]
+    },
+    "Silkworm_SR": {
+      "add": ["radar"],
+      "remove": ["artillery"]
+    },
+    "Smerch": {
+      "add": ["wheeled"]
+    },
+    "Smerch_HE": {
+      "add": ["wheeled"]
+    },
+    "SON_9": {
+      "replace": ["ground", "air-defence", "radar"]
+    },
+    "SpGH_Dana": {
+      "add": ["armour", "wheeled"]
+    },
+    "Stug_III": {
+      "add": ["main-gun-system"]
+    },
+    "Stug_IV": {
+      "add": ["main-gun-system"]
+    },
+    "SturmPzIV": {
+      "add": ["armour", "main-gun-system"],
+      "remove": ["artillery"]
+    },
+    "T155_Firtina": {
+      "add": ["armour"]
+    },
+    "TACAN_beacon": {
+      "add": ["signals"]
+    },
+    "Tetrarch": {
+      "remove": ["main-gun-system"]
+    },
+    "tt_B8M1": {
+      "add": ["wheeled"]
+    },
+    "tt_DSHK": {
+      "add": ["wheeled", "motorized"],
+      "remove": ["armour"]
+    },
+    "Uragan_BM-27": {
+      "add": ["wheeled"]
+    },
+    "v1_launcher": {
+      "add": ["missile", "single-rocket-launcher"],
+      "remove": ["artillery"]
+    },
+    "VAB_Mephisto": {
+      "replace": ["ground", "armour", "anti-tank", "wheeled"]
+    },
+    "Wespe124": {
+      "add": ["armour"]
+    }
+  }
+}

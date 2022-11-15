@@ -1,52 +1,83 @@
+using System.Collections.Immutable;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.Extensions.FileProviders;
+
 namespace DasCleverle.DcsExport.LiveMap.Client;
 
-internal static class IconTemplateMap
+internal class IconTemplateMap
 {
-    public static IReadOnlyDictionary<string, string[]> AttributeMap = new Dictionary<string, string[]>()
+    public static IconTemplateMap Load(IFileProvider fileProvider)
     {
-        ["Air Defence"] = new[] { "air-defence" },
-        ["Air"] = new[] { "air" },
-        ["ATGM"] = new[] { "anti-tank" },
-        ["Ground Units"] = new[] { "ground" },
-        ["AAA"] = new[] { "main-gun-system" },
-        ["IFV"] = new[] { "main-gun-system", "infantry", "armour" },
-        ["APC"] = new[] { "infantry", "armour" },
-        // TODO: reconnaissance
-        ["Ships"] = new[] { "sea" },
-        ["Submarines"] = new[] { "submarine" },
-        ["Tanks"] = new[] { "armour" },
-        ["Artillery"] = new[] { "artillery" },
-        ["AA_flak"] = new[] { "artillery" },
-        // TODO: attack
-        ["AWACS"] = new[] { "air", "awacs" },
-        // TODO: battleship
-        ["Bombers"] = new[] { "bomber" },
-        ["Light armed ships"] = new[] { "boat" },
-        ["Aircraft Carriers"] = new[] { "carrier" },
-        ["Corvettes"] = new[] { "corvette" },
-        ["Cruisers"] = new[] { "cruiser" },
-        ["Destroyers"] = new[] { "destroyer" },
-        ["Fighters"] = new[] { "fighter" },
-        ["Multirole fighters"] = new[] { "fighter" },
-        ["Frigates"] = new[] { "frigate" },
-        ["Infantry"] = new[] { "infantry" },
-        ["Infantry carriers"] = new[] { "infantry" },
-        ["Unarmed ships"] = new[] { "merchant-ship" },
-        // ["SAM CC"] = new[] { /* TODO: HQ */ "" },
-        ["SAM LL"] = new[] { "missile" },
-        ["SAM SR"] = new[] { "radar" },
-        ["SAM TR"] = new[] { "radar" },
-        ["EWR"] = new[] { "radar" },
-        ["MLRS"] = new[] { "multiple-rocket-launcher" },
-        ["Helicopters"] = new[] { "rotary" },
-        ["Tankers"] = new[] { "tanker" },
-        ["UAVs"] = new[] { "uav" }
-    };
+        var path = Path.Combine("icons", "icon-config.json");
+        var file = fileProvider.GetFileInfo(path);
 
-    public static IReadOnlyDictionary<string, string[]> TypeNameMap = new Dictionary<string, string[]>()
+        if (!file.Exists)
+        {
+            throw new FileNotFoundException($"Could not find icon configuration file '{file.PhysicalPath}'.");
+        }
+
+        var options = new JsonSerializerOptions
+        {
+            AllowTrailingCommas= true,
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            ReadCommentHandling = JsonCommentHandling.Skip
+        };
+        options.Converters.Add(new JsonAttributeMapConverter());
+
+        using var stream = file.CreateReadStream();
+        return JsonSerializer.Deserialize<IconTemplateMap>(stream, options)!;
+    }
+
+    public string Fallback { get; init; } = "";
+
+    public ImmutableDictionary<string, AttributeMap> Attributes { get; init; } = ImmutableDictionary<string, AttributeMap>.Empty;
+
+    public ImmutableDictionary<string, TypeNameMap> TypeNames { get; init; } = ImmutableDictionary<string, TypeNameMap>.Empty;
+
+    internal class AttributeMap
     {
-        ["LHA_Tarawa"] = new[] { "sea", "lha" },
-        ["HarborTug"] = new[] { "sea", "merchant-ship" },
-        ["2B11 mortar"] = new[] { "ground", "mortar" },
-    };
+        public IEnumerable<string> Templates { get; init; } = Enumerable.Empty<string>();
+
+        public IEnumerable<string> Superseeds { get; init; } = Enumerable.Empty<string>();
+    }
+
+    internal class TypeNameMap
+    {
+        public IEnumerable<string>? Add { get; init; }
+
+        public IEnumerable<string>? Remove { get; init; }
+
+        public IEnumerable<string>? Replace { get; init; }
+    }
+
+    private class JsonAttributeMapConverter : JsonConverter<AttributeMap>
+    {
+        public override AttributeMap? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            switch (reader.TokenType)
+            {
+                case JsonTokenType.StartObject:
+                    var strippedOptions = new JsonSerializerOptions(options);
+                    strippedOptions.Converters.Remove(this);
+                    return JsonSerializer.Deserialize<AttributeMap>(ref reader, strippedOptions);
+
+                case JsonTokenType.StartArray:
+                    var templates = JsonSerializer.Deserialize<string[]>(ref reader, options)!;
+
+                    return new AttributeMap
+                    {
+                        Templates = templates
+                    };
+
+                default:
+                    throw new JsonException($"Unexpected JSON token '{reader.TokenType}'.");
+
+            }
+        }
+
+        public override void Write(Utf8JsonWriter writer, AttributeMap value, JsonSerializerOptions options) 
+            => throw new NotSupportedException();
+    }
 }

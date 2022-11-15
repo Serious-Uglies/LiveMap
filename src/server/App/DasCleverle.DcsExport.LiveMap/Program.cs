@@ -44,9 +44,12 @@ builder.Services.AddLiveState();
 
 builder.Services.AddHostedService<LiveStateHubService>();
 
-builder.Services.AddSingleton<IIconGenerator, IconGenerator>();
+builder.Services.AddSingleton<IconTemplateMap>(sp => IconTemplateMap.Load(sp.GetRequiredService<IWebHostEnvironment>().WebRootFileProvider));
+builder.Services.AddTransient<IIconGenerator, IconGenerator>();
+
 builder.Services.AddSingleton<ILayerRegistry, LayerRegistry>();
-builder.Services.AddSingleton<ILayerProvider, DefaultLayerProvider>();
+builder.Services.AddTransient<ILayerProvider, DefaultLayerProvider>();
+
 builder.Services.AddSingleton<IPopupRegistry, PopupRegistry>();
 builder.Services.AddTransient<IPopupProvider, ObjectPopupProvider>();
 builder.Services.AddTransient<IPopupProvider, AirbasePopupProvider>();

@@ -171,8 +171,10 @@ internal static class IconAttributeGraph
 
         graph.AddEdge("AAA", "Mobile AAA");
         graph.AddEdge("AAA", "Static AAA");
+        graph.AddEdge("AAA", "AA_flak");
         graph.AddEdge("Air Defence vehicles", "EWR");
         graph.AddEdge("Air Defence", "AAA");
+        graph.AddEdge("Air Defence", "AA_missile");
         graph.AddEdge("Air Defence", "Air Defence vehicles");
         graph.AddEdge("Air Defence", "SAM related");
         graph.AddEdge("Air", "Helicopters");

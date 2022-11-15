@@ -11,10 +11,12 @@ namespace DasCleverle.DcsExport.LiveMap.Client;
 internal class IconGenerator : IIconGenerator
 {
     private readonly IFileProvider _fileProvider;
+    private readonly IconTemplateMap _iconTemplateMap;
 
-    public IconGenerator(IWebHostEnvironment environment)
+    public IconGenerator(IWebHostEnvironment environment, IconTemplateMap iconTemplateMap)
     {
         _fileProvider = environment.WebRootFileProvider;
+        _iconTemplateMap = iconTemplateMap;
     }
 
     public IconKey GetIconKey(Coalition coalition, string typeName, IEnumerable<string> attributes, bool isPlayer)
@@ -85,34 +87,59 @@ internal class IconGenerator : IIconGenerator
 
     private IEnumerable<string> GetTemplates(Coalition coalition, string typeName, IEnumerable<string> attributes)
     {
+        _iconTemplateMap.TypeNames.TryGetValue(typeName, out var typeNameMap);
+
+        if (typeNameMap != null && typeNameMap.Replace != null)
+        {
+            return new HashSet<string>(typeNameMap.Replace);
+        }
+
+        var supersessions = new HashSet<string>();
         var templates = new HashSet<string>();
 
-        if (IconTemplateMap.TypeNameMap.TryGetValue(typeName, out var typeNameTemplates))
+        foreach (var attribute in attributes)
         {
-            foreach (var name in typeNameTemplates)
+            if (!_iconTemplateMap.Attributes.TryGetValue(attribute, out var attributeMap))
             {
-                templates.Add(name);
+                continue;
+            }
+
+            foreach (var template in attributeMap.Templates)
+            {
+
+                templates.Add(template);
+            }
+
+            foreach (var supersession in attributeMap.Superseeds)
+            {
+                supersessions.Add(supersession);
             }
         }
-        else
-        {
-            foreach (var attribute in attributes)
-            {
-                if (!IconTemplateMap.AttributeMap.TryGetValue(attribute, out var attributeTemplates))
-                {
-                    continue;
-                }
 
-                foreach (var name in attributeTemplates)
-                {
-                    templates.Add(name);
-                }
+        foreach (var supersession in supersessions)
+        {
+            templates.Remove(supersession);
+        }
+
+        if (typeNameMap?.Remove != null)
+        {
+            foreach (var template in typeNameMap.Remove)
+            {
+                templates.Remove(template);
+            }
+        }
+
+        if (typeNameMap?.Add != null)
+        {
+            foreach (var template in typeNameMap.Add)
+            {
+                templates.Add(template);
             }
         }
 
         if (templates.Count == 0)
         {
-            templates.Add("ground");
+            templates.Add(_iconTemplateMap.Fallback);
         }
 
         return templates;

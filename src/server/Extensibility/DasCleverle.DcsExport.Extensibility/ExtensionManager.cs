@@ -9,16 +9,18 @@ public interface IExtensionManager
     Extension? GetExtension(string id);
 
     IEnumerable<IFileInfo> GetAssetFiles(string subpath);
+
+    IFileInfo GetAssetFile(string path);
 }
 
 public class ExtensionManager : IExtensionManager
 {
     private readonly Dictionary<string, Extension> _extensions = new();
-    private readonly ExtensionFileProvider _assetFiles;
+    private readonly ExtensionAssetFileProvider _assetFiles;
 
     public ExtensionManager()
     {
-        _assetFiles = new ExtensionFileProvider(_extensions.Values);
+        _assetFiles = new ExtensionAssetFileProvider(_extensions.Values);
     }
 
     public IEnumerable<Extension> GetAllExtensions() => _extensions.Values;
@@ -31,4 +33,9 @@ public class ExtensionManager : IExtensionManager
     }
 
     internal void Register(Extension extension) => _extensions[extension.Id] = extension;
+
+    public IFileInfo GetAssetFile(string path)
+    {
+        return _assetFiles.GetFileInfo(path);
+    }
 }

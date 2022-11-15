@@ -44,7 +44,10 @@ builder.Services.AddLiveState();
 
 builder.Services.AddHostedService<LiveStateHubService>();
 
-builder.Services.AddSingleton<IconTemplateMap>(sp => IconTemplateMap.Load(sp.GetRequiredService<IWebHostEnvironment>().WebRootFileProvider));
+builder.Services.AddSingleton<IconTemplateMap>(sp => IconTemplateMap.Load(
+    sp.GetRequiredService<IWebHostEnvironment>().WebRootFileProvider,
+    sp.GetRequiredService<IExtensionManager>())
+);
 builder.Services.AddTransient<IIconGenerator, IconGenerator>();
 
 builder.Services.AddSingleton<ILayerRegistry, LayerRegistry>();

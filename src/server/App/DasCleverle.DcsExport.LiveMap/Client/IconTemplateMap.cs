@@ -1,33 +1,54 @@
 using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DasCleverle.DcsExport.Extensibility;
 using Microsoft.Extensions.FileProviders;
 
 namespace DasCleverle.DcsExport.LiveMap.Client;
 
-internal class IconTemplateMap
+internal record IconTemplateMap
 {
-    public static IconTemplateMap Load(IFileProvider fileProvider)
+    public static IconTemplateMap Load(IFileProvider fileProvider, IExtensionManager extensionManager)
     {
-        var path = Path.Combine("icons", "icon-config.json");
-        var file = fileProvider.GetFileInfo(path);
+        var path = Path.Combine("icons", "config");
+        var files = fileProvider.GetDirectoryContents(path)
+            .Concat(extensionManager.GetAssetFiles(path));
 
-        if (!file.Exists)
+        if (!files.Any())
         {
-            throw new FileNotFoundException($"Could not find icon configuration file '{file.PhysicalPath}'.");
+            throw new FileNotFoundException($"Could not find any icon configuration files.");
         }
 
         var options = new JsonSerializerOptions
         {
-            AllowTrailingCommas= true,
+            AllowTrailingCommas = true,
             PropertyNameCaseInsensitive = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             ReadCommentHandling = JsonCommentHandling.Skip
         };
         options.Converters.Add(new JsonAttributeMapConverter());
 
-        using var stream = file.CreateReadStream();
-        return JsonSerializer.Deserialize<IconTemplateMap>(stream, options)!;
+        var fullMap = new IconTemplateMap();
+
+        foreach (var file in files)
+        {
+            if (file.IsDirectory || Path.GetExtension(file.Name) != ".json") 
+            {
+                continue;
+            }
+
+            using var stream = file.CreateReadStream();
+            var map = JsonSerializer.Deserialize<IconTemplateMap>(stream, options)!;
+
+            fullMap = fullMap with
+            {
+                Fallback = !string.IsNullOrEmpty(map.Fallback) ? map.Fallback : fullMap.Fallback,
+                Attributes = fullMap.Attributes.SetItems(map.Attributes),
+                TypeNames = fullMap.TypeNames.SetItems(map.TypeNames)
+            };
+        }
+
+        return fullMap;
     }
 
     public string Fallback { get; init; } = "";
@@ -77,7 +98,7 @@ internal class IconTemplateMap
             }
         }
 
-        public override void Write(Utf8JsonWriter writer, AttributeMap value, JsonSerializerOptions options) 
+        public override void Write(Utf8JsonWriter writer, AttributeMap value, JsonSerializerOptions options)
             => throw new NotSupportedException();
     }
 }

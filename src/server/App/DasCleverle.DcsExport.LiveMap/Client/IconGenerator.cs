@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using DasCleverle.DcsExport.Client.Icons;
+using DasCleverle.DcsExport.Extensibility;
 using DasCleverle.DcsExport.Listener.Model;
 using Microsoft.Extensions.FileProviders;
 using Svg;
@@ -11,11 +12,13 @@ namespace DasCleverle.DcsExport.LiveMap.Client;
 internal class IconGenerator : IIconGenerator
 {
     private readonly IFileProvider _fileProvider;
+    private readonly IExtensionManager _extensionManager;
     private readonly IconTemplateMap _iconTemplateMap;
 
-    public IconGenerator(IWebHostEnvironment environment, IconTemplateMap iconTemplateMap)
+    public IconGenerator(IWebHostEnvironment environment, IExtensionManager extensionManager, IconTemplateMap iconTemplateMap)
     {
         _fileProvider = environment.WebRootFileProvider;
+        _extensionManager = extensionManager;
         _iconTemplateMap = iconTemplateMap;
     }
 
@@ -106,7 +109,6 @@ internal class IconGenerator : IIconGenerator
 
             foreach (var template in attributeMap.Templates)
             {
-
                 templates.Add(template);
             }
 
@@ -148,6 +150,22 @@ internal class IconGenerator : IIconGenerator
     private IFileInfo GetTemplateFile(Coalition coalition, string template)
     {
         var coalitionPath = Path.Combine("icons", IconKey.GetCoalitionName(coalition), $"{template}.svg");
+        var commonPath = Path.Combine("icons", "common", $"{template}.svg");
+
+        var extensionCoalitionFile = _extensionManager.GetAssetFile(coalitionPath);
+
+        if (extensionCoalitionFile.Exists)
+        {
+            return extensionCoalitionFile;
+        }
+
+        var extensionFallbackFile = _extensionManager.GetAssetFile(commonPath);
+
+        if (extensionFallbackFile.Exists) 
+        {
+            return extensionFallbackFile;
+        }
+
         var coalitionFile = _fileProvider.GetFileInfo(coalitionPath);
 
         if (coalitionFile.Exists)
@@ -155,7 +173,6 @@ internal class IconGenerator : IIconGenerator
             return coalitionFile;
         }
 
-        var commonPath = Path.Combine("icons", "common", $"{template}.svg");
         var fallbackFile = _fileProvider.GetFileInfo(commonPath);
 
         if (fallbackFile.Exists)

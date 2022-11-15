@@ -17,6 +17,7 @@
     "Air": ["air"],
     "Aircraft Carriers": ["carrier"],
     "Artillery": ["artillery"],
+    "Battleplanes": ["attack"],
     "Bombers": ["bomber"],
     "Corvettes": ["corvette"],
     "Cruisers": ["cruiser"],
@@ -29,6 +30,7 @@
     "IFV": ["main-gun-system", "infantry", "armour"],
     "Infantry carriers": ["infantry"],
     "Infantry": ["infantry"],
+    "Interceptors": ["fighter"],
     "Light armed ships": ["boat"],
     "MLRS": ["multiple-rocket-launcher"],
     "Multirole fighters": ["fighter"],
@@ -39,19 +41,55 @@
     "Submarines": ["submarine"],
     "Tankers": ["tanker"],
     "Tanks": ["armour"],
-    "UAVs": ["uav"],
+    "Transports": ["cargo"],
+    "UAVs": {
+      "templates": ["uav"],
+      "superseeds": ["attack", "fighter", "cargo", "tanker", "awacs"]
+    },
     "Unarmed ships": ["merchant-ship"]
   },
   "typeNames": {
     "2B11 mortar": {
       "replace": ["ground", "mortar"]
     },
+    "AV8BNA": {
+      "add": ["attack"],
+      "remove": ["bomber"]
+    },
+    "Bf-109K-4": {
+      "add": ["fighter"],
+      "remove": ["attack"]
+    },
     "BTR_D": {
       "add": ["anti-tank"],
       "remove": ["infantry"]
     },
+    "C-101CC": {
+      "add": ["trainer"],
+      "remove": ["attack"]
+    },
+    "C-101EB": {
+      "add": ["trainer"],
+      "remove": ["attack"]
+    },
+    "Christen Eagle II": {
+      "add": ["trainer"],
+      "remove": ["attack"]
+    },
     "Elefant_SdKfz_184": {
       "add": ["main-gun-system"]
+    },
+    "FW-190A8": {
+      "add": ["fighter"],
+      "remove": ["attack"]
+    },
+    "FW-190D9": {
+      "add": ["fighter"],
+      "remove": ["attack"]
+    },
+    "Hawk": {
+      "add": ["trainer"],
+      "remove": ["attack"]
     },
     "Grad-URAL": {
       "add": ["wheeled"]
@@ -86,6 +124,14 @@
     "JTAC": {
       "replace": ["ground", "reconnaissance"]
     },
+    "L-39C": {
+      "add": ["trainer"],
+      "remove": ["attack"]
+    },
+    "L-39ZA": {
+      "add": ["trainer"],
+      "remove": ["attack"]
+    },
     "LHA_Tarawa": {
       "add": ["lha"],
       "remove": ["carrier"]
@@ -117,11 +163,53 @@
     "M4_Tractor": {
       "remove": ["main-gun-system"]
     },
+    "MB-339A": {
+      "add": ["trainer"],
+      "remove": ["attack"]
+    },
+    "MB-339APAN": {
+      "add": ["trainer"],
+      "remove": ["attack"]
+    },
+    "MiG-15bis": {
+      "add": ["fighter"],
+      "remove": ["attack"]
+    },
+    "MiG-25RBT": {
+      "add": ["fighter"]
+    },
+    "MiG-27K": {
+      "add": ["fighter"],
+      "remove": ["bomber"]
+    },
     "MLRS": {
       "add": ["armour"]
     },
+    "P-47D-30": {
+      "add": ["fighter"],
+      "remove": ["attack"]
+    },
+    "P-47D-30bl1": {
+      "add": ["fighter"],
+      "remove": ["attack"]
+    },
+    "P-47D-40": {
+      "add": ["fighter"],
+      "remove": ["attack"]
+    },
+    "P-51D": {
+      "add": ["fighter"],
+      "remove": ["attack"]
+    },
+    "P-51D-30-NA": {
+      "add": ["fighter"],
+      "remove": ["attack"]
+    },
     "PLZ05": {
       "add": ["armour"]
+    },
+    "S-3B": {
+      "add": ["cargo"]
     },
     "SAU 2-C9": {
       "add": ["armour"]
@@ -152,6 +240,14 @@
     "SON_9": {
       "replace": ["ground", "air-defence", "radar"]
     },
+    "SpitfireLFMkIX": {
+      "add": ["fighter"],
+      "remove": ["attack"]
+    },
+    "SpitfireLFMkIXCW": {
+      "add": ["fighter"],
+      "remove": ["attack"]
+    },
     "SpGH_Dana": {
       "add": ["armour", "wheeled"]
     },
@@ -165,11 +261,31 @@
       "add": ["armour", "main-gun-system"],
       "remove": ["artillery"]
     },
+    "Su-17M4": {
+      "add": ["attack"],
+      "remove": ["bomber"]
+    },
+    "Su-24M": {
+      "add": ["attack"],
+      "remove": ["bomber"]
+    },
+    "Su-24MR": {
+      "add": ["attack"],
+      "remove": ["bomber"]
+    },
+    "Su-34": {
+      "add": ["attack"],
+      "remove": ["bomber"]
+    },
     "T155_Firtina": {
       "add": ["armour"]
     },
     "TACAN_beacon": {
       "add": ["signals"]
+    },
+    "TF-51D": {
+      "add": ["trainer"],
+      "remove": ["attack"]
     },
     "Tetrarch": {
       "remove": ["main-gun-system"]
@@ -180,6 +296,14 @@
     "tt_DSHK": {
       "add": ["wheeled", "motorized"],
       "remove": ["armour"]
+    },
+    "Tornado GR4": {
+      "add": ["attack"],
+      "remove": ["bomber"]
+    },
+    "Tornado IDS": {
+      "add": ["attack"],
+      "remove": ["bomber"]
     },
     "Uragan_BM-27": {
       "add": ["wheeled"]
@@ -193,6 +317,10 @@
     },
     "Wespe124": {
       "add": ["armour"]
+    },
+    "Yak-52": {
+      "add": ["trainer"],
+      "remove": ["uav"]
     }
   }
 }

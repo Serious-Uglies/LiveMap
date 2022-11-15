@@ -59,7 +59,7 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
                 return;
             }
 
-            var extensionFiles = GetExtensionResources();
+            var extensionFiles = _extensionManager.GetAssetFiles(_options.Value.BasePath);
             var jsonFiles = _fileProvider.GetDirectoryContents(_options.Value.BasePath)
                 .Where(f => Path.GetExtension(f.Name) == ".json");
 
@@ -72,7 +72,7 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
                 var overrideName = $"{Path.GetFileNameWithoutExtension(file.Name)}.overrides.json";
                 var @override = overrides.FirstOrDefault(x => x.Name == overrideName);
 
-                var rawFile = await ReadResourceFileAsync(file.PhysicalPath);
+                var rawFile = await ReadResourceFileAsync(file);
 
                 if (rawFile == null)
                 {
@@ -86,7 +86,7 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
                         continue;
                     }
 
-                    var rawExtensionFile = await ReadResourceFileAsync(extensionFile.FullName);
+                    var rawExtensionFile = await ReadResourceFileAsync(extensionFile);
 
                     if (rawExtensionFile == null)
                     {
@@ -96,7 +96,7 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
                     rawFile = rawFile.Merge(rawExtensionFile);
                 }
 
-                var overrideFile = await ReadResourceFileAsync(@override?.PhysicalPath);
+                var overrideFile = await ReadResourceFileAsync(@override);
 
                 if (overrideFile != null)
                 {
@@ -125,14 +125,14 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
         }
     }
 
-    private static async Task<RawResourceFile?> ReadResourceFileAsync(string? path)
+    private static async Task<RawResourceFile?> ReadResourceFileAsync(IFileInfo? file)
     {
-        if (path == null)
+        if (file == null)
         {
             return null;
         }
 
-        using var stream = File.Open(path, FileMode.Open, FileAccess.Read);
+        using var stream = file.CreateReadStream();
         var rawFile = await JsonSerializer.DeserializeAsync<RawResourceFile>(stream, JsonSerializerOptions);
 
         if (rawFile == null)
@@ -141,14 +141,6 @@ public class JsonFileLocalizationProvider : ILocalizationProvider
         }
 
         return rawFile;
-    }
-
-    private FileInfo[] GetExtensionResources()
-    {
-        return _extensionManager.GetAllExtensions()
-            .SelectMany(x => x.Assets)
-            .Where(x => x.FullName.Contains(Path.Join("assets", "lang")))
-            .ToArray();
     }
 
     private static JsonSerializerOptions ConfigureJsonSerializer()

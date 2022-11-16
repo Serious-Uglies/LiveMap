@@ -116,6 +116,7 @@ internal static class IconAttributeGraph
         graph.AddNode("Infantry");
         graph.AddNode("Interceptors");
         graph.AddNode("LR SAM");
+        graph.AddNode("Landing Ships");
         graph.AddNode("Light armed ships");
         graph.AddNode("LightArmoredUnits");
         graph.AddNode("MANPADS AUX");
@@ -151,6 +152,7 @@ internal static class IconAttributeGraph
         graph.AddNode("Ships");
         graph.AddNode("Static AAA");
         graph.AddNode("Strategic bombers");
+        graph.AddNode("Submarines");
         graph.AddNode("Tankers");
         graph.AddNode("Tanks");
         graph.AddNode("Transport helicopters");
@@ -225,6 +227,8 @@ internal static class IconAttributeGraph
         graph.AddEdge("Heavy armed ships", "Cruisers");
         graph.AddEdge("Heavy armed ships", "Destroyers");
         graph.AddEdge("Heavy armed ships", "Frigates");
+        graph.AddEdge("Heavy armed ships", "Landing Ships");
+        graph.AddEdge("Heavy armed ships", "Submarines");
         graph.AddEdge("HeavyArmoredUnits", "Buildings");
         graph.AddEdge("HeavyArmoredUnits", "Fortifications");
         graph.AddEdge("HeavyArmoredUnits", "Heavy armed ships");

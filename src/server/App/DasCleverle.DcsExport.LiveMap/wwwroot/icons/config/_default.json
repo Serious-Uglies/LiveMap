@@ -17,6 +17,7 @@
     "Air": ["air"],
     "Aircraft Carriers": ["carrier"],
     "Artillery": ["artillery"],
+    "Attack helicopters": ["attack-modifier"],
     "Battleplanes": ["attack"],
     "Bombers": ["bomber"],
     "Corvettes": ["corvette"],
@@ -31,6 +32,7 @@
     "Infantry carriers": ["infantry"],
     "Infantry": ["infantry"],
     "Interceptors": ["fighter"],
+    "Landing Ships": ["amphibious-assault"],
     "Light armed ships": ["boat"],
     "MLRS": ["multiple-rocket-launcher"],
     "Multirole fighters": ["fighter"],
@@ -38,10 +40,14 @@
     "SAM SR": ["radar"],
     "SAM TR": ["radar"],
     "Ships": ["sea"],
-    "Submarines": ["submarine"],
+    "Submarines": {
+      "templates": ["submarine"],
+      "superseeds": ["sea"]
+    },
     "Tankers": ["tanker"],
     "Tanks": ["armour"],
     "Transports": ["cargo"],
+    "Transport helicopters": ["utility-modifier"],
     "UAVs": {
       "templates": ["uav"],
       "superseeds": ["attack", "fighter", "cargo", "tanker", "awacs"]
@@ -109,7 +115,7 @@
       "replace": ["ground", "air-defence", "missile"]
     },
     "HarborTug": {
-      "add": ["merchant-ship"]
+      "add": ["sea", "merchant-ship"]
     },
     "hy_launcher": {
       "add": ["missile", "single-rocket-launcher"],

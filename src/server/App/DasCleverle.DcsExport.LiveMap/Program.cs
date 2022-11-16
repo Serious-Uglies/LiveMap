@@ -8,6 +8,7 @@ using DasCleverle.DcsExport.Extensibility;
 using DasCleverle.DcsExport.Listener;
 using DasCleverle.DcsExport.Listener.Json;
 using DasCleverle.DcsExport.LiveMap;
+using DasCleverle.DcsExport.LiveMap.Caching;
 using DasCleverle.DcsExport.LiveMap.Client;
 using DasCleverle.DcsExport.LiveMap.Handlers;
 using DasCleverle.DcsExport.LiveMap.Hubs;
@@ -35,6 +36,9 @@ builder.Services.AddSpaStaticFiles(spa =>
     spa.RootPath = "ClientApp/build";
 });
 
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<ICache, MemoryCache>();
+
 builder.Services.Configure<MapboxOptions>(builder.Configuration);
 builder.Services.Configure<ExtensionOptions>(builder.Configuration.GetSection("Extensions"));
 
@@ -48,7 +52,7 @@ builder.Services.AddSingleton<IconTemplateMap>(sp => IconTemplateMap.Load(
     sp.GetRequiredService<IWebHostEnvironment>().WebRootFileProvider,
     sp.GetRequiredService<IExtensionManager>())
 );
-builder.Services.AddTransient<IIconGenerator, IconGenerator>();
+builder.Services.AddSingleton<IIconGenerator, IconGenerator>();
 
 builder.Services.AddSingleton<ILayerRegistry, LayerRegistry>();
 builder.Services.AddTransient<ILayerProvider, DefaultLayerProvider>();
@@ -58,12 +62,6 @@ builder.Services.AddTransient<IPopupProvider, ObjectPopupProvider>();
 builder.Services.AddTransient<IPopupProvider, AirbasePopupProvider>();
 
 builder.Services.AddSingleton<ILocalizationProvider, JsonFileLocalizationProvider>();
-builder.Services.Configure<JsonFileLocalizationProviderOptions>(options =>
-{
-    options.BasePath = "lang";
-    options.DisableCache = builder.Environment.IsDevelopment();
-});
-
 
 var app = builder.Build();
 

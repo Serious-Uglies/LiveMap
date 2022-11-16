@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using DasCleverle.DcsExport.Client.Icons;
 using DasCleverle.DcsExport.Extensibility;
 using DasCleverle.DcsExport.Listener.Model;
+using DasCleverle.DcsExport.LiveMap.Caching;
 using Microsoft.Extensions.FileProviders;
 using Svg;
 
@@ -11,12 +12,14 @@ namespace DasCleverle.DcsExport.LiveMap.Client;
 
 internal class IconGenerator : IIconGenerator
 {
+    private readonly ICache _cache;
     private readonly IFileProvider _fileProvider;
     private readonly IExtensionManager _extensionManager;
     private readonly IconTemplateMap _iconTemplateMap;
 
-    public IconGenerator(IWebHostEnvironment environment, IExtensionManager extensionManager, IconTemplateMap iconTemplateMap)
+    public IconGenerator(ICache cache, IWebHostEnvironment environment, IExtensionManager extensionManager, IconTemplateMap iconTemplateMap)
     {
+        _cache = cache;
         _fileProvider = environment.WebRootFileProvider;
         _extensionManager = extensionManager;
         _iconTemplateMap = iconTemplateMap;
@@ -25,42 +28,49 @@ internal class IconGenerator : IIconGenerator
     public IconKey GetIconKey(Coalition coalition, string typeName, IEnumerable<string> attributes, bool isPlayer)
     {
         var relevant = IconAttributeGraph.GetRelevantAttributes(attributes);
-        return new IconKey(GetTemplates(coalition, typeName, relevant), coalition, isPlayer);
+        return new IconKey(GetTemplates(typeName, relevant), coalition, isPlayer);
     }
 
     public Stream GenerateIcon(IconKey key)
     {
-        var svg = new SvgDocument();
-        var templates = key.Templates
-            .Select(x => GetTemplateFile(key.Coalition, x))
-            .Select(x => SvgDocument.Open(x.PhysicalPath))
-            .ToArray();
-
-        foreach (var template in templates)
+        var bytes = _cache.GetOrCreate<byte[]>(new IconCacheKey(key.ToString()), (entry) =>
         {
-            foreach (var child in template.Children)
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+
+            var svg = new SvgDocument();
+            var templates = key.Templates
+                .Select(x => GetTemplateFile(key.Coalition, x))
+                .Select(x => SvgDocument.Open(x.PhysicalPath))
+                .ToArray();
+
+            foreach (var template in templates)
             {
-                var resultChild = child;
-
-                if (child.CustomAttributes.TryGetValue("colorable", out var colorable) && colorable == "true")
+                foreach (var child in template.Children)
                 {
-                    var color = IconColors.GetCoalitionColor(key.Coalition, key.IsPlayer);
+                    var resultChild = child;
 
-                    if (color.HasValue)
+                    if (child.CustomAttributes.TryGetValue("colorable", out var colorable) && colorable == "true")
                     {
-                        resultChild = child.DeepCopy();
-                        resultChild.Fill = new SvgColourServer(color.Value);
+                        var color = IconColors.GetCoalitionColor(key.Coalition, key.IsPlayer);
+
+                        if (color.HasValue)
+                        {
+                            resultChild = child.DeepCopy();
+                            resultChild.Fill = new SvgColourServer(color.Value);
+                        }
                     }
+
+                    svg.Children.Add(resultChild);
                 }
-
-                svg.Children.Add(resultChild);
             }
-        }
 
-        return RenderImage(svg);
+            return RenderImage(svg);
+        });
+
+        return new MemoryStream(bytes, false);
     }
 
-    private Stream RenderImage(SvgDocument svg)
+    private byte[] RenderImage(SvgDocument svg)
     {
         const float scale = 0.1875f;
         const int width = 128;
@@ -81,70 +91,76 @@ internal class IconGenerator : IIconGenerator
         graphics.SmoothingMode = SmoothingMode.AntiAlias;
         graphics.DrawImage(bitmap, new Rectangle(0, 0, scaledWidth, scaledHeight));
 
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         scaled.Save(stream, ImageFormat.Png);
         stream.Position = 0;
 
-        return stream;
+        var bytes = new byte[stream.Length];
+        stream.Read(bytes, 0, (int)stream.Length);
+
+        return bytes;
     }
 
-    private IEnumerable<string> GetTemplates(Coalition coalition, string typeName, IEnumerable<string> attributes)
+    private IEnumerable<string> GetTemplates(string typeName, IEnumerable<string> attributes)
     {
-        _iconTemplateMap.TypeNames.TryGetValue(typeName, out var typeNameMap);
-
-        if (typeNameMap != null && typeNameMap.Replace != null)
+        return _cache.GetOrCreate<HashSet<string>>(new TemplateCacheKey(typeName), (entry) =>
         {
-            return new HashSet<string>(typeNameMap.Replace);
-        }
+            _iconTemplateMap.TypeNames.TryGetValue(typeName, out var typeNameMap);
 
-        var supersessions = new HashSet<string>();
-        var templates = new HashSet<string>();
-
-        foreach (var attribute in attributes)
-        {
-            if (!_iconTemplateMap.Attributes.TryGetValue(attribute, out var attributeMap))
+            if (typeNameMap != null && typeNameMap.Replace != null)
             {
-                continue;
+                return new HashSet<string>(typeNameMap.Replace);
             }
 
-            foreach (var template in attributeMap.Templates)
+            var templates = new HashSet<string>();
+            var supersessions = new HashSet<string>();
+
+            foreach (var attribute in attributes)
             {
-                templates.Add(template);
+                if (!_iconTemplateMap.Attributes.TryGetValue(attribute, out var attributeMap))
+                {
+                    continue;
+                }
+
+                foreach (var template in attributeMap.Templates)
+                {
+                    templates.Add(template);
+                }
+
+                foreach (var supersession in attributeMap.Superseeds)
+                {
+                    supersessions.Add(supersession);
+                }
             }
 
-            foreach (var supersession in attributeMap.Superseeds)
+            foreach (var supersession in supersessions)
             {
-                supersessions.Add(supersession);
+                templates.Remove(supersession);
             }
-        }
 
-        foreach (var supersession in supersessions)
-        {
-            templates.Remove(supersession);
-        }
-
-        if (typeNameMap?.Remove != null)
-        {
-            foreach (var template in typeNameMap.Remove)
+            if (typeNameMap?.Remove != null)
             {
-                templates.Remove(template);
+                foreach (var template in typeNameMap.Remove)
+                {
+                    templates.Remove(template);
+                }
             }
-        }
 
-        if (typeNameMap?.Add != null)
-        {
-            foreach (var template in typeNameMap.Add)
+            if (typeNameMap?.Add != null)
             {
-                templates.Add(template);
+                foreach (var template in typeNameMap.Add)
+                {
+                    templates.Add(template);
+                }
             }
-        }
 
-        if (templates.Count == 0)
-        {
-            templates.Add(_iconTemplateMap.Fallback);
-        }
+            if (templates.Count == 0)
+            {
+                templates.Add(_iconTemplateMap.Fallback);
+            }
 
-        return templates;
+            return templates;
+        });
     }
 
     private IFileInfo GetTemplateFile(Coalition coalition, string template)
@@ -161,7 +177,7 @@ internal class IconGenerator : IIconGenerator
 
         var extensionFallbackFile = _extensionManager.GetAssetFile(commonPath);
 
-        if (extensionFallbackFile.Exists) 
+        if (extensionFallbackFile.Exists)
         {
             return extensionFallbackFile;
         }
@@ -181,5 +197,25 @@ internal class IconGenerator : IIconGenerator
         }
 
         throw new FileNotFoundException($"Could not find file for template '{template}'");
+    }
+
+    private record struct IconCacheKey
+    {
+        public string Key { get; }
+
+        public IconCacheKey(string key)
+        {
+            Key = key;
+        }
+    }
+
+    private record struct TemplateCacheKey
+    {
+        public string Key { get; }
+
+        public TemplateCacheKey(string typeName)
+        {
+            Key = typeName;
+        }
     }
 }

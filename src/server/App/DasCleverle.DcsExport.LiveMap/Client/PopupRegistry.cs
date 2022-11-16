@@ -1,49 +1,34 @@
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using DasCleverle.DcsExport.Client.Abstractions.Popups;
+using DasCleverle.DcsExport.LiveMap.Caching;
 
 namespace DasCleverle.DcsExport.LiveMap.Client;
 
 internal class PopupRegistry : IPopupRegistry
 {
-    private readonly Dictionary<string, IPopup> _cache = new();
-    private bool _isInitialized = false;
-    private object _syncRoot = new();
-
+    private readonly object _cacheKey = new();
+    private readonly ICache _cache;
     private readonly IEnumerable<IPopupProvider> _providers;
     private readonly IEnumerable<IPopupExtender> _extenders;
 
-    public PopupRegistry(IEnumerable<IPopupProvider> providers, IEnumerable<IPopupExtender> extenders)
+    public PopupRegistry(ICache cache, IEnumerable<IPopupProvider> providers, IEnumerable<IPopupExtender> extenders)
     {
+        _cache = cache;
         _providers = providers;
         _extenders = extenders;
     }
 
     public IPopup? GetPopup(string layer)
     {
-        Initialize();
-        return _cache.TryGetValue(layer, out var popup) ? popup : null;
+        return GetPopups().TryGetValue(layer, out var popup) ? popup : null;
     }
 
     public IDictionary<string, IPopup> GetPopups()
     {
-        Initialize();
-        return new ReadOnlyDictionary<string, IPopup>(_cache);
-    }
-
-    private void Initialize() 
-    {
-        if (_isInitialized)
+        return _cache.GetOrCreate<ImmutableDictionary<string, IPopup>>(_cacheKey, (entry) =>
         {
-            return;
-        }
-
-        lock (_syncRoot)
-        {
-            if (_isInitialized)
-            {
-                return;
-            }
-
+            var popups = ImmutableDictionary.CreateBuilder<string, IPopup>();
             var providersByLayer = _providers.GroupBy(x => x.Layer);
 
             foreach (var providers in providersByLayer)
@@ -63,10 +48,10 @@ internal class PopupRegistry : IPopupRegistry
                     popup = extender.Extend(popup);
                 }
 
-                _cache[provider.Layer] = popup;
+                popups[provider.Layer] = popup;
             }
 
-            _isInitialized = true;
-        }
+            return popups.ToImmutable();
+        });
     }
 }

@@ -1,1 +1,0 @@
-& dotnet run --project ../../../../tools/IconBuilder -- -d assets/icon-templates/definition.json -t assets/icon-templates -o wwwroot/icons

@@ -2,75 +2,70 @@ using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DasCleverle.DcsExport.Extensibility;
+using DasCleverle.DcsExport.LiveMap.Caching;
 using Microsoft.Extensions.FileProviders;
 
 namespace DasCleverle.DcsExport.LiveMap.Client;
 
-internal record IconTemplateMap
+
+internal class IconTemplateMapManager
 {
-    public static IconTemplateMap Load(IFileProvider fileProvider, IExtensionManager extensionManager)
+    private readonly object _cacheKey = new();
+    private readonly ICache _cache;
+    private readonly IFileProvider _fileProvider;
+    private readonly IExtensionManager _extensionManager;
+
+    public IconTemplateMapManager(ICache cache, IWebHostEnvironment environment, IExtensionManager extensionManager)
     {
-        var path = Path.Combine("icons", "config");
-        var files = fileProvider.GetDirectoryContents(path)
-            .Concat(extensionManager.GetAssetFiles(path));
+        _cache = cache;
+        _fileProvider = environment.WebRootFileProvider;
+        _extensionManager = extensionManager;
+    }
 
-        if (!files.Any())
+    public IconTemplateMap GetTemplateMap()
+    {
+        return _cache.GetOrCreate<IconTemplateMap>(_cacheKey, (entry) =>
         {
-            throw new FileNotFoundException($"Could not find any icon configuration files.");
-        }
+            var path = Path.Combine("icons", "config");
+            var files = _fileProvider.GetDirectoryContents(path)
+                .Concat(_extensionManager.GetAssetFiles(path));
 
-        var options = new JsonSerializerOptions
-        {
-            AllowTrailingCommas = true,
-            PropertyNameCaseInsensitive = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            ReadCommentHandling = JsonCommentHandling.Skip
-        };
-        options.Converters.Add(new JsonAttributeMapConverter());
-
-        var fullMap = new IconTemplateMap();
-
-        foreach (var file in files)
-        {
-            if (file.IsDirectory || Path.GetExtension(file.Name) != ".json") 
+            if (!files.Any())
             {
-                continue;
+                throw new FileNotFoundException($"Could not find any icon configuration files.");
             }
 
-            using var stream = file.CreateReadStream();
-            var map = JsonSerializer.Deserialize<IconTemplateMap>(stream, options)!;
-
-            fullMap = fullMap with
+            var options = new JsonSerializerOptions
             {
-                Fallback = !string.IsNullOrEmpty(map.Fallback) ? map.Fallback : fullMap.Fallback,
-                Attributes = fullMap.Attributes.SetItems(map.Attributes),
-                TypeNames = fullMap.TypeNames.SetItems(map.TypeNames)
+                AllowTrailingCommas = true,
+                PropertyNameCaseInsensitive = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                ReadCommentHandling = JsonCommentHandling.Skip
             };
-        }
+            options.Converters.Add(new JsonAttributeMapConverter());
 
-        return fullMap;
-    }
+            var fullMap = new IconTemplateMap();
 
-    public string Fallback { get; init; } = "";
+            foreach (var file in files)
+            {
+                if (file.IsDirectory || Path.GetExtension(file.Name) != ".json")
+                {
+                    continue;
+                }
 
-    public ImmutableDictionary<string, AttributeMap> Attributes { get; init; } = ImmutableDictionary<string, AttributeMap>.Empty;
+                using var stream = file.CreateReadStream();
+                var map = JsonSerializer.Deserialize<IconTemplateMap>(stream, options)!;
 
-    public ImmutableDictionary<string, TypeNameMap> TypeNames { get; init; } = ImmutableDictionary<string, TypeNameMap>.Empty;
+                fullMap = fullMap with
+                {
+                    Fallback = !string.IsNullOrEmpty(map.Fallback) ? map.Fallback : fullMap.Fallback,
+                    Attributes = fullMap.Attributes.SetItems(map.Attributes),
+                    TypeNames = fullMap.TypeNames.SetItems(map.TypeNames)
+                };
+            }
 
-    internal class AttributeMap
-    {
-        public IEnumerable<string> Templates { get; init; } = Enumerable.Empty<string>();
-
-        public IEnumerable<string> Superseeds { get; init; } = Enumerable.Empty<string>();
-    }
-
-    internal class TypeNameMap
-    {
-        public IEnumerable<string>? Add { get; init; }
-
-        public IEnumerable<string>? Remove { get; init; }
-
-        public IEnumerable<string>? Replace { get; init; }
+            return fullMap;
+        });
     }
 
     private class JsonAttributeMapConverter : JsonConverter<AttributeMap>
@@ -101,4 +96,29 @@ internal record IconTemplateMap
         public override void Write(Utf8JsonWriter writer, AttributeMap value, JsonSerializerOptions options)
             => throw new NotSupportedException();
     }
+}
+
+internal record IconTemplateMap
+{
+    public string Fallback { get; init; } = "";
+
+    public ImmutableDictionary<string, AttributeMap> Attributes { get; init; } = ImmutableDictionary<string, AttributeMap>.Empty;
+
+    public ImmutableDictionary<string, TypeNameMap> TypeNames { get; init; } = ImmutableDictionary<string, TypeNameMap>.Empty;
+}
+
+internal class AttributeMap
+{
+    public IEnumerable<string> Templates { get; init; } = Enumerable.Empty<string>();
+
+    public IEnumerable<string> Superseeds { get; init; } = Enumerable.Empty<string>();
+}
+
+internal class TypeNameMap
+{
+    public IEnumerable<string>? Add { get; init; }
+
+    public IEnumerable<string>? Remove { get; init; }
+
+    public IEnumerable<string>? Replace { get; init; }
 }

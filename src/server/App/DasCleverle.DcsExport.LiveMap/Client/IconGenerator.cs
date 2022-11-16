@@ -15,14 +15,14 @@ internal class IconGenerator : IIconGenerator
     private readonly ICache _cache;
     private readonly IFileProvider _fileProvider;
     private readonly IExtensionManager _extensionManager;
-    private readonly IconTemplateMap _iconTemplateMap;
+    private readonly IconTemplateMapManager _iconTemplateMapManager;
 
-    public IconGenerator(ICache cache, IWebHostEnvironment environment, IExtensionManager extensionManager, IconTemplateMap iconTemplateMap)
+    public IconGenerator(ICache cache, IWebHostEnvironment environment, IExtensionManager extensionManager, IconTemplateMapManager iconTemplateMapManager)
     {
         _cache = cache;
         _fileProvider = environment.WebRootFileProvider;
         _extensionManager = extensionManager;
-        _iconTemplateMap = iconTemplateMap;
+        _iconTemplateMapManager = iconTemplateMapManager;
     }
 
     public IconKey GetIconKey(Coalition coalition, string typeName, IEnumerable<string> attributes, bool isPlayer)
@@ -105,7 +105,9 @@ internal class IconGenerator : IIconGenerator
     {
         return _cache.GetOrCreate<HashSet<string>>(new TemplateCacheKey(typeName), (entry) =>
         {
-            _iconTemplateMap.TypeNames.TryGetValue(typeName, out var typeNameMap);
+            var map = _iconTemplateMapManager.GetTemplateMap();
+
+            map.TypeNames.TryGetValue(typeName, out var typeNameMap);
 
             if (typeNameMap != null && typeNameMap.Replace != null)
             {
@@ -117,7 +119,7 @@ internal class IconGenerator : IIconGenerator
 
             foreach (var attribute in attributes)
             {
-                if (!_iconTemplateMap.Attributes.TryGetValue(attribute, out var attributeMap))
+                if (!map.Attributes.TryGetValue(attribute, out var attributeMap))
                 {
                     continue;
                 }
@@ -156,7 +158,7 @@ internal class IconGenerator : IIconGenerator
 
             if (templates.Count == 0)
             {
-                templates.Add(_iconTemplateMap.Fallback);
+                templates.Add(map.Fallback);
             }
 
             return templates;

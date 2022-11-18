@@ -76,7 +76,21 @@ function Mapbox({
       return;
     }
 
+    const loading = new Set<string>();
+    const fallbackImage = {
+      width: 24,
+      height: 24,
+      data: new Uint8Array(24 * 24 * 4),
+    };
+
     map.on('styleimagemissing', ({ id }: { id: string }) => {
+      if (loading.has(id)) {
+        return;
+      }
+
+      loading.add(id);
+      map.addImage(id, fallbackImage);
+
       map.loadImage('/api/client/icon/' + id, (error, image) => {
         if (error) {
           console.error(error);
@@ -87,11 +101,12 @@ function Mapbox({
           return;
         }
 
-        if (map.hasImage(id)) {
-          return;
-        }
+        map.updateImage(id, image);
+        loading.delete(id);
 
-        map.addImage(id, image);
+        if (loading.size === 0) {
+          map.triggerRepaint();
+        }
       });
     });
 

@@ -10,6 +10,8 @@ public record ObjectPayload : EventPayload
 
     public ObjectType Type { get; init; }
 
+    public ObjectCategory Category { get; init; }
+
     public int? GroupId { get; init; }
 
     public string? Name { get; init; }

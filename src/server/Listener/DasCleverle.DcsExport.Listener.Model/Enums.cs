@@ -13,3 +13,12 @@ public enum ObjectType
     Unit = 1,
     Static = 2
 }
+
+public enum ObjectCategory 
+{
+    Plane = 0,
+    Helicopter = 1,
+    Ground = 2,
+    Ship = 3,
+    Static = 4
+}

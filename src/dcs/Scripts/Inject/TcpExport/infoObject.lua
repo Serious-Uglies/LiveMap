@@ -57,6 +57,7 @@ function mod.getObject(object, reduced)
 
     local objectInfo = {
         type = type,
+        category = desc.category,
         id = id,
         name = object:getName(),
         displayName = TcpExportHook.objectNames[object:getTypeName()],
@@ -101,7 +102,7 @@ local function getStatics(side, reduced)
         local static = mod.getObject(statics[i], reduced)
 
         if static ~= nil then
-            table.insert(objects, mod.getObject(statics[i], reduced))
+            table.insert(objects, static)
         end
     end
 

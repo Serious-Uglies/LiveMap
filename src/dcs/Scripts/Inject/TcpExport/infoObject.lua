@@ -59,7 +59,7 @@ function mod.getObject(object, reduced)
         type = type,
         id = id,
         name = object:getName(),
-        displayName = desc.displayName,
+        displayName = TcpExportHook.objectNames[object:getTypeName()],
         coalition = object:getCoalition(),
         country = country.name[object:getCountry()],
         typeName = object:getTypeName(),

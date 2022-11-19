@@ -9,7 +9,8 @@
     "StaticObject",
     "DCS",
     "TcpExportHook",
-    "TcpExportConfig"
+    "TcpExportConfig",
+    "Objects"
   ],
   "Lua.runtime.version": "Lua 5.1"
 }

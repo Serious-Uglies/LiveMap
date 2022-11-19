@@ -18,17 +18,17 @@ public class AddAirbaseReducer : Reducer<AirbasePayload>
             return state;
         }
 
-        var coalition = airbase.Coalition.ToString().ToLowerInvariant();
         var category = airbase.Category.ToString().ToLowerInvariant();
+        var iconKey = new IconKey(new[] { category }, airbase.Coalition, false);
         var rotation = airbase.Runways.FirstOrDefault()?.Course;
 
         var feature = Feature(
             airbase.Id,
             Point(airbase.Position.Long, airbase.Position.Lat),
-            new AirbaseProperties() 
+            new AirbaseProperties()
             {
                 Name = airbase.Name,
-                Icon = new IconKey(new [] { "airbase" }, airbase.Coalition, false).ToString(),
+                Icon = iconKey.ToString(),
                 Rotation = rotation ?? 0,
                 Runways = airbase.Runways,
                 Frequencies = airbase.Frequencies,

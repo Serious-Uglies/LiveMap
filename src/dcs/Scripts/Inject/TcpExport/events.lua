@@ -18,8 +18,15 @@ local function removeObjectHandler(event)
         return
     end
 
-    local unit = event.target or event.initiator;
-    connection.send("object:remove", { id = unit:getID() })
+    if event.target then
+        connection.send("object:remove", { id = event.target:getID() })
+        return
+    end
+
+    if event.initiator then
+        connection.send("object:remove", { id = event.initiator:getID() })
+        return
+    end
 end
 
 local function missionEndHandler(event)

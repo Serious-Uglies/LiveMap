@@ -1,3 +1,4 @@
+using DasCleverle.DcsExport.Client.Icons;
 using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.LiveMap.Abstractions;
@@ -8,67 +9,40 @@ namespace DasCleverle.DcsExport.State.Reducers;
 
 public class AddObjectReducer : Reducer<ObjectPayload>
 {
+    private readonly IIconGenerator _iconGenerator;
+
+    public AddObjectReducer(IIconGenerator iconGenerator)
+    {
+        _iconGenerator = iconGenerator;
+    }
+
     protected override LiveState Reduce(LiveState state, IExportEvent<ObjectPayload> exportEvent)
     {
-        var obj = exportEvent.Payload;
+        var payload = exportEvent.Payload;
 
-        if (obj.Position == null)
+        if (payload.Position == null)
         {
             return state;
         }
 
-        var iconType = GetIconType(obj);
-        var coalition = obj.Coalition.ToString().ToLowerInvariant();
-        var pilot = !string.IsNullOrEmpty(obj.Player) ? "player" : "ai";
-
         var feature = Feature(
-            obj.Id,
-            Point(obj.Position.Long, obj.Position.Lat),
+            payload.Id,
+            Point(payload.Position.Long, payload.Position.Lat),
             new ObjectProperties()
             {
-                Icon = $"{coalition}-{iconType}-{pilot}",
-                SortKey = GetSortKey(obj),
-                Player = obj.Player,
-                Name = GetName(obj)
+                Icon = GetIconKey(payload).ToString(),
+                SortKey = GetSortKey(payload),
+                Player = payload.Player,
+                Name = GetName(payload),
             }
         );
 
         return state.AddMapFeature(Layers.Objects, feature);
     }
 
-    private static string GetIconType(ObjectPayload payload)
-    {
-        if (payload.Type == ObjectType.Static)
-        {
-            return "ground";
-        }
-
-        if (payload.Attributes.Contains(ObjectAttribute.Water))
-        {
-            return "water";
-        }
-        else if (payload.Attributes.Contains(ObjectAttribute.Ground))
-        {
-            return "ground";
-        }
-        else if (payload.Attributes.Contains(ObjectAttribute.Tanker))
-        {
-            return "tanker";
-        }
-        else if (payload.Attributes.Contains(ObjectAttribute.Awacs))
-        {
-            return "awacs";
-        }
-
-        return "fixed";
-    }
-
     private static int GetSortKey(ObjectPayload payload)
     {
-        return payload.Type == ObjectType.Unit
-            && (payload.Attributes.Contains(ObjectAttribute.Fixed) || payload.Attributes.Contains(ObjectAttribute.Rotary))
-            ? 1
-            : 0;
+        return payload.Type == ObjectType.Unit && payload.Attributes.Contains("Air") ? 1 : 0;
     }
 
     private static string GetName(ObjectPayload payload)
@@ -84,5 +58,13 @@ public class AddObjectReducer : Reducer<ObjectPayload>
         }
 
         return "";
+    }
+
+    private IconKey GetIconKey(ObjectPayload payload)
+    {
+        var colorKey = payload.Coalition.ToString().ToLowerInvariant();
+        var colorModifier = !string.IsNullOrEmpty(payload.Player) ? "player" : "ai";
+
+        return _iconGenerator.GetIconKey(colorKey, colorModifier, payload.TypeName, payload.Attributes);
     }
 }

@@ -1,7 +1,6 @@
-using System.Net;
 using DasCleverle.DcsExport.Client.Abstractions.Layers;
 using DasCleverle.DcsExport.Client.Abstractions.Popups;
-using DasCleverle.DcsExport.LiveMap.Client;
+using DasCleverle.DcsExport.Client.Icons;
 using DasCleverle.Mapbox.Layers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -36,22 +35,10 @@ public class ClientController : Controller
         return Json(registry.GetPopups());
     }
 
-    [HttpGet("icons")]
-    public IEnumerable<IconInfo> GetIcons([FromServices] IIconProvider iconProvider)
+    [HttpGet("icon/{iconKey}")]
+    public ActionResult GetIcon(string iconKey, [FromServices] IIconGenerator iconGenerator)
     {
-        return iconProvider.GetIcons();
-    }
-
-    [HttpGet("icons/{fileName}")]
-    public ActionResult GetIcons([FromServices] IIconProvider iconProvider, string fileName)
-    {
-        var file = iconProvider.GetIconFile(fileName);
-
-        if (file == null || !ContentTypeProvider.TryGetContentType(fileName, out var contentType))
-        {
-            return StatusCode((int)HttpStatusCode.NotFound);
-        }
-
-        return File(file, contentType);
+        var key = IconKey.Parse(iconKey);
+        return File(iconGenerator.GenerateIcon(key), "image/png");
     }
 }

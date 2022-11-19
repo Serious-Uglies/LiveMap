@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.0" />
+    <PackageReference Include="Svg" Version="3.4.4" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -68,11 +69,6 @@
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       </ResolvedFileToPublish>
     </ItemGroup>
-  </Target>
-
-  <Target Name="Generate-Icons" AfterTargets="Build">
-    <Exec Condition="'$(OS)' == 'Windows_NT'" Command="powershell.exe ./Generate-Icons.ps1" />
-    <Exec Condition="'$(OS)' != 'Windows_NT'" Command="pwsh ./Generate-Icons.ps1" />
   </Target>
 
 </Project>

@@ -1,42 +1,30 @@
+using System.Collections.Immutable;
 using DasCleverle.DcsExport.Client.Abstractions.Layers;
+using DasCleverle.DcsExport.LiveMap.Caching;
 using DasCleverle.Mapbox.Layers;
 
 namespace DasCleverle.DcsExport.LiveMap.Client;
 
 internal class LayerRegistry : ILayerRegistry
 {
-    private List<ILayer> _cache = new();
-    private bool _isInitialized = false;
-    private object _syncRoot = new();
+    private readonly object _cacheKey = new();
+    private readonly ICache _cache;
 
     private readonly IEnumerable<ILayerProvider> _providers;
     private readonly IEnumerable<ILayerExtender> _extenders;
 
-    public LayerRegistry(IEnumerable<ILayerProvider> providers, IEnumerable<ILayerExtender> extenders)
+    public LayerRegistry(ICache cache, IEnumerable<ILayerProvider> providers, IEnumerable<ILayerExtender> extenders)
     {
+        _cache = cache;
         _providers = providers;
         _extenders = extenders;
     }
 
     public IEnumerable<ILayer> GetLayers()
     {
-        Initialize();
-        return _cache;
-    }
-
-    private void Initialize()
-    {
-        if (_isInitialized)
+        return _cache.GetOrCreate<ImmutableList<ILayer>>(_cacheKey, (entry) =>
         {
-            return;
-        }
-
-        lock (_syncRoot)
-        {
-            if (_isInitialized)
-            {
-                return;
-            }
+            var list = ImmutableList.CreateBuilder<ILayer>();
 
             foreach (var provider in _providers)
             {
@@ -52,12 +40,12 @@ internal class LayerRegistry : ILayerRegistry
                         extendedLayer = extender.Extend(extendedLayer);
                     }
 
-                    _cache.Add(extendedLayer);
+                    list.Add(extendedLayer);
                 }
+
             }
 
-            _isInitialized = true;
-        }
+            return list.ToImmutable();
+        });
     }
-
 }

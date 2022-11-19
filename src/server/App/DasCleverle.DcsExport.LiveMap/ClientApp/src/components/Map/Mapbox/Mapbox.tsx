@@ -11,7 +11,6 @@ import { getMapboxConfig, MapboxConfiguration } from '../../../api/config';
 import MapboxLayer from './MapboxLayer';
 
 import './Mapbox.css';
-import { getIcons, IconInfo } from '../../../api/client';
 
 type MapboxProps = {
   children: React.ReactNode;
@@ -30,13 +29,11 @@ function Mapbox({
 }: MapboxProps) {
   const mapRef = useRef<MapRef | null>(null);
   const [config, setConfig] = useState<MapboxConfiguration | null>();
-  const [icons, setIcons] = useState<IconInfo[]>([]);
   const [cursor, setCursor] = useState('auto');
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     getMapboxConfig().then((config) => setConfig(config));
-    getIcons().then((icons) => setIcons(icons));
   }, []);
 
   const handleMouseEnter = useCallback(
@@ -73,14 +70,28 @@ function Mapbox({
   );
 
   const handleMapLoad = useCallback(() => {
-    if (!mapRef.current) {
+    const map = mapRef.current;
+
+    if (!map) {
       return;
     }
 
-    const map = mapRef.current;
+    const loading = new Set<string>();
+    const fallbackImage = {
+      width: 24,
+      height: 24,
+      data: new Uint8Array(24 * 24 * 4),
+    };
 
-    for (let icon of icons) {
-      map.loadImage(icon.url, (error, image) => {
+    map.on('styleimagemissing', ({ id }: { id: string }) => {
+      if (loading.has(id)) {
+        return;
+      }
+
+      loading.add(id);
+      map.addImage(id, fallbackImage);
+
+      map.loadImage('/api/client/icon/' + id, (error, image) => {
         if (error) {
           console.error(error);
           return;
@@ -90,23 +101,17 @@ function Mapbox({
           return;
         }
 
-        map.addImage(icon.id, image);
+        map.updateImage(id, image);
+        loading.delete(id);
 
-        const images = map.listImages();
-        let loadedCount = 0;
-
-        for (let { id } of icons) {
-          if (images.includes(id)) {
-            loadedCount++;
-          }
-        }
-
-        if (loadedCount === icons.length) {
-          setLoaded(true);
+        if (loading.size === 0) {
+          map.triggerRepaint();
         }
       });
-    }
-  }, [icons]);
+    });
+
+    setLoaded(true);
+  }, []);
 
   if (!config) {
     return null;

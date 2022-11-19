@@ -15,9 +15,9 @@ entry_assembly = "DasCleverle.DcsExport.SampleExtension"
 # These files must be located in the 'assets' directory
 # At the moment these types of assets are supported:
 #  * "lang/*.json": Custom localization resources
-#  * "icons/*.png": Custom icons for map features
+#  * "icons/**/*.svg": Custom icons for map features
 assets = [
-    "lang/en.json",
+    "lang/en.json"
 ]
 
 # An array of LUA scripts that contain the DCS-side part of the extension

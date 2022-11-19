@@ -6,6 +6,7 @@
     <ProjectReference Include="..\..\Listener\DasCleverle.DcsExport.Listener.Abstractions\DasCleverle.DcsExport.Listener.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\lib\DasCleverle.GeoJson\DasCleverle.GeoJson.csproj" />
     <ProjectReference Include="..\..\App\DasCleverle.DcsExport.LiveMap.Abstractions\DasCleverle.DcsExport.LiveMap.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Client\DasCleverle.DcsExport.Client.Abstractions\DasCleverle.DcsExport.Client.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

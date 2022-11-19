@@ -1,4 +1,6 @@
+using System.Collections.Immutable;
 using DasCleverle.DcsExport.Listener.Abstractions;
+
 namespace DasCleverle.DcsExport.Listener.Model;
 
 [EventPayload("object:add")]
@@ -18,11 +20,11 @@ public record ObjectPayload : EventPayload
 
     public string? Country { get; init; }
 
-    public string? TypeName { get; init; }
+    public string TypeName { get; init; } = "";
 
     public string? Player { get; init; }
 
-    public HashSet<ObjectAttribute> Attributes { get; init; } = new HashSet<ObjectAttribute>();
+    public ImmutableHashSet<string> Attributes { get; init; } = ImmutableHashSet<string>.Empty;
 
     public Position? Position { get; init; }
 }

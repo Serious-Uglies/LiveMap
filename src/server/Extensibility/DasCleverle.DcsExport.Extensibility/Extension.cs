@@ -2,9 +2,10 @@ namespace DasCleverle.DcsExport.Extensibility;
 
 public record Extension
 {
-    internal Extension(string id, ExtensionConfiguration configuration, Version version, IEnumerable<FileInfo> assets, IEnumerable<FileInfo> scripts)
+    internal Extension(string id, DirectoryInfo baseDirectory, ExtensionConfiguration configuration, Version version, IEnumerable<FileInfo> assets, IEnumerable<FileInfo> scripts)
     {
         Id = id;
+        BaseDirectory = baseDirectory;
         FriendlyName = configuration.FriendlyName;
         Description = configuration.Description;
         Author = configuration.Author;
@@ -23,7 +24,9 @@ public record Extension
 
     public Version Version { get; }
 
-    public IEnumerable<FileInfo> Assets { get; }
+    internal DirectoryInfo BaseDirectory { get; }
 
-    public IEnumerable<FileInfo> Scripts { get; }
+    internal IEnumerable<FileInfo> Assets { get; }
+
+    internal IEnumerable<FileInfo> Scripts { get; }
 }

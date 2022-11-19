@@ -21,21 +21,6 @@
       }
     },
     {
-      "name": "Launch IconBuilder",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "build.iconbuilder",
-      "program": "${workspaceFolder}/tools/IconBuilder/bin/Debug/net6.0/IconBuilder.dll",
-      "args": [
-        "-d", "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap/assets/icon-templates/definition.json",
-        "-t", "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap/assets/icon-templates",
-        "-o", "${workspaceFolder}/src/server/App/DasCleverle.DcsExport.LiveMap/wwwroot/icons",
-      ],
-      "cwd": "${workspaceFolder}/tools/IconBuilder",
-      "console": "integratedTerminal",
-      "stopAtEntry": false
-    },
-    {
       "name": ".NET Core Attach",
       "type": "coreclr",
       "request": "attach",

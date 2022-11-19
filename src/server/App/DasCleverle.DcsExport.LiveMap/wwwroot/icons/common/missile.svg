@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
+  <path
+      style="fill:none;stroke:#000000;stroke-width:3;stroke-linejoin:round"
+      d="M 72.480924,86.480912 V 53.48946 c 3e-6,-8.885514 -8.501504,-11.969842 -8.501504,-11.969842 0,0 -8.46034,3.083727 -8.46034,11.96924 v 32.992061"
+      id="missile" />
+</svg>

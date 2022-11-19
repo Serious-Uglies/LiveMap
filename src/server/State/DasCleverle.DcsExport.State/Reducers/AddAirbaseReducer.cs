@@ -1,3 +1,4 @@
+using DasCleverle.DcsExport.Client.Icons;
 using DasCleverle.DcsExport.Listener.Abstractions;
 using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.LiveMap.Abstractions;
@@ -17,17 +18,16 @@ public class AddAirbaseReducer : Reducer<AirbasePayload>
             return state;
         }
 
-        var coalition = airbase.Coalition.ToString().ToLowerInvariant();
-        var category = airbase.Category.ToString().ToLowerInvariant();
+        var iconKey = GetIconKey(airbase);
         var rotation = airbase.Runways.FirstOrDefault()?.Course;
 
         var feature = Feature(
             airbase.Id,
             Point(airbase.Position.Long, airbase.Position.Lat),
-            new AirbaseProperties() 
+            new AirbaseProperties()
             {
                 Name = airbase.Name,
-                Icon = $"{coalition}-{category}",
+                Icon = iconKey.ToString(),
                 Rotation = rotation ?? 0,
                 Runways = airbase.Runways,
                 Frequencies = airbase.Frequencies,
@@ -36,5 +36,13 @@ public class AddAirbaseReducer : Reducer<AirbasePayload>
         );
 
         return state.AddMapFeature(Layers.Airbases, feature);
+    }
+
+    private IconKey GetIconKey(AirbasePayload airbase)
+    {
+        var category = airbase.Category.ToString().ToLowerInvariant();
+        var colorKey = airbase.Coalition.ToString().ToLowerInvariant();
+        
+        return new IconKey(colorKey, "ai", new[] { category });
     }
 }

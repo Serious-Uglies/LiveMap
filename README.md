@@ -59,7 +59,7 @@ TcpExportConfig = {
 }
 ```
 
-Or increase the update interval:
+Or change the update interval:
 
 ```lua
 TcpExportConfig = {
@@ -88,57 +88,51 @@ local config = {
     interval = 1,
 
     -- Defines the types of objects to export per coalition.
+    -- Set any value to false to not export the given type of object
+    -- Available object types:
+    --  * airplane         Any fixed wing aircraft
+    --  * helicopter       Any rotary wing aircraft
+    --  * ground           Any ground unit
+    --  * ship             Any water based unit
+    --  * structure        Any structure like buildings, fortifications, static objects
+    --  * airdromes        Any fortified airfield, e.g. Senaki Kolkhi
+    --  * farp             Any helipad placed by the mission designer
     export = {
 
-        -- Defines the types of objects to export for the blue coalition.
+        -- Determines the types of objects to export for the blue coalition.
+        -- Default values: all true
         blue = {
-            -- Determines whether unit objects (airplanes, helicopters, ground units, etc.) should be exported.
-            -- Default value: true
-            unit = true,
-
-            -- Determines whether static objects should be exported.
-            -- Default value: true
-            static = true,
-
-            -- Determines whether airfields and FARPs should be exported.
-            -- Default value: true
-            airbase = true
+            airplane = true,
+            helicopter = true,
+            ground = true,
+            ship = true,
+            structure = true,
+            airdrome = true,
+            farp = true
         },
 
-        -- Defines the types of objects to export for the red coalition.
+        -- Determines the types of objects to export for the red coalition.
+        -- Default values: all true
         red = {
-            -- Determines whether unit objects (airplanes, helicopters, ground units, etc.) should be exported.
-            -- Default value: true
-            unit = true,
-
-            -- Determines whether static objects should be exported.
-            -- Default value: true
-            static = true,
-
-            -- Determines whether airfields and FARPs should be exported.
-            -- Default value: true
-            airbase = true
+            airplane = true,
+            helicopter = true,
+            ground = true,
+            ship = true,
+            structure = true,
+            airdrome = true,
+            farp = true
         },
 
-        -- Defines the types of objects to export for the neutral coalition.
+        -- Determines the types of objects to export for the neutral coalition.
+        -- Default values: all false, except "airdrome"
         neutral = {
-            -- Determines whether unit objects (airplanes, helicopters, ground units, etc.) should be exported.
-            -- Default value: true
-            unit = true,
-
-            -- Determines whether static objects should be exported.
-            -- Default value: true
-            static = true,
-
-            -- Determines whether airfields and FARPs should be exported.
-            -- Default value: true
-            airbase = true
-        },
-
-        -- Determines the extensions to be loaded
-        -- Default value: {}
-        extensions = {
-            "moose"
+            airplane = false,
+            helicopter = false,
+            ground = false,
+            ship = false,
+            structure = false,
+            airdrome = true,
+            farp = false
         }
     }
 }

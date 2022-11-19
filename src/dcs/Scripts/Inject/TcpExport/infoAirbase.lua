@@ -196,6 +196,10 @@ function mod.getAllAirbases()
         end
     end
 
+    if #airbaseInfo == 0 then
+        return nil
+    end
+
     return airbaseInfo
 end
 

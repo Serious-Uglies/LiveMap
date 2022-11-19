@@ -10,12 +10,37 @@ local coalitionNames = {
     [coalition.side.NEUTRAL] = "neutral"
 }
 
+local objectCategories = {
+    [Unit.Category.AIRPLANE] = "airplane",
+    [Unit.Category.HELICOPTER] = "helicopter",
+    [Unit.Category.GROUND_UNIT] = "ground",
+    [Unit.Category.SHIP] = "ship",
+    [Unit.Category.STRUCTURE] = "structure"
+}
+
+local airbaseCategories = {
+    [Airbase.Category.AIRDROME] = "airdrome",
+    [Airbase.Category.HELIPAD] = "farp"
+}
+
 function mod.filter(objType, object)
+    local category
+    local categoryId = object:getDesc().category
+
+    if objType == "unit" or objType == "static" then
+        category = objectCategories[categoryId]
+    elseif objType == "airbase" then
+        category = airbaseCategories[categoryId]
+    end
+
+    if not category then
+        return false
+    end
+
     local coalition = object:getCoalition()
     local coalitionName = coalitionNames[coalition]
-    local coalitionConfig = config.export[coalitionName]
 
-    if not coalitionConfig[objType] then
+    if not config.export[coalitionName] or not config.export[coalitionName][category] then
         return false
     end
 

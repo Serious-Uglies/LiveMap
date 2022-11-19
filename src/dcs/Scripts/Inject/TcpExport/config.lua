@@ -1,5 +1,11 @@
 local config = {
     --------------------------------------------------------------------------
+    -- ATTENTION!
+    -- To ensure future updates do not overwrite any changes to the 
+    -- configuration, only make changes to the file 'config-overrides.lua'!
+    --------------------------------------------------------------------------
+
+    --------------------------------------------------------------------------
     -- Hint for mission designers:
     --
     -- The following configuration values can be overridden per mission by
@@ -88,8 +94,13 @@ local config = {
     extensions = {}
 }
 
+local util = require("util")
+local overrides = require("config-overrides")
+
+config = util.assign({}, config, overrides)
+
 if TcpExportConfig ~= nil and type(TcpExportConfig) == "table" then
-    config = require("util").assign({}, config, TcpExportConfig)
+    config = util.assign({}, TcpExportConfig)
 end
 
 return config

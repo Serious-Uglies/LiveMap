@@ -49,7 +49,14 @@ As mentioned above, the Live Map is an ASP<span>.NET</span> Core app. Microsoft 
 
 ### TCP Export
 
-The TCP Export is configured through the file `config.lua` in the `Scripts/Inject/TcpExport` directory. This configuration is global and will be applied to any mission. To configure the TCP Export for a single mission specifically, define a mission trigger `4 MISSION START` with a `DO SCRIPT` or `DO SCRIPT FILE` action. In this file you can declare a global table `TcpExportConfig` which will override any values defined in the configuration from `config.lua`. Every value not defined in `TcpExportConfig` will have the value defined in `config.lua`.
+The TCP Export is configured through the file `config.lua` in the `Scripts/Inject/TcpExport` directory. This configuration is global and will be applied to any mission. To prevent updates of the application to overwrite any changes to the configuration a second file `config-overrides.lua` is provided. This file should be used to change any configuration values.
+
+To configure the TCP Export for a single mission specifically, define a mission trigger `4 MISSION START` with a `DO SCRIPT` or `DO SCRIPT FILE` action. In this script a declare a global table `TcpExportConfig` which contains the changes to the configuration. Note that any subsequent changes to the table will not be applied.
+
+The configuriation is applied as follows:
+1. `config.lua`
+2. `config-overrides.lua`
+3. `TcpExportConfig` global table
 
 E.g. to disable the export for the given mission:
 

@@ -3,7 +3,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using DasCleverle.DcsExport.Client.Icons;
 using DasCleverle.DcsExport.Extensibility;
-using DasCleverle.DcsExport.Listener.Model;
 using DasCleverle.DcsExport.LiveMap.Caching;
 using Microsoft.Extensions.FileProviders;
 using Svg;
@@ -25,10 +24,10 @@ internal class IconGenerator : IIconGenerator
         _iconTemplateMapManager = iconTemplateMapManager;
     }
 
-    public IconKey GetIconKey(Coalition coalition, string typeName, IEnumerable<string> attributes, bool isPlayer)
+    public IconKey GetIconKey(string colorKey, string colorModifier, string typeName, IEnumerable<string> attributes)
     {
         var relevant = IconAttributeGraph.GetRelevantAttributes(attributes);
-        return new IconKey(GetTemplates(typeName, relevant), coalition, isPlayer);
+        return new IconKey(colorKey, colorModifier, GetTemplates(typeName, relevant));
     }
 
     public Stream GenerateIcon(IconKey key)
@@ -37,9 +36,11 @@ internal class IconGenerator : IIconGenerator
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
 
+            var map = _iconTemplateMapManager.GetTemplateMap();
+
             var svg = new SvgDocument();
             var templates = key.Templates
-                .Select(x => GetTemplateFile(key.Coalition, x))
+                .Select(x => GetTemplateFile(key.ColorKey, x))
                 .Select(x => SvgDocument.Open(x.PhysicalPath))
                 .ToArray();
 
@@ -49,15 +50,12 @@ internal class IconGenerator : IIconGenerator
                 {
                     var resultChild = child;
 
-                    if (child.CustomAttributes.TryGetValue("colorable", out var colorable) && colorable == "true")
+                    if (child.CustomAttributes.TryGetValue("colorable", out var colorable) 
+                        && colorable == "true"
+                        && map.Colors.TryGetValue($"{key.ColorKey}.{key.ColorModifier}", out var color))
                     {
-                        var color = IconColors.GetCoalitionColor(key.Coalition, key.IsPlayer);
-
-                        if (color.HasValue)
-                        {
-                            resultChild = child.DeepCopy();
-                            resultChild.Fill = new SvgColourServer(color.Value);
-                        }
+                        resultChild = child.DeepCopy();
+                        resultChild.Fill = new SvgColourServer(color);
                     }
 
                     svg.Children.Add(resultChild);
@@ -165,16 +163,16 @@ internal class IconGenerator : IIconGenerator
         });
     }
 
-    private IFileInfo GetTemplateFile(Coalition coalition, string template)
+    private IFileInfo GetTemplateFile(string colorKey, string template)
     {
-        var coalitionPath = Path.Combine("icons", IconKey.GetCoalitionName(coalition), $"{template}.svg");
+        var specificPath = Path.Combine("icons", colorKey, $"{template}.svg");
         var commonPath = Path.Combine("icons", "common", $"{template}.svg");
 
-        var extensionCoalitionFile = _extensionManager.GetAssetFile(coalitionPath);
+        var extensionSpecificFile = _extensionManager.GetAssetFile(specificPath);
 
-        if (extensionCoalitionFile.Exists)
+        if (extensionSpecificFile.Exists)
         {
-            return extensionCoalitionFile;
+            return extensionSpecificFile;
         }
 
         var extensionFallbackFile = _extensionManager.GetAssetFile(commonPath);
@@ -184,11 +182,11 @@ internal class IconGenerator : IIconGenerator
             return extensionFallbackFile;
         }
 
-        var coalitionFile = _fileProvider.GetFileInfo(coalitionPath);
+        var specificFile = _fileProvider.GetFileInfo(specificPath);
 
-        if (coalitionFile.Exists)
+        if (specificFile.Exists)
         {
-            return coalitionFile;
+            return specificFile;
         }
 
         var fallbackFile = _fileProvider.GetFileInfo(commonPath);

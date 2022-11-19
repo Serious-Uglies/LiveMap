@@ -1,10 +1,8 @@
-using DasCleverle.DcsExport.Listener.Model;
-
 namespace DasCleverle.DcsExport.Client.Icons;
 
 public interface IIconGenerator
 {
-    IconKey GetIconKey(Coalition coalition, string typeName, IEnumerable<string> attributes, bool isPlayer);
+    IconKey GetIconKey(string colorKey, string colorModifier, string typeName, IEnumerable<string> attributes);
 
     Stream GenerateIcon(IconKey key);
 }

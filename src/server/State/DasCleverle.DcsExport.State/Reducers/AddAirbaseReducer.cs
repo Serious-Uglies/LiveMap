@@ -18,8 +18,7 @@ public class AddAirbaseReducer : Reducer<AirbasePayload>
             return state;
         }
 
-        var category = airbase.Category.ToString().ToLowerInvariant();
-        var iconKey = new IconKey(new[] { category }, airbase.Coalition, false);
+        var iconKey = GetIconKey(airbase);
         var rotation = airbase.Runways.FirstOrDefault()?.Course;
 
         var feature = Feature(
@@ -37,5 +36,13 @@ public class AddAirbaseReducer : Reducer<AirbasePayload>
         );
 
         return state.AddMapFeature(Layers.Airbases, feature);
+    }
+
+    private IconKey GetIconKey(AirbasePayload airbase)
+    {
+        var category = airbase.Category.ToString().ToLowerInvariant();
+        var colorKey = airbase.Coalition.ToString().ToLowerInvariant();
+        
+        return new IconKey(colorKey, "ai", new[] { category });
     }
 }

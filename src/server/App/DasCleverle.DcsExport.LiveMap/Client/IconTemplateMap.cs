@@ -1,6 +1,9 @@
 using System.Collections.Immutable;
+using System.Drawing;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using DasCleverle.DcsExport.Extensibility;
 using DasCleverle.DcsExport.LiveMap.Caching;
 using Microsoft.Extensions.FileProviders;
@@ -43,6 +46,7 @@ internal class IconTemplateMapManager
                 ReadCommentHandling = JsonCommentHandling.Skip
             };
             options.Converters.Add(new JsonAttributeMapConverter());
+            options.Converters.Add(new JsonColorConverter());
 
             var fullMap = new IconTemplateMap();
 
@@ -59,6 +63,7 @@ internal class IconTemplateMapManager
                 fullMap = fullMap with
                 {
                     Fallback = !string.IsNullOrEmpty(map.Fallback) ? map.Fallback : fullMap.Fallback,
+                    Colors = fullMap.Colors.SetItems(map.Colors),
                     Attributes = fullMap.Attributes.SetItems(map.Attributes),
                     TypeNames = fullMap.TypeNames.SetItems(map.TypeNames)
                 };
@@ -96,11 +101,46 @@ internal class IconTemplateMapManager
         public override void Write(Utf8JsonWriter writer, AttributeMap value, JsonSerializerOptions options)
             => throw new NotSupportedException();
     }
+
+    private class JsonColorConverter : JsonConverter<Color>
+    {
+
+        private static readonly Regex Regex = new("#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})", RegexOptions.Compiled);
+
+        public override Color Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType != JsonTokenType.String)
+            {
+                throw new JsonException("Expected a color hex string in the format '#rrggbb'.");
+            }
+
+            var hex = reader.GetString()!;
+            var match = Regex.Match(hex);
+
+            if (!match.Success)
+            {
+                throw new JsonException("Expected a color hex string in the format '#rrggbb'.");
+            }
+
+            var red = int.Parse(match.Groups[1].Value, NumberStyles.HexNumber);
+            var green = int.Parse(match.Groups[2].Value, NumberStyles.HexNumber);
+            var blue = int.Parse(match.Groups[3].Value, NumberStyles.HexNumber);
+
+            return Color.FromArgb(255, red, green, blue);
+        }
+
+        public override void Write(Utf8JsonWriter writer, Color value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
 
 internal record IconTemplateMap
 {
     public string Fallback { get; init; } = "";
+
+    public ImmutableDictionary<string, Color> Colors { get; init; } = ImmutableDictionary<string, Color>.Empty;
 
     public ImmutableDictionary<string, AttributeMap> Attributes { get; init; } = ImmutableDictionary<string, AttributeMap>.Empty;
 

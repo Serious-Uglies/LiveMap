@@ -1,5 +1,13 @@
 {
   "fallback": "ground",
+  "colors": {
+    "blue.ai": "#91cce3",
+    "blue.player": "#268cb8",
+    "red.ai": "#e9817d",
+    "red.player": "#d92e23",
+    "neutral.ai": "#abd7a2",
+    "neutral.player": "#41bd28"
+  },
   "attributes": {
     "AAA": ["main-gun-system"],
     "AA_flak": {

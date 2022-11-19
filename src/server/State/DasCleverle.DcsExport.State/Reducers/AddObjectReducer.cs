@@ -18,25 +18,22 @@ public class AddObjectReducer : Reducer<ObjectPayload>
 
     protected override LiveState Reduce(LiveState state, IExportEvent<ObjectPayload> exportEvent)
     {
-        var obj = exportEvent.Payload;
+        var payload = exportEvent.Payload;
 
-        if (obj.Position == null)
+        if (payload.Position == null)
         {
             return state;
         }
 
-        var iconKey = _iconGenerator.GetIconKey(obj.Coalition, obj.TypeName, obj.Attributes, !string.IsNullOrEmpty(obj.Player));
-
         var feature = Feature(
-            obj.Id,
-            Point(obj.Position.Long, obj.Position.Lat),
+            payload.Id,
+            Point(payload.Position.Long, payload.Position.Lat),
             new ObjectProperties()
             {
-                Icon = iconKey.ToString(),
-                IconSize = obj.Attributes.Contains("Air") ? 0.2 : 0.25,
-                SortKey = GetSortKey(obj),
-                Player = obj.Player,
-                Name = GetName(obj),
+                Icon = GetIconKey(payload).ToString(),
+                SortKey = GetSortKey(payload),
+                Player = payload.Player,
+                Name = GetName(payload),
             }
         );
 
@@ -61,5 +58,13 @@ public class AddObjectReducer : Reducer<ObjectPayload>
         }
 
         return "";
+    }
+
+    private IconKey GetIconKey(ObjectPayload payload)
+    {
+        var colorKey = payload.Coalition.ToString().ToLowerInvariant();
+        var colorModifier = !string.IsNullOrEmpty(payload.Player) ? "player" : "ai";
+
+        return _iconGenerator.GetIconKey(colorKey, colorModifier, payload.TypeName, payload.Attributes);
     }
 }
